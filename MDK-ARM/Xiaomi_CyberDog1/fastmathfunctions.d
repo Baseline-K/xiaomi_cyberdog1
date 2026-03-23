@@ -1,0 +1,16 @@
+xiaomi_cyberdog1\fastmathfunctions.o: D:/Keil5/Packs/ARM/CMSIS-DSP/1.16.2/Source/FastMathFunctions/FastMathFunctions.c
+xiaomi_cyberdog1\fastmathfunctions.o: D:/Keil5/Packs/ARM/CMSIS-DSP/1.16.2/Source/FastMathFunctions/arm_cos_f32.c
+xiaomi_cyberdog1\fastmathfunctions.o: D:\Keil5\Packs\ARM\CMSIS-DSP\1.16.2\Include\dsp/fast_math_functions.h
+xiaomi_cyberdog1\fastmathfunctions.o: D:\Keil5\Packs\ARM\CMSIS-DSP\1.16.2\Include\arm_math_types.h
+xiaomi_cyberdog1\fastmathfunctions.o: ../Drivers/CMSIS/Include/cmsis_compiler.h
+xiaomi_cyberdog1\fastmathfunctions.o: D:\Keil5\Core\ARM\ARMCC\Bin\..\include\stdint.h
+xiaomi_cyberdog1\fastmathfunctions.o: ../Drivers/CMSIS/Include/cmsis_armcc.h
+xiaomi_cyberdog1\fastmathfunctions.o: D:\Keil5\Core\ARM\ARMCC\Bin\..\include\string.h
+xiaomi_cyberdog1\fastmathfunctions.o: D:\Keil5\Core\ARM\ARMCC\Bin\..\include\math.h
+xiaomi_cyberdog1\fastmathfunctions.o: D:\Keil5\Core\ARM\ARMCC\Bin\..\include\float.h
+xiaomi_cyberdog1\fastmathfunctions.o: D:\Keil5\Core\ARM\ARMCC\Bin\..\include\limits.h
+xiaomi_cyberdog1\fastmathfunctions.o: D:\Keil5\Packs\ARM\CMSIS-DSP\1.16.2\Include\arm_math_memory.h
+xiaomi_cyberdog1\fastmathfunctions.o: D:\Keil5\Packs\ARM\CMSIS-DSP\1.16.2\Include\dsp/none.h
+xiaomi_cyberdog1\fastmathfunctions.o: D:\Keil5\Packs\ARM\CMSIS-DSP\1.16.2\Include\dsp/utils.h
+xiaomi_cyberdog1\fastmathfunctions.o: D:\Keil5\Packs\ARM\CMSIS-DSP\1.16.2\Include\dsp/basic_math_functions.h
+xiaomi_cyberdog1\fastmathfunctions.o: D:\Keil5\Packs\ARM\CMSIS-DSP\1.16.2\Include\arm_common_tables.h
