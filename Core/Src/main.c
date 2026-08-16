@@ -19,6 +19,7 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "adc.h"
+#include "can.h"
 #include "dma.h"
 #include "iwdg.h"
 #include "spi.h"
@@ -71,7 +72,9 @@ int main(void)
 {
 
   /* USER CODE BEGIN 1 */
-
+  /* GD32_PATCH: Enable FPU on Cortex-M4F (CP10 + CP11 full access).
+     Equivalent to: (*(volatile uint32_t *)(0xE000ED88)) |= (15 << 20); */
+  SCB->CPACR |= ((3UL << 20) | (3UL << 22));
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
@@ -98,7 +101,8 @@ int main(void)
   MX_SPI2_Init();
   MX_TIM1_Init();
   MX_USART2_UART_Init();
-
+  //MX_IWDG_Init();
+  MX_CAN_Init();
   /* USER CODE BEGIN 2 */
 
   main_user();

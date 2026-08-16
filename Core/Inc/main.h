@@ -93,7 +93,12 @@ void Error_Handler(void);
 #define Encode_MOSI_GPIO_Port GPIOC
 
 /* USER CODE BEGIN Private defines */
-
+/* DRV8353 gate driver control pins */
+#define ENABLE_Pin              DRV8323_EN_Pin
+#define ENABLE_GPIO_Port        DRV8323_EN_GPIO_Port
+/* PWML: Low-side gate driver control input — assign to free GPIO as needed */
+#define PWML_Pin                GPIO_PIN_15
+#define PWML_GPIO_Port          GPIOB
 /* USER CODE END Private defines */
 
 #ifdef __cplusplus

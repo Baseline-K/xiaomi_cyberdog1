@@ -57,6 +57,7 @@
 /* External variables --------------------------------------------------------*/
 extern ADC_HandleTypeDef hadc1;
 extern ADC_HandleTypeDef hadc2;
+extern CAN_HandleTypeDef hcan;
 extern DMA_HandleTypeDef hdma_spi2_rx;
 extern DMA_HandleTypeDef hdma_spi2_tx;
 extern SPI_HandleTypeDef hspi2;
@@ -87,17 +88,17 @@ void NMI_Handler(void)
 /**
   * @brief This function handles Hard fault interrupt.
   */
-//void HardFault_Handler(void)
-//{
-//  /* USER CODE BEGIN HardFault_IRQn 0 */
+void HardFault_Handler(void)
+{
+  /* USER CODE BEGIN HardFault_IRQn 0 */
 
-//  /* USER CODE END HardFault_IRQn 0 */
-//  while (1)
-//  {
-//    /* USER CODE BEGIN W1_HardFault_IRQn 0 */
-//    /* USER CODE END W1_HardFault_IRQn 0 */
-//  }
-//}
+  /* USER CODE END HardFault_IRQn 0 */
+  while (1)
+  {
+    /* USER CODE BEGIN W1_HardFault_IRQn 0 */
+    /* USER CODE END W1_HardFault_IRQn 0 */
+  }
+}
 
 /**
   * @brief This function handles Memory management fault.
@@ -245,6 +246,48 @@ void ADC1_2_IRQHandler(void)
   /* USER CODE BEGIN ADC1_2_IRQn 1 */
 
   /* USER CODE END ADC1_2_IRQn 1 */
+}
+
+/**
+  * @brief This function handles USB high priority or CAN TX interrupts.
+  */
+void USB_HP_CAN1_TX_IRQHandler(void)
+{
+  /* USER CODE BEGIN USB_HP_CAN1_TX_IRQn 0 */
+
+  /* USER CODE END USB_HP_CAN1_TX_IRQn 0 */
+  HAL_CAN_IRQHandler(&hcan);
+  /* USER CODE BEGIN USB_HP_CAN1_TX_IRQn 1 */
+
+  /* USER CODE END USB_HP_CAN1_TX_IRQn 1 */
+}
+
+/**
+  * @brief This function handles USB low priority or CAN RX0 interrupts.
+  */
+void USB_LP_CAN1_RX0_IRQHandler(void)
+{
+  /* USER CODE BEGIN USB_LP_CAN1_RX0_IRQn 0 */
+
+  /* USER CODE END USB_LP_CAN1_RX0_IRQn 0 */
+  HAL_CAN_IRQHandler(&hcan);
+  /* USER CODE BEGIN USB_LP_CAN1_RX0_IRQn 1 */
+
+  /* USER CODE END USB_LP_CAN1_RX0_IRQn 1 */
+}
+
+/**
+  * @brief This function handles CAN SCE interrupt.
+  */
+void CAN1_SCE_IRQHandler(void)
+{
+  /* USER CODE BEGIN CAN1_SCE_IRQn 0 */
+
+  /* USER CODE END CAN1_SCE_IRQn 0 */
+  HAL_CAN_IRQHandler(&hcan);
+  /* USER CODE BEGIN CAN1_SCE_IRQn 1 */
+
+  /* USER CODE END CAN1_SCE_IRQn 1 */
 }
 
 /**

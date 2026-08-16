@@ -4,9 +4,9 @@
 *                         www.segger.com                             *
 **********************************************************************
 
-File          : F:/Engineering_Project/Motor_Control/Xiaomi_CyberDog1/Xiaomi_CyberDog1/Xiaomi_CyberDog1.jdebug
-Created       : 19 Oct 2025 23:54
-Ozone Version : V3.32a
+File          : 
+Created       : 15. Aug 2026 18:50
+Ozone Version : V3.50a
 */
 
 /*********************************************************************
@@ -22,9 +22,9 @@ void OnProjectLoad (void) {
   //
   // Dialog-generated settings
   //
-  Project.AddPathSubstitute ("F:/Engineering_Project/Motor_Control/Xiaomi_CyberDog1/Xiaomi_CyberDog1", "$(ProjectDir)");
-  Project.AddPathSubstitute ("f:/engineering_project/motor_control/xiaomi_cyberdog1/xiaomi_cyberdog1", "$(ProjectDir)");
-  Project.SetDevice ("GD32F303RE");
+  Project.AddPathSubstitute ("D:/Engineering_Project/Micro_Balance_Bike/3.Software/Motor_Driver/Xiaomi_CyberDog1", "$(ProjectDir)");
+  Project.AddPathSubstitute ("d:/engineering_project/micro_balance_bike/3.software/motor_driver/xiaomi_cyberdog1", "$(ProjectDir)");
+  Project.SetDevice ("GD32F303RET6");
   Project.SetHostIF ("USB", "");
   Project.SetTargetIF ("SWD");
   Project.SetTIFSpeed ("4 MHz");
@@ -32,7 +32,8 @@ void OnProjectLoad (void) {
   //
   // User settings
   //
-  File.Open ("$(ProjectDir)/MDK-ARM/Xiaomi_CyberDog1/Xiaomi_CyberDog1.axf");
+  Edit.SysVar (VAR_POWER_SAMPLING_SPEED, FREQ_1_KHZ);
+  File.Open ("$(ProjectDir)/build/Debug/Xiaomi_CyberDog1.elf");
 }
 
 /*********************************************************************
@@ -309,6 +310,19 @@ void AfterTargetDownload (void) {
 **********************************************************************
 */
 //void AfterProjectLoad (void) {
+//}
+
+/*********************************************************************
+*
+*       OnDebugStartBreakSymbolReached
+*
+* Function description
+*   Called when program execution has reached/passed
+*   the symbol to be breaked at during debug start. Optional.
+*
+**********************************************************************
+*/
+//void OnDebugStartBreakSymReached (void) {
 //}
 
 /*********************************************************************

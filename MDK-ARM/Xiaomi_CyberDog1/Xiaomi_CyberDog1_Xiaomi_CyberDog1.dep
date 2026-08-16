@@ -1,1847 +1,0 @@
-Dependencies for Project 'Xiaomi_CyberDog1', Target 'Xiaomi_CyberDog1': (DO NOT MODIFY !)
-CompilerVersion: 6190000::V6.19::ARMCLANG
-F (startup_stm32f103xe.s)(0x6936E4AD)(--target=arm-arm-none-eabi -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -masm=auto  -Wa,armasm,--diag_suppress=A1950W -c-gdwarf-4 -Wa,armasm,--pd,"__MICROLIB SETA 1"-I./RTE/_Xiaomi_CyberDog1-ID:/Keil5/Packs/ARM/CMSIS/5.7.0/CMSIS/Core/Include-ID:/Keil5/Packs/ARM/CMSIS/5.7.0/CMSIS/DSP/Include-ID:/Keil5/Packs/GigaDevice/GD32F30x_DFP/2.2.1/Device/Include-Wa,armasm,--pd,"__UVISION_VERSION SETA 538" -Wa,armasm,--pd,"_RTE_ SETA 1" -Wa,armasm,--pd,"GD32F30X_HD SETA 1" -Wa,armasm,--pd,"_RTE_ SETA 1"-o xiaomi_cyberdog1/startup_stm32f103xe.o)
-F (../Core/Src/main.c)(0x692EFA6E)(-xc -std=c99 --target=arm-arm-none-eabi -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -c-fno-rtti -funsigned-char -fshort-enums -fshort-wchar-D__MICROLIB -gdwarf-4 -O0 -ffunction-sections -Wno-packed -Wno-missing-variable-declarations -Wno-missing-prototypes -Wno-missing-noreturn -Wno-sign-conversion -Wno-nonportable-include-path -Wno-reserved-id-macro -Wno-unused-macros -Wno-documentation-unknown-command -Wno-documentation -Wno-license-management -Wno-parentheses-equality -Wno-reserved-identifier -I ../Drivers/CMSIS/Include -I ../Core/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F1xx/Include -I ../APP -I ../BSP -I ../MID/MID_foc_float -I ../MID/MID_segger_rtt -I ../MID/MID_foc -I ../MID/MID_SoftIIC/SoftIIC_Fast -I ../COM -I ../MID/MID_cm_backtrace-I./RTE/_Xiaomi_CyberDog1-ID:/Keil5/Packs/ARM/CMSIS/5.7.0/CMSIS/Core/Include-ID:/Keil5/Packs/ARM/CMSIS/5.7.0/CMSIS/DSP/Include-ID:/Keil5/Packs/GigaDevice/GD32F30x_DFP/2.2.1/Device/Include-D__UVISION_VERSION="538" -D_RTE_ -DGD32F30X_HD -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F103xE -DARM_MATH_CM4-o xiaomi_cyberdog1/main.o -MD)
-I (..\Core\Inc\main.h)(0x68F8E623)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal.h)(0x689C3A9F)
-I (..\Core\Inc\stm32f1xx_hal_conf.h)(0x692EF7E8)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_rcc.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_def.h)(0x689C3A9F)
-I (..\Drivers\CMSIS\Device\ST\STM32F1xx\Include\stm32f1xx.h)(0x689C3A9F)
-I (..\Drivers\CMSIS\Device\ST\STM32F1xx\Include\stm32f103xe.h)(0x689C3A9F)
-I (..\Drivers\CMSIS\Include\core_cm3.h)(0x692EF9A1)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\stdint.h)(0x63884908)
-I (..\Drivers\CMSIS\Include\cmsis_version.h)(0x689C3A94)
-I (..\Drivers\CMSIS\Include\cmsis_compiler.h)(0x689C3A94)
-I (..\Drivers\CMSIS\Include\cmsis_armclang.h)(0x689C3A94)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\arm_compat.h)(0x63884908)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\arm_acle.h)(0x63884908)
-I (..\Drivers\CMSIS\Device\ST\STM32F1xx\Include\system_stm32f1xx.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\Legacy\stm32_hal_legacy.h)(0x689C3A9F)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\stddef.h)(0x63884908)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_rcc_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_gpio.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_gpio_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_exti.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_dma.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_dma_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_cortex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_adc.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_adc_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_flash.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_flash_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_iwdg.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_pwr.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_spi.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_tim.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_tim_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_uart.h)(0x689C3A9F)
-I (..\Core\Inc\adc.h)(0x68EA5AB5)
-I (..\Core\Inc\dma.h)(0x68EA5AB6)
-I (..\Core\Inc\iwdg.h)(0x692EF7E4)
-I (..\Core\Inc\spi.h)(0x68EA5AB6)
-I (..\Core\Inc\tim.h)(0x68F4AC14)
-I (..\Core\Inc\usart.h)(0x68EA5AB7)
-I (..\Core\Inc\gpio.h)(0x68EA5AB4)
-I (..\APP\main_user.h)(0x6925C78E)
-I (D:\Keil5\Packs\ARM\CMSIS\5.7.0\CMSIS\DSP\Include\arm_math.h)(0x5E8ED122)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\string.h)(0x63884908)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\math.h)(0x63884908)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\float.h)(0x63884908)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\limits.h)(0x63884908)
-I (..\COM\filter.h)(0x6905FF32)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\stdbool.h)(0x63884908)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\stdio.h)(0x63884908)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\stdlib.h)(0x63884908)
-F (../Core/Src/gpio.c)(0x68F8E61E)(-xc -std=c99 --target=arm-arm-none-eabi -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -c-fno-rtti -funsigned-char -fshort-enums -fshort-wchar-D__MICROLIB -gdwarf-4 -O0 -ffunction-sections -Wno-packed -Wno-missing-variable-declarations -Wno-missing-prototypes -Wno-missing-noreturn -Wno-sign-conversion -Wno-nonportable-include-path -Wno-reserved-id-macro -Wno-unused-macros -Wno-documentation-unknown-command -Wno-documentation -Wno-license-management -Wno-parentheses-equality -Wno-reserved-identifier -I ../Drivers/CMSIS/Include -I ../Core/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F1xx/Include -I ../APP -I ../BSP -I ../MID/MID_foc_float -I ../MID/MID_segger_rtt -I ../MID/MID_foc -I ../MID/MID_SoftIIC/SoftIIC_Fast -I ../COM -I ../MID/MID_cm_backtrace-I./RTE/_Xiaomi_CyberDog1-ID:/Keil5/Packs/ARM/CMSIS/5.7.0/CMSIS/Core/Include-ID:/Keil5/Packs/ARM/CMSIS/5.7.0/CMSIS/DSP/Include-ID:/Keil5/Packs/GigaDevice/GD32F30x_DFP/2.2.1/Device/Include-D__UVISION_VERSION="538" -D_RTE_ -DGD32F30X_HD -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F103xE -DARM_MATH_CM4-o xiaomi_cyberdog1/gpio.o -MD)
-I (..\Core\Inc\gpio.h)(0x68EA5AB4)
-I (..\Core\Inc\main.h)(0x68F8E623)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal.h)(0x689C3A9F)
-I (..\Core\Inc\stm32f1xx_hal_conf.h)(0x692EF7E8)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_rcc.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_def.h)(0x689C3A9F)
-I (..\Drivers\CMSIS\Device\ST\STM32F1xx\Include\stm32f1xx.h)(0x689C3A9F)
-I (..\Drivers\CMSIS\Device\ST\STM32F1xx\Include\stm32f103xe.h)(0x689C3A9F)
-I (..\Drivers\CMSIS\Include\core_cm3.h)(0x692EF9A1)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\stdint.h)(0x63884908)
-I (..\Drivers\CMSIS\Include\cmsis_version.h)(0x689C3A94)
-I (..\Drivers\CMSIS\Include\cmsis_compiler.h)(0x689C3A94)
-I (..\Drivers\CMSIS\Include\cmsis_armclang.h)(0x689C3A94)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\arm_compat.h)(0x63884908)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\arm_acle.h)(0x63884908)
-I (..\Drivers\CMSIS\Device\ST\STM32F1xx\Include\system_stm32f1xx.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\Legacy\stm32_hal_legacy.h)(0x689C3A9F)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\stddef.h)(0x63884908)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_rcc_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_gpio.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_gpio_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_exti.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_dma.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_dma_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_cortex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_adc.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_adc_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_flash.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_flash_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_iwdg.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_pwr.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_spi.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_tim.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_tim_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_uart.h)(0x689C3A9F)
-F (../Core/Src/adc.c)(0x692EF7E4)(-xc -std=c99 --target=arm-arm-none-eabi -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -c-fno-rtti -funsigned-char -fshort-enums -fshort-wchar-D__MICROLIB -gdwarf-4 -O0 -ffunction-sections -Wno-packed -Wno-missing-variable-declarations -Wno-missing-prototypes -Wno-missing-noreturn -Wno-sign-conversion -Wno-nonportable-include-path -Wno-reserved-id-macro -Wno-unused-macros -Wno-documentation-unknown-command -Wno-documentation -Wno-license-management -Wno-parentheses-equality -Wno-reserved-identifier -I ../Drivers/CMSIS/Include -I ../Core/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F1xx/Include -I ../APP -I ../BSP -I ../MID/MID_foc_float -I ../MID/MID_segger_rtt -I ../MID/MID_foc -I ../MID/MID_SoftIIC/SoftIIC_Fast -I ../COM -I ../MID/MID_cm_backtrace-I./RTE/_Xiaomi_CyberDog1-ID:/Keil5/Packs/ARM/CMSIS/5.7.0/CMSIS/Core/Include-ID:/Keil5/Packs/ARM/CMSIS/5.7.0/CMSIS/DSP/Include-ID:/Keil5/Packs/GigaDevice/GD32F30x_DFP/2.2.1/Device/Include-D__UVISION_VERSION="538" -D_RTE_ -DGD32F30X_HD -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F103xE -DARM_MATH_CM4-o xiaomi_cyberdog1/adc.o -MD)
-I (..\Core\Inc\adc.h)(0x68EA5AB5)
-I (..\Core\Inc\main.h)(0x68F8E623)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal.h)(0x689C3A9F)
-I (..\Core\Inc\stm32f1xx_hal_conf.h)(0x692EF7E8)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_rcc.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_def.h)(0x689C3A9F)
-I (..\Drivers\CMSIS\Device\ST\STM32F1xx\Include\stm32f1xx.h)(0x689C3A9F)
-I (..\Drivers\CMSIS\Device\ST\STM32F1xx\Include\stm32f103xe.h)(0x689C3A9F)
-I (..\Drivers\CMSIS\Include\core_cm3.h)(0x692EF9A1)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\stdint.h)(0x63884908)
-I (..\Drivers\CMSIS\Include\cmsis_version.h)(0x689C3A94)
-I (..\Drivers\CMSIS\Include\cmsis_compiler.h)(0x689C3A94)
-I (..\Drivers\CMSIS\Include\cmsis_armclang.h)(0x689C3A94)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\arm_compat.h)(0x63884908)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\arm_acle.h)(0x63884908)
-I (..\Drivers\CMSIS\Device\ST\STM32F1xx\Include\system_stm32f1xx.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\Legacy\stm32_hal_legacy.h)(0x689C3A9F)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\stddef.h)(0x63884908)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_rcc_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_gpio.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_gpio_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_exti.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_dma.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_dma_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_cortex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_adc.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_adc_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_flash.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_flash_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_iwdg.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_pwr.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_spi.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_tim.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_tim_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_uart.h)(0x689C3A9F)
-F (../Core/Src/dma.c)(0x6925CB13)(-xc -std=c99 --target=arm-arm-none-eabi -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -c-fno-rtti -funsigned-char -fshort-enums -fshort-wchar-D__MICROLIB -gdwarf-4 -O0 -ffunction-sections -Wno-packed -Wno-missing-variable-declarations -Wno-missing-prototypes -Wno-missing-noreturn -Wno-sign-conversion -Wno-nonportable-include-path -Wno-reserved-id-macro -Wno-unused-macros -Wno-documentation-unknown-command -Wno-documentation -Wno-license-management -Wno-parentheses-equality -Wno-reserved-identifier -I ../Drivers/CMSIS/Include -I ../Core/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F1xx/Include -I ../APP -I ../BSP -I ../MID/MID_foc_float -I ../MID/MID_segger_rtt -I ../MID/MID_foc -I ../MID/MID_SoftIIC/SoftIIC_Fast -I ../COM -I ../MID/MID_cm_backtrace-I./RTE/_Xiaomi_CyberDog1-ID:/Keil5/Packs/ARM/CMSIS/5.7.0/CMSIS/Core/Include-ID:/Keil5/Packs/ARM/CMSIS/5.7.0/CMSIS/DSP/Include-ID:/Keil5/Packs/GigaDevice/GD32F30x_DFP/2.2.1/Device/Include-D__UVISION_VERSION="538" -D_RTE_ -DGD32F30X_HD -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F103xE -DARM_MATH_CM4-o xiaomi_cyberdog1/dma.o -MD)
-I (..\Core\Inc\dma.h)(0x68EA5AB6)
-I (..\Core\Inc\main.h)(0x68F8E623)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal.h)(0x689C3A9F)
-I (..\Core\Inc\stm32f1xx_hal_conf.h)(0x692EF7E8)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_rcc.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_def.h)(0x689C3A9F)
-I (..\Drivers\CMSIS\Device\ST\STM32F1xx\Include\stm32f1xx.h)(0x689C3A9F)
-I (..\Drivers\CMSIS\Device\ST\STM32F1xx\Include\stm32f103xe.h)(0x689C3A9F)
-I (..\Drivers\CMSIS\Include\core_cm3.h)(0x692EF9A1)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\stdint.h)(0x63884908)
-I (..\Drivers\CMSIS\Include\cmsis_version.h)(0x689C3A94)
-I (..\Drivers\CMSIS\Include\cmsis_compiler.h)(0x689C3A94)
-I (..\Drivers\CMSIS\Include\cmsis_armclang.h)(0x689C3A94)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\arm_compat.h)(0x63884908)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\arm_acle.h)(0x63884908)
-I (..\Drivers\CMSIS\Device\ST\STM32F1xx\Include\system_stm32f1xx.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\Legacy\stm32_hal_legacy.h)(0x689C3A9F)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\stddef.h)(0x63884908)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_rcc_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_gpio.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_gpio_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_exti.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_dma.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_dma_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_cortex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_adc.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_adc_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_flash.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_flash_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_iwdg.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_pwr.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_spi.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_tim.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_tim_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_uart.h)(0x689C3A9F)
-F (../Core/Src/iwdg.c)(0x692EF7E4)(-xc -std=c99 --target=arm-arm-none-eabi -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -c-fno-rtti -funsigned-char -fshort-enums -fshort-wchar-D__MICROLIB -gdwarf-4 -O0 -ffunction-sections -Wno-packed -Wno-missing-variable-declarations -Wno-missing-prototypes -Wno-missing-noreturn -Wno-sign-conversion -Wno-nonportable-include-path -Wno-reserved-id-macro -Wno-unused-macros -Wno-documentation-unknown-command -Wno-documentation -Wno-license-management -Wno-parentheses-equality -Wno-reserved-identifier -I ../Drivers/CMSIS/Include -I ../Core/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F1xx/Include -I ../APP -I ../BSP -I ../MID/MID_foc_float -I ../MID/MID_segger_rtt -I ../MID/MID_foc -I ../MID/MID_SoftIIC/SoftIIC_Fast -I ../COM -I ../MID/MID_cm_backtrace-I./RTE/_Xiaomi_CyberDog1-ID:/Keil5/Packs/ARM/CMSIS/5.7.0/CMSIS/Core/Include-ID:/Keil5/Packs/ARM/CMSIS/5.7.0/CMSIS/DSP/Include-ID:/Keil5/Packs/GigaDevice/GD32F30x_DFP/2.2.1/Device/Include-D__UVISION_VERSION="538" -D_RTE_ -DGD32F30X_HD -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F103xE -DARM_MATH_CM4-o xiaomi_cyberdog1/iwdg.o -MD)
-I (..\Core\Inc\iwdg.h)(0x692EF7E4)
-I (..\Core\Inc\main.h)(0x68F8E623)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal.h)(0x689C3A9F)
-I (..\Core\Inc\stm32f1xx_hal_conf.h)(0x692EF7E8)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_rcc.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_def.h)(0x689C3A9F)
-I (..\Drivers\CMSIS\Device\ST\STM32F1xx\Include\stm32f1xx.h)(0x689C3A9F)
-I (..\Drivers\CMSIS\Device\ST\STM32F1xx\Include\stm32f103xe.h)(0x689C3A9F)
-I (..\Drivers\CMSIS\Include\core_cm3.h)(0x692EF9A1)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\stdint.h)(0x63884908)
-I (..\Drivers\CMSIS\Include\cmsis_version.h)(0x689C3A94)
-I (..\Drivers\CMSIS\Include\cmsis_compiler.h)(0x689C3A94)
-I (..\Drivers\CMSIS\Include\cmsis_armclang.h)(0x689C3A94)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\arm_compat.h)(0x63884908)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\arm_acle.h)(0x63884908)
-I (..\Drivers\CMSIS\Device\ST\STM32F1xx\Include\system_stm32f1xx.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\Legacy\stm32_hal_legacy.h)(0x689C3A9F)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\stddef.h)(0x63884908)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_rcc_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_gpio.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_gpio_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_exti.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_dma.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_dma_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_cortex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_adc.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_adc_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_flash.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_flash_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_iwdg.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_pwr.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_spi.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_tim.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_tim_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_uart.h)(0x689C3A9F)
-F (../Core/Src/spi.c)(0x6925CB13)(-xc -std=c99 --target=arm-arm-none-eabi -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -c-fno-rtti -funsigned-char -fshort-enums -fshort-wchar-D__MICROLIB -gdwarf-4 -O0 -ffunction-sections -Wno-packed -Wno-missing-variable-declarations -Wno-missing-prototypes -Wno-missing-noreturn -Wno-sign-conversion -Wno-nonportable-include-path -Wno-reserved-id-macro -Wno-unused-macros -Wno-documentation-unknown-command -Wno-documentation -Wno-license-management -Wno-parentheses-equality -Wno-reserved-identifier -I ../Drivers/CMSIS/Include -I ../Core/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F1xx/Include -I ../APP -I ../BSP -I ../MID/MID_foc_float -I ../MID/MID_segger_rtt -I ../MID/MID_foc -I ../MID/MID_SoftIIC/SoftIIC_Fast -I ../COM -I ../MID/MID_cm_backtrace-I./RTE/_Xiaomi_CyberDog1-ID:/Keil5/Packs/ARM/CMSIS/5.7.0/CMSIS/Core/Include-ID:/Keil5/Packs/ARM/CMSIS/5.7.0/CMSIS/DSP/Include-ID:/Keil5/Packs/GigaDevice/GD32F30x_DFP/2.2.1/Device/Include-D__UVISION_VERSION="538" -D_RTE_ -DGD32F30X_HD -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F103xE -DARM_MATH_CM4-o xiaomi_cyberdog1/spi.o -MD)
-I (..\Core\Inc\spi.h)(0x68EA5AB6)
-I (..\Core\Inc\main.h)(0x68F8E623)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal.h)(0x689C3A9F)
-I (..\Core\Inc\stm32f1xx_hal_conf.h)(0x692EF7E8)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_rcc.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_def.h)(0x689C3A9F)
-I (..\Drivers\CMSIS\Device\ST\STM32F1xx\Include\stm32f1xx.h)(0x689C3A9F)
-I (..\Drivers\CMSIS\Device\ST\STM32F1xx\Include\stm32f103xe.h)(0x689C3A9F)
-I (..\Drivers\CMSIS\Include\core_cm3.h)(0x692EF9A1)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\stdint.h)(0x63884908)
-I (..\Drivers\CMSIS\Include\cmsis_version.h)(0x689C3A94)
-I (..\Drivers\CMSIS\Include\cmsis_compiler.h)(0x689C3A94)
-I (..\Drivers\CMSIS\Include\cmsis_armclang.h)(0x689C3A94)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\arm_compat.h)(0x63884908)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\arm_acle.h)(0x63884908)
-I (..\Drivers\CMSIS\Device\ST\STM32F1xx\Include\system_stm32f1xx.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\Legacy\stm32_hal_legacy.h)(0x689C3A9F)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\stddef.h)(0x63884908)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_rcc_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_gpio.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_gpio_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_exti.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_dma.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_dma_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_cortex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_adc.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_adc_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_flash.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_flash_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_iwdg.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_pwr.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_spi.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_tim.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_tim_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_uart.h)(0x689C3A9F)
-F (../Core/Src/tim.c)(0x6925CB14)(-xc -std=c99 --target=arm-arm-none-eabi -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -c-fno-rtti -funsigned-char -fshort-enums -fshort-wchar-D__MICROLIB -gdwarf-4 -O0 -ffunction-sections -Wno-packed -Wno-missing-variable-declarations -Wno-missing-prototypes -Wno-missing-noreturn -Wno-sign-conversion -Wno-nonportable-include-path -Wno-reserved-id-macro -Wno-unused-macros -Wno-documentation-unknown-command -Wno-documentation -Wno-license-management -Wno-parentheses-equality -Wno-reserved-identifier -I ../Drivers/CMSIS/Include -I ../Core/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F1xx/Include -I ../APP -I ../BSP -I ../MID/MID_foc_float -I ../MID/MID_segger_rtt -I ../MID/MID_foc -I ../MID/MID_SoftIIC/SoftIIC_Fast -I ../COM -I ../MID/MID_cm_backtrace-I./RTE/_Xiaomi_CyberDog1-ID:/Keil5/Packs/ARM/CMSIS/5.7.0/CMSIS/Core/Include-ID:/Keil5/Packs/ARM/CMSIS/5.7.0/CMSIS/DSP/Include-ID:/Keil5/Packs/GigaDevice/GD32F30x_DFP/2.2.1/Device/Include-D__UVISION_VERSION="538" -D_RTE_ -DGD32F30X_HD -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F103xE -DARM_MATH_CM4-o xiaomi_cyberdog1/tim.o -MD)
-I (..\Core\Inc\tim.h)(0x68F4AC14)
-I (..\Core\Inc\main.h)(0x68F8E623)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal.h)(0x689C3A9F)
-I (..\Core\Inc\stm32f1xx_hal_conf.h)(0x692EF7E8)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_rcc.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_def.h)(0x689C3A9F)
-I (..\Drivers\CMSIS\Device\ST\STM32F1xx\Include\stm32f1xx.h)(0x689C3A9F)
-I (..\Drivers\CMSIS\Device\ST\STM32F1xx\Include\stm32f103xe.h)(0x689C3A9F)
-I (..\Drivers\CMSIS\Include\core_cm3.h)(0x692EF9A1)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\stdint.h)(0x63884908)
-I (..\Drivers\CMSIS\Include\cmsis_version.h)(0x689C3A94)
-I (..\Drivers\CMSIS\Include\cmsis_compiler.h)(0x689C3A94)
-I (..\Drivers\CMSIS\Include\cmsis_armclang.h)(0x689C3A94)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\arm_compat.h)(0x63884908)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\arm_acle.h)(0x63884908)
-I (..\Drivers\CMSIS\Device\ST\STM32F1xx\Include\system_stm32f1xx.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\Legacy\stm32_hal_legacy.h)(0x689C3A9F)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\stddef.h)(0x63884908)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_rcc_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_gpio.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_gpio_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_exti.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_dma.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_dma_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_cortex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_adc.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_adc_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_flash.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_flash_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_iwdg.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_pwr.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_spi.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_tim.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_tim_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_uart.h)(0x689C3A9F)
-I (..\MID\MID_foc_float\foc.h)(0x69384E2E)
-I (..\APP\main_user.h)(0x6925C78E)
-I (D:\Keil5\Packs\ARM\CMSIS\5.7.0\CMSIS\DSP\Include\arm_math.h)(0x5E8ED122)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\string.h)(0x63884908)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\math.h)(0x63884908)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\float.h)(0x63884908)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\limits.h)(0x63884908)
-I (..\COM\filter.h)(0x6905FF32)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\stdbool.h)(0x63884908)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\stdio.h)(0x63884908)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\stdlib.h)(0x63884908)
-F (../Core/Src/usart.c)(0x6925CB14)(-xc -std=c99 --target=arm-arm-none-eabi -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -c-fno-rtti -funsigned-char -fshort-enums -fshort-wchar-D__MICROLIB -gdwarf-4 -O0 -ffunction-sections -Wno-packed -Wno-missing-variable-declarations -Wno-missing-prototypes -Wno-missing-noreturn -Wno-sign-conversion -Wno-nonportable-include-path -Wno-reserved-id-macro -Wno-unused-macros -Wno-documentation-unknown-command -Wno-documentation -Wno-license-management -Wno-parentheses-equality -Wno-reserved-identifier -I ../Drivers/CMSIS/Include -I ../Core/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F1xx/Include -I ../APP -I ../BSP -I ../MID/MID_foc_float -I ../MID/MID_segger_rtt -I ../MID/MID_foc -I ../MID/MID_SoftIIC/SoftIIC_Fast -I ../COM -I ../MID/MID_cm_backtrace-I./RTE/_Xiaomi_CyberDog1-ID:/Keil5/Packs/ARM/CMSIS/5.7.0/CMSIS/Core/Include-ID:/Keil5/Packs/ARM/CMSIS/5.7.0/CMSIS/DSP/Include-ID:/Keil5/Packs/GigaDevice/GD32F30x_DFP/2.2.1/Device/Include-D__UVISION_VERSION="538" -D_RTE_ -DGD32F30X_HD -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F103xE -DARM_MATH_CM4-o xiaomi_cyberdog1/usart.o -MD)
-I (..\Core\Inc\usart.h)(0x68EA5AB7)
-I (..\Core\Inc\main.h)(0x68F8E623)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal.h)(0x689C3A9F)
-I (..\Core\Inc\stm32f1xx_hal_conf.h)(0x692EF7E8)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_rcc.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_def.h)(0x689C3A9F)
-I (..\Drivers\CMSIS\Device\ST\STM32F1xx\Include\stm32f1xx.h)(0x689C3A9F)
-I (..\Drivers\CMSIS\Device\ST\STM32F1xx\Include\stm32f103xe.h)(0x689C3A9F)
-I (..\Drivers\CMSIS\Include\core_cm3.h)(0x692EF9A1)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\stdint.h)(0x63884908)
-I (..\Drivers\CMSIS\Include\cmsis_version.h)(0x689C3A94)
-I (..\Drivers\CMSIS\Include\cmsis_compiler.h)(0x689C3A94)
-I (..\Drivers\CMSIS\Include\cmsis_armclang.h)(0x689C3A94)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\arm_compat.h)(0x63884908)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\arm_acle.h)(0x63884908)
-I (..\Drivers\CMSIS\Device\ST\STM32F1xx\Include\system_stm32f1xx.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\Legacy\stm32_hal_legacy.h)(0x689C3A9F)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\stddef.h)(0x63884908)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_rcc_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_gpio.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_gpio_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_exti.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_dma.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_dma_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_cortex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_adc.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_adc_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_flash.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_flash_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_iwdg.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_pwr.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_spi.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_tim.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_tim_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_uart.h)(0x689C3A9F)
-F (../Core/Src/stm32f1xx_it.c)(0x692EF9BF)(-xc -std=c99 --target=arm-arm-none-eabi -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -c-fno-rtti -funsigned-char -fshort-enums -fshort-wchar-D__MICROLIB -gdwarf-4 -O0 -ffunction-sections -Wno-packed -Wno-missing-variable-declarations -Wno-missing-prototypes -Wno-missing-noreturn -Wno-sign-conversion -Wno-nonportable-include-path -Wno-reserved-id-macro -Wno-unused-macros -Wno-documentation-unknown-command -Wno-documentation -Wno-license-management -Wno-parentheses-equality -Wno-reserved-identifier -I ../Drivers/CMSIS/Include -I ../Core/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F1xx/Include -I ../APP -I ../BSP -I ../MID/MID_foc_float -I ../MID/MID_segger_rtt -I ../MID/MID_foc -I ../MID/MID_SoftIIC/SoftIIC_Fast -I ../COM -I ../MID/MID_cm_backtrace-I./RTE/_Xiaomi_CyberDog1-ID:/Keil5/Packs/ARM/CMSIS/5.7.0/CMSIS/Core/Include-ID:/Keil5/Packs/ARM/CMSIS/5.7.0/CMSIS/DSP/Include-ID:/Keil5/Packs/GigaDevice/GD32F30x_DFP/2.2.1/Device/Include-D__UVISION_VERSION="538" -D_RTE_ -DGD32F30X_HD -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F103xE -DARM_MATH_CM4-o xiaomi_cyberdog1/stm32f1xx_it.o -MD)
-I (..\Core\Inc\main.h)(0x68F8E623)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal.h)(0x689C3A9F)
-I (..\Core\Inc\stm32f1xx_hal_conf.h)(0x692EF7E8)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_rcc.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_def.h)(0x689C3A9F)
-I (..\Drivers\CMSIS\Device\ST\STM32F1xx\Include\stm32f1xx.h)(0x689C3A9F)
-I (..\Drivers\CMSIS\Device\ST\STM32F1xx\Include\stm32f103xe.h)(0x689C3A9F)
-I (..\Drivers\CMSIS\Include\core_cm3.h)(0x692EF9A1)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\stdint.h)(0x63884908)
-I (..\Drivers\CMSIS\Include\cmsis_version.h)(0x689C3A94)
-I (..\Drivers\CMSIS\Include\cmsis_compiler.h)(0x689C3A94)
-I (..\Drivers\CMSIS\Include\cmsis_armclang.h)(0x689C3A94)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\arm_compat.h)(0x63884908)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\arm_acle.h)(0x63884908)
-I (..\Drivers\CMSIS\Device\ST\STM32F1xx\Include\system_stm32f1xx.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\Legacy\stm32_hal_legacy.h)(0x689C3A9F)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\stddef.h)(0x63884908)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_rcc_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_gpio.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_gpio_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_exti.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_dma.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_dma_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_cortex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_adc.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_adc_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_flash.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_flash_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_iwdg.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_pwr.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_spi.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_tim.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_tim_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_uart.h)(0x689C3A9F)
-I (..\Core\Inc\stm32f1xx_it.h)(0x6925CB14)
-F (../Core/Src/stm32f1xx_hal_msp.c)(0x68EA5AB7)(-xc -std=c99 --target=arm-arm-none-eabi -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -c-fno-rtti -funsigned-char -fshort-enums -fshort-wchar-D__MICROLIB -gdwarf-4 -O0 -ffunction-sections -Wno-packed -Wno-missing-variable-declarations -Wno-missing-prototypes -Wno-missing-noreturn -Wno-sign-conversion -Wno-nonportable-include-path -Wno-reserved-id-macro -Wno-unused-macros -Wno-documentation-unknown-command -Wno-documentation -Wno-license-management -Wno-parentheses-equality -Wno-reserved-identifier -I ../Drivers/CMSIS/Include -I ../Core/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F1xx/Include -I ../APP -I ../BSP -I ../MID/MID_foc_float -I ../MID/MID_segger_rtt -I ../MID/MID_foc -I ../MID/MID_SoftIIC/SoftIIC_Fast -I ../COM -I ../MID/MID_cm_backtrace-I./RTE/_Xiaomi_CyberDog1-ID:/Keil5/Packs/ARM/CMSIS/5.7.0/CMSIS/Core/Include-ID:/Keil5/Packs/ARM/CMSIS/5.7.0/CMSIS/DSP/Include-ID:/Keil5/Packs/GigaDevice/GD32F30x_DFP/2.2.1/Device/Include-D__UVISION_VERSION="538" -D_RTE_ -DGD32F30X_HD -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F103xE -DARM_MATH_CM4-o xiaomi_cyberdog1/stm32f1xx_hal_msp.o -MD)
-I (..\Core\Inc\main.h)(0x68F8E623)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal.h)(0x689C3A9F)
-I (..\Core\Inc\stm32f1xx_hal_conf.h)(0x692EF7E8)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_rcc.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_def.h)(0x689C3A9F)
-I (..\Drivers\CMSIS\Device\ST\STM32F1xx\Include\stm32f1xx.h)(0x689C3A9F)
-I (..\Drivers\CMSIS\Device\ST\STM32F1xx\Include\stm32f103xe.h)(0x689C3A9F)
-I (..\Drivers\CMSIS\Include\core_cm3.h)(0x692EF9A1)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\stdint.h)(0x63884908)
-I (..\Drivers\CMSIS\Include\cmsis_version.h)(0x689C3A94)
-I (..\Drivers\CMSIS\Include\cmsis_compiler.h)(0x689C3A94)
-I (..\Drivers\CMSIS\Include\cmsis_armclang.h)(0x689C3A94)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\arm_compat.h)(0x63884908)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\arm_acle.h)(0x63884908)
-I (..\Drivers\CMSIS\Device\ST\STM32F1xx\Include\system_stm32f1xx.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\Legacy\stm32_hal_legacy.h)(0x689C3A9F)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\stddef.h)(0x63884908)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_rcc_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_gpio.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_gpio_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_exti.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_dma.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_dma_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_cortex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_adc.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_adc_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_flash.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_flash_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_iwdg.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_pwr.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_spi.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_tim.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_tim_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_uart.h)(0x689C3A9F)
-F (../Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_gpio_ex.c)(0x689C3A9F)(-xc -std=c99 --target=arm-arm-none-eabi -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -c-fno-rtti -funsigned-char -fshort-enums -fshort-wchar-D__MICROLIB -gdwarf-4 -O0 -ffunction-sections -Wno-packed -Wno-missing-variable-declarations -Wno-missing-prototypes -Wno-missing-noreturn -Wno-sign-conversion -Wno-nonportable-include-path -Wno-reserved-id-macro -Wno-unused-macros -Wno-documentation-unknown-command -Wno-documentation -Wno-license-management -Wno-parentheses-equality -Wno-reserved-identifier -I ../Drivers/CMSIS/Include -I ../Core/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F1xx/Include -I ../APP -I ../BSP -I ../MID/MID_foc_float -I ../MID/MID_segger_rtt -I ../MID/MID_foc -I ../MID/MID_SoftIIC/SoftIIC_Fast -I ../COM -I ../MID/MID_cm_backtrace-I./RTE/_Xiaomi_CyberDog1-ID:/Keil5/Packs/ARM/CMSIS/5.7.0/CMSIS/Core/Include-ID:/Keil5/Packs/ARM/CMSIS/5.7.0/CMSIS/DSP/Include-ID:/Keil5/Packs/GigaDevice/GD32F30x_DFP/2.2.1/Device/Include-D__UVISION_VERSION="538" -D_RTE_ -DGD32F30X_HD -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F103xE -DARM_MATH_CM4-o xiaomi_cyberdog1/stm32f1xx_hal_gpio_ex.o -MD)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal.h)(0x689C3A9F)
-I (..\Core\Inc\stm32f1xx_hal_conf.h)(0x692EF7E8)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_rcc.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_def.h)(0x689C3A9F)
-I (..\Drivers\CMSIS\Device\ST\STM32F1xx\Include\stm32f1xx.h)(0x689C3A9F)
-I (..\Drivers\CMSIS\Device\ST\STM32F1xx\Include\stm32f103xe.h)(0x689C3A9F)
-I (..\Drivers\CMSIS\Include\core_cm3.h)(0x692EF9A1)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\stdint.h)(0x63884908)
-I (..\Drivers\CMSIS\Include\cmsis_version.h)(0x689C3A94)
-I (..\Drivers\CMSIS\Include\cmsis_compiler.h)(0x689C3A94)
-I (..\Drivers\CMSIS\Include\cmsis_armclang.h)(0x689C3A94)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\arm_compat.h)(0x63884908)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\arm_acle.h)(0x63884908)
-I (..\Drivers\CMSIS\Device\ST\STM32F1xx\Include\system_stm32f1xx.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\Legacy\stm32_hal_legacy.h)(0x689C3A9F)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\stddef.h)(0x63884908)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_rcc_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_gpio.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_gpio_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_exti.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_dma.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_dma_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_cortex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_adc.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_adc_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_flash.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_flash_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_iwdg.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_pwr.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_spi.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_tim.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_tim_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_uart.h)(0x689C3A9F)
-F (../Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_adc.c)(0x689C3A9F)(-xc -std=c99 --target=arm-arm-none-eabi -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -c-fno-rtti -funsigned-char -fshort-enums -fshort-wchar-D__MICROLIB -gdwarf-4 -O0 -ffunction-sections -Wno-packed -Wno-missing-variable-declarations -Wno-missing-prototypes -Wno-missing-noreturn -Wno-sign-conversion -Wno-nonportable-include-path -Wno-reserved-id-macro -Wno-unused-macros -Wno-documentation-unknown-command -Wno-documentation -Wno-license-management -Wno-parentheses-equality -Wno-reserved-identifier -I ../Drivers/CMSIS/Include -I ../Core/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F1xx/Include -I ../APP -I ../BSP -I ../MID/MID_foc_float -I ../MID/MID_segger_rtt -I ../MID/MID_foc -I ../MID/MID_SoftIIC/SoftIIC_Fast -I ../COM -I ../MID/MID_cm_backtrace-I./RTE/_Xiaomi_CyberDog1-ID:/Keil5/Packs/ARM/CMSIS/5.7.0/CMSIS/Core/Include-ID:/Keil5/Packs/ARM/CMSIS/5.7.0/CMSIS/DSP/Include-ID:/Keil5/Packs/GigaDevice/GD32F30x_DFP/2.2.1/Device/Include-D__UVISION_VERSION="538" -D_RTE_ -DGD32F30X_HD -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F103xE -DARM_MATH_CM4-o xiaomi_cyberdog1/stm32f1xx_hal_adc.o -MD)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal.h)(0x689C3A9F)
-I (..\Core\Inc\stm32f1xx_hal_conf.h)(0x692EF7E8)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_rcc.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_def.h)(0x689C3A9F)
-I (..\Drivers\CMSIS\Device\ST\STM32F1xx\Include\stm32f1xx.h)(0x689C3A9F)
-I (..\Drivers\CMSIS\Device\ST\STM32F1xx\Include\stm32f103xe.h)(0x689C3A9F)
-I (..\Drivers\CMSIS\Include\core_cm3.h)(0x692EF9A1)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\stdint.h)(0x63884908)
-I (..\Drivers\CMSIS\Include\cmsis_version.h)(0x689C3A94)
-I (..\Drivers\CMSIS\Include\cmsis_compiler.h)(0x689C3A94)
-I (..\Drivers\CMSIS\Include\cmsis_armclang.h)(0x689C3A94)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\arm_compat.h)(0x63884908)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\arm_acle.h)(0x63884908)
-I (..\Drivers\CMSIS\Device\ST\STM32F1xx\Include\system_stm32f1xx.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\Legacy\stm32_hal_legacy.h)(0x689C3A9F)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\stddef.h)(0x63884908)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_rcc_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_gpio.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_gpio_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_exti.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_dma.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_dma_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_cortex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_adc.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_adc_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_flash.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_flash_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_iwdg.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_pwr.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_spi.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_tim.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_tim_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_uart.h)(0x689C3A9F)
-F (../Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_adc_ex.c)(0x689C3A9F)(-xc -std=c99 --target=arm-arm-none-eabi -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -c-fno-rtti -funsigned-char -fshort-enums -fshort-wchar-D__MICROLIB -gdwarf-4 -O0 -ffunction-sections -Wno-packed -Wno-missing-variable-declarations -Wno-missing-prototypes -Wno-missing-noreturn -Wno-sign-conversion -Wno-nonportable-include-path -Wno-reserved-id-macro -Wno-unused-macros -Wno-documentation-unknown-command -Wno-documentation -Wno-license-management -Wno-parentheses-equality -Wno-reserved-identifier -I ../Drivers/CMSIS/Include -I ../Core/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F1xx/Include -I ../APP -I ../BSP -I ../MID/MID_foc_float -I ../MID/MID_segger_rtt -I ../MID/MID_foc -I ../MID/MID_SoftIIC/SoftIIC_Fast -I ../COM -I ../MID/MID_cm_backtrace-I./RTE/_Xiaomi_CyberDog1-ID:/Keil5/Packs/ARM/CMSIS/5.7.0/CMSIS/Core/Include-ID:/Keil5/Packs/ARM/CMSIS/5.7.0/CMSIS/DSP/Include-ID:/Keil5/Packs/GigaDevice/GD32F30x_DFP/2.2.1/Device/Include-D__UVISION_VERSION="538" -D_RTE_ -DGD32F30X_HD -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F103xE -DARM_MATH_CM4-o xiaomi_cyberdog1/stm32f1xx_hal_adc_ex.o -MD)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal.h)(0x689C3A9F)
-I (..\Core\Inc\stm32f1xx_hal_conf.h)(0x692EF7E8)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_rcc.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_def.h)(0x689C3A9F)
-I (..\Drivers\CMSIS\Device\ST\STM32F1xx\Include\stm32f1xx.h)(0x689C3A9F)
-I (..\Drivers\CMSIS\Device\ST\STM32F1xx\Include\stm32f103xe.h)(0x689C3A9F)
-I (..\Drivers\CMSIS\Include\core_cm3.h)(0x692EF9A1)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\stdint.h)(0x63884908)
-I (..\Drivers\CMSIS\Include\cmsis_version.h)(0x689C3A94)
-I (..\Drivers\CMSIS\Include\cmsis_compiler.h)(0x689C3A94)
-I (..\Drivers\CMSIS\Include\cmsis_armclang.h)(0x689C3A94)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\arm_compat.h)(0x63884908)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\arm_acle.h)(0x63884908)
-I (..\Drivers\CMSIS\Device\ST\STM32F1xx\Include\system_stm32f1xx.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\Legacy\stm32_hal_legacy.h)(0x689C3A9F)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\stddef.h)(0x63884908)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_rcc_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_gpio.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_gpio_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_exti.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_dma.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_dma_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_cortex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_adc.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_adc_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_flash.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_flash_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_iwdg.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_pwr.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_spi.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_tim.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_tim_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_uart.h)(0x689C3A9F)
-F (../Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal.c)(0x689C3A9F)(-xc -std=c99 --target=arm-arm-none-eabi -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -c-fno-rtti -funsigned-char -fshort-enums -fshort-wchar-D__MICROLIB -gdwarf-4 -O0 -ffunction-sections -Wno-packed -Wno-missing-variable-declarations -Wno-missing-prototypes -Wno-missing-noreturn -Wno-sign-conversion -Wno-nonportable-include-path -Wno-reserved-id-macro -Wno-unused-macros -Wno-documentation-unknown-command -Wno-documentation -Wno-license-management -Wno-parentheses-equality -Wno-reserved-identifier -I ../Drivers/CMSIS/Include -I ../Core/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F1xx/Include -I ../APP -I ../BSP -I ../MID/MID_foc_float -I ../MID/MID_segger_rtt -I ../MID/MID_foc -I ../MID/MID_SoftIIC/SoftIIC_Fast -I ../COM -I ../MID/MID_cm_backtrace-I./RTE/_Xiaomi_CyberDog1-ID:/Keil5/Packs/ARM/CMSIS/5.7.0/CMSIS/Core/Include-ID:/Keil5/Packs/ARM/CMSIS/5.7.0/CMSIS/DSP/Include-ID:/Keil5/Packs/GigaDevice/GD32F30x_DFP/2.2.1/Device/Include-D__UVISION_VERSION="538" -D_RTE_ -DGD32F30X_HD -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F103xE -DARM_MATH_CM4-o xiaomi_cyberdog1/stm32f1xx_hal.o -MD)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal.h)(0x689C3A9F)
-I (..\Core\Inc\stm32f1xx_hal_conf.h)(0x692EF7E8)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_rcc.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_def.h)(0x689C3A9F)
-I (..\Drivers\CMSIS\Device\ST\STM32F1xx\Include\stm32f1xx.h)(0x689C3A9F)
-I (..\Drivers\CMSIS\Device\ST\STM32F1xx\Include\stm32f103xe.h)(0x689C3A9F)
-I (..\Drivers\CMSIS\Include\core_cm3.h)(0x692EF9A1)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\stdint.h)(0x63884908)
-I (..\Drivers\CMSIS\Include\cmsis_version.h)(0x689C3A94)
-I (..\Drivers\CMSIS\Include\cmsis_compiler.h)(0x689C3A94)
-I (..\Drivers\CMSIS\Include\cmsis_armclang.h)(0x689C3A94)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\arm_compat.h)(0x63884908)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\arm_acle.h)(0x63884908)
-I (..\Drivers\CMSIS\Device\ST\STM32F1xx\Include\system_stm32f1xx.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\Legacy\stm32_hal_legacy.h)(0x689C3A9F)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\stddef.h)(0x63884908)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_rcc_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_gpio.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_gpio_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_exti.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_dma.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_dma_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_cortex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_adc.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_adc_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_flash.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_flash_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_iwdg.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_pwr.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_spi.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_tim.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_tim_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_uart.h)(0x689C3A9F)
-F (../Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_rcc.c)(0x689C3A9F)(-xc -std=c99 --target=arm-arm-none-eabi -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -c-fno-rtti -funsigned-char -fshort-enums -fshort-wchar-D__MICROLIB -gdwarf-4 -O0 -ffunction-sections -Wno-packed -Wno-missing-variable-declarations -Wno-missing-prototypes -Wno-missing-noreturn -Wno-sign-conversion -Wno-nonportable-include-path -Wno-reserved-id-macro -Wno-unused-macros -Wno-documentation-unknown-command -Wno-documentation -Wno-license-management -Wno-parentheses-equality -Wno-reserved-identifier -I ../Drivers/CMSIS/Include -I ../Core/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F1xx/Include -I ../APP -I ../BSP -I ../MID/MID_foc_float -I ../MID/MID_segger_rtt -I ../MID/MID_foc -I ../MID/MID_SoftIIC/SoftIIC_Fast -I ../COM -I ../MID/MID_cm_backtrace-I./RTE/_Xiaomi_CyberDog1-ID:/Keil5/Packs/ARM/CMSIS/5.7.0/CMSIS/Core/Include-ID:/Keil5/Packs/ARM/CMSIS/5.7.0/CMSIS/DSP/Include-ID:/Keil5/Packs/GigaDevice/GD32F30x_DFP/2.2.1/Device/Include-D__UVISION_VERSION="538" -D_RTE_ -DGD32F30X_HD -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F103xE -DARM_MATH_CM4-o xiaomi_cyberdog1/stm32f1xx_hal_rcc.o -MD)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal.h)(0x689C3A9F)
-I (..\Core\Inc\stm32f1xx_hal_conf.h)(0x692EF7E8)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_rcc.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_def.h)(0x689C3A9F)
-I (..\Drivers\CMSIS\Device\ST\STM32F1xx\Include\stm32f1xx.h)(0x689C3A9F)
-I (..\Drivers\CMSIS\Device\ST\STM32F1xx\Include\stm32f103xe.h)(0x689C3A9F)
-I (..\Drivers\CMSIS\Include\core_cm3.h)(0x692EF9A1)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\stdint.h)(0x63884908)
-I (..\Drivers\CMSIS\Include\cmsis_version.h)(0x689C3A94)
-I (..\Drivers\CMSIS\Include\cmsis_compiler.h)(0x689C3A94)
-I (..\Drivers\CMSIS\Include\cmsis_armclang.h)(0x689C3A94)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\arm_compat.h)(0x63884908)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\arm_acle.h)(0x63884908)
-I (..\Drivers\CMSIS\Device\ST\STM32F1xx\Include\system_stm32f1xx.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\Legacy\stm32_hal_legacy.h)(0x689C3A9F)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\stddef.h)(0x63884908)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_rcc_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_gpio.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_gpio_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_exti.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_dma.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_dma_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_cortex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_adc.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_adc_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_flash.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_flash_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_iwdg.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_pwr.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_spi.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_tim.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_tim_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_uart.h)(0x689C3A9F)
-F (../Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_rcc_ex.c)(0x689C3A9F)(-xc -std=c99 --target=arm-arm-none-eabi -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -c-fno-rtti -funsigned-char -fshort-enums -fshort-wchar-D__MICROLIB -gdwarf-4 -O0 -ffunction-sections -Wno-packed -Wno-missing-variable-declarations -Wno-missing-prototypes -Wno-missing-noreturn -Wno-sign-conversion -Wno-nonportable-include-path -Wno-reserved-id-macro -Wno-unused-macros -Wno-documentation-unknown-command -Wno-documentation -Wno-license-management -Wno-parentheses-equality -Wno-reserved-identifier -I ../Drivers/CMSIS/Include -I ../Core/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F1xx/Include -I ../APP -I ../BSP -I ../MID/MID_foc_float -I ../MID/MID_segger_rtt -I ../MID/MID_foc -I ../MID/MID_SoftIIC/SoftIIC_Fast -I ../COM -I ../MID/MID_cm_backtrace-I./RTE/_Xiaomi_CyberDog1-ID:/Keil5/Packs/ARM/CMSIS/5.7.0/CMSIS/Core/Include-ID:/Keil5/Packs/ARM/CMSIS/5.7.0/CMSIS/DSP/Include-ID:/Keil5/Packs/GigaDevice/GD32F30x_DFP/2.2.1/Device/Include-D__UVISION_VERSION="538" -D_RTE_ -DGD32F30X_HD -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F103xE -DARM_MATH_CM4-o xiaomi_cyberdog1/stm32f1xx_hal_rcc_ex.o -MD)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal.h)(0x689C3A9F)
-I (..\Core\Inc\stm32f1xx_hal_conf.h)(0x692EF7E8)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_rcc.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_def.h)(0x689C3A9F)
-I (..\Drivers\CMSIS\Device\ST\STM32F1xx\Include\stm32f1xx.h)(0x689C3A9F)
-I (..\Drivers\CMSIS\Device\ST\STM32F1xx\Include\stm32f103xe.h)(0x689C3A9F)
-I (..\Drivers\CMSIS\Include\core_cm3.h)(0x692EF9A1)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\stdint.h)(0x63884908)
-I (..\Drivers\CMSIS\Include\cmsis_version.h)(0x689C3A94)
-I (..\Drivers\CMSIS\Include\cmsis_compiler.h)(0x689C3A94)
-I (..\Drivers\CMSIS\Include\cmsis_armclang.h)(0x689C3A94)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\arm_compat.h)(0x63884908)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\arm_acle.h)(0x63884908)
-I (..\Drivers\CMSIS\Device\ST\STM32F1xx\Include\system_stm32f1xx.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\Legacy\stm32_hal_legacy.h)(0x689C3A9F)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\stddef.h)(0x63884908)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_rcc_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_gpio.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_gpio_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_exti.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_dma.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_dma_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_cortex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_adc.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_adc_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_flash.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_flash_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_iwdg.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_pwr.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_spi.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_tim.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_tim_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_uart.h)(0x689C3A9F)
-F (../Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_gpio.c)(0x689C3A9F)(-xc -std=c99 --target=arm-arm-none-eabi -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -c-fno-rtti -funsigned-char -fshort-enums -fshort-wchar-D__MICROLIB -gdwarf-4 -O0 -ffunction-sections -Wno-packed -Wno-missing-variable-declarations -Wno-missing-prototypes -Wno-missing-noreturn -Wno-sign-conversion -Wno-nonportable-include-path -Wno-reserved-id-macro -Wno-unused-macros -Wno-documentation-unknown-command -Wno-documentation -Wno-license-management -Wno-parentheses-equality -Wno-reserved-identifier -I ../Drivers/CMSIS/Include -I ../Core/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F1xx/Include -I ../APP -I ../BSP -I ../MID/MID_foc_float -I ../MID/MID_segger_rtt -I ../MID/MID_foc -I ../MID/MID_SoftIIC/SoftIIC_Fast -I ../COM -I ../MID/MID_cm_backtrace-I./RTE/_Xiaomi_CyberDog1-ID:/Keil5/Packs/ARM/CMSIS/5.7.0/CMSIS/Core/Include-ID:/Keil5/Packs/ARM/CMSIS/5.7.0/CMSIS/DSP/Include-ID:/Keil5/Packs/GigaDevice/GD32F30x_DFP/2.2.1/Device/Include-D__UVISION_VERSION="538" -D_RTE_ -DGD32F30X_HD -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F103xE -DARM_MATH_CM4-o xiaomi_cyberdog1/stm32f1xx_hal_gpio.o -MD)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal.h)(0x689C3A9F)
-I (..\Core\Inc\stm32f1xx_hal_conf.h)(0x692EF7E8)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_rcc.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_def.h)(0x689C3A9F)
-I (..\Drivers\CMSIS\Device\ST\STM32F1xx\Include\stm32f1xx.h)(0x689C3A9F)
-I (..\Drivers\CMSIS\Device\ST\STM32F1xx\Include\stm32f103xe.h)(0x689C3A9F)
-I (..\Drivers\CMSIS\Include\core_cm3.h)(0x692EF9A1)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\stdint.h)(0x63884908)
-I (..\Drivers\CMSIS\Include\cmsis_version.h)(0x689C3A94)
-I (..\Drivers\CMSIS\Include\cmsis_compiler.h)(0x689C3A94)
-I (..\Drivers\CMSIS\Include\cmsis_armclang.h)(0x689C3A94)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\arm_compat.h)(0x63884908)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\arm_acle.h)(0x63884908)
-I (..\Drivers\CMSIS\Device\ST\STM32F1xx\Include\system_stm32f1xx.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\Legacy\stm32_hal_legacy.h)(0x689C3A9F)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\stddef.h)(0x63884908)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_rcc_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_gpio.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_gpio_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_exti.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_dma.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_dma_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_cortex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_adc.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_adc_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_flash.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_flash_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_iwdg.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_pwr.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_spi.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_tim.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_tim_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_uart.h)(0x689C3A9F)
-F (../Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_dma.c)(0x689C3A9F)(-xc -std=c99 --target=arm-arm-none-eabi -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -c-fno-rtti -funsigned-char -fshort-enums -fshort-wchar-D__MICROLIB -gdwarf-4 -O0 -ffunction-sections -Wno-packed -Wno-missing-variable-declarations -Wno-missing-prototypes -Wno-missing-noreturn -Wno-sign-conversion -Wno-nonportable-include-path -Wno-reserved-id-macro -Wno-unused-macros -Wno-documentation-unknown-command -Wno-documentation -Wno-license-management -Wno-parentheses-equality -Wno-reserved-identifier -I ../Drivers/CMSIS/Include -I ../Core/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F1xx/Include -I ../APP -I ../BSP -I ../MID/MID_foc_float -I ../MID/MID_segger_rtt -I ../MID/MID_foc -I ../MID/MID_SoftIIC/SoftIIC_Fast -I ../COM -I ../MID/MID_cm_backtrace-I./RTE/_Xiaomi_CyberDog1-ID:/Keil5/Packs/ARM/CMSIS/5.7.0/CMSIS/Core/Include-ID:/Keil5/Packs/ARM/CMSIS/5.7.0/CMSIS/DSP/Include-ID:/Keil5/Packs/GigaDevice/GD32F30x_DFP/2.2.1/Device/Include-D__UVISION_VERSION="538" -D_RTE_ -DGD32F30X_HD -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F103xE -DARM_MATH_CM4-o xiaomi_cyberdog1/stm32f1xx_hal_dma.o -MD)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal.h)(0x689C3A9F)
-I (..\Core\Inc\stm32f1xx_hal_conf.h)(0x692EF7E8)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_rcc.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_def.h)(0x689C3A9F)
-I (..\Drivers\CMSIS\Device\ST\STM32F1xx\Include\stm32f1xx.h)(0x689C3A9F)
-I (..\Drivers\CMSIS\Device\ST\STM32F1xx\Include\stm32f103xe.h)(0x689C3A9F)
-I (..\Drivers\CMSIS\Include\core_cm3.h)(0x692EF9A1)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\stdint.h)(0x63884908)
-I (..\Drivers\CMSIS\Include\cmsis_version.h)(0x689C3A94)
-I (..\Drivers\CMSIS\Include\cmsis_compiler.h)(0x689C3A94)
-I (..\Drivers\CMSIS\Include\cmsis_armclang.h)(0x689C3A94)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\arm_compat.h)(0x63884908)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\arm_acle.h)(0x63884908)
-I (..\Drivers\CMSIS\Device\ST\STM32F1xx\Include\system_stm32f1xx.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\Legacy\stm32_hal_legacy.h)(0x689C3A9F)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\stddef.h)(0x63884908)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_rcc_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_gpio.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_gpio_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_exti.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_dma.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_dma_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_cortex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_adc.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_adc_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_flash.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_flash_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_iwdg.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_pwr.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_spi.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_tim.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_tim_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_uart.h)(0x689C3A9F)
-F (../Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_cortex.c)(0x689C3A9F)(-xc -std=c99 --target=arm-arm-none-eabi -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -c-fno-rtti -funsigned-char -fshort-enums -fshort-wchar-D__MICROLIB -gdwarf-4 -O0 -ffunction-sections -Wno-packed -Wno-missing-variable-declarations -Wno-missing-prototypes -Wno-missing-noreturn -Wno-sign-conversion -Wno-nonportable-include-path -Wno-reserved-id-macro -Wno-unused-macros -Wno-documentation-unknown-command -Wno-documentation -Wno-license-management -Wno-parentheses-equality -Wno-reserved-identifier -I ../Drivers/CMSIS/Include -I ../Core/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F1xx/Include -I ../APP -I ../BSP -I ../MID/MID_foc_float -I ../MID/MID_segger_rtt -I ../MID/MID_foc -I ../MID/MID_SoftIIC/SoftIIC_Fast -I ../COM -I ../MID/MID_cm_backtrace-I./RTE/_Xiaomi_CyberDog1-ID:/Keil5/Packs/ARM/CMSIS/5.7.0/CMSIS/Core/Include-ID:/Keil5/Packs/ARM/CMSIS/5.7.0/CMSIS/DSP/Include-ID:/Keil5/Packs/GigaDevice/GD32F30x_DFP/2.2.1/Device/Include-D__UVISION_VERSION="538" -D_RTE_ -DGD32F30X_HD -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F103xE -DARM_MATH_CM4-o xiaomi_cyberdog1/stm32f1xx_hal_cortex.o -MD)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal.h)(0x689C3A9F)
-I (..\Core\Inc\stm32f1xx_hal_conf.h)(0x692EF7E8)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_rcc.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_def.h)(0x689C3A9F)
-I (..\Drivers\CMSIS\Device\ST\STM32F1xx\Include\stm32f1xx.h)(0x689C3A9F)
-I (..\Drivers\CMSIS\Device\ST\STM32F1xx\Include\stm32f103xe.h)(0x689C3A9F)
-I (..\Drivers\CMSIS\Include\core_cm3.h)(0x692EF9A1)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\stdint.h)(0x63884908)
-I (..\Drivers\CMSIS\Include\cmsis_version.h)(0x689C3A94)
-I (..\Drivers\CMSIS\Include\cmsis_compiler.h)(0x689C3A94)
-I (..\Drivers\CMSIS\Include\cmsis_armclang.h)(0x689C3A94)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\arm_compat.h)(0x63884908)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\arm_acle.h)(0x63884908)
-I (..\Drivers\CMSIS\Device\ST\STM32F1xx\Include\system_stm32f1xx.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\Legacy\stm32_hal_legacy.h)(0x689C3A9F)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\stddef.h)(0x63884908)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_rcc_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_gpio.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_gpio_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_exti.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_dma.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_dma_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_cortex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_adc.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_adc_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_flash.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_flash_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_iwdg.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_pwr.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_spi.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_tim.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_tim_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_uart.h)(0x689C3A9F)
-F (../Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_pwr.c)(0x689C3A9F)(-xc -std=c99 --target=arm-arm-none-eabi -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -c-fno-rtti -funsigned-char -fshort-enums -fshort-wchar-D__MICROLIB -gdwarf-4 -O0 -ffunction-sections -Wno-packed -Wno-missing-variable-declarations -Wno-missing-prototypes -Wno-missing-noreturn -Wno-sign-conversion -Wno-nonportable-include-path -Wno-reserved-id-macro -Wno-unused-macros -Wno-documentation-unknown-command -Wno-documentation -Wno-license-management -Wno-parentheses-equality -Wno-reserved-identifier -I ../Drivers/CMSIS/Include -I ../Core/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F1xx/Include -I ../APP -I ../BSP -I ../MID/MID_foc_float -I ../MID/MID_segger_rtt -I ../MID/MID_foc -I ../MID/MID_SoftIIC/SoftIIC_Fast -I ../COM -I ../MID/MID_cm_backtrace-I./RTE/_Xiaomi_CyberDog1-ID:/Keil5/Packs/ARM/CMSIS/5.7.0/CMSIS/Core/Include-ID:/Keil5/Packs/ARM/CMSIS/5.7.0/CMSIS/DSP/Include-ID:/Keil5/Packs/GigaDevice/GD32F30x_DFP/2.2.1/Device/Include-D__UVISION_VERSION="538" -D_RTE_ -DGD32F30X_HD -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F103xE -DARM_MATH_CM4-o xiaomi_cyberdog1/stm32f1xx_hal_pwr.o -MD)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal.h)(0x689C3A9F)
-I (..\Core\Inc\stm32f1xx_hal_conf.h)(0x692EF7E8)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_rcc.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_def.h)(0x689C3A9F)
-I (..\Drivers\CMSIS\Device\ST\STM32F1xx\Include\stm32f1xx.h)(0x689C3A9F)
-I (..\Drivers\CMSIS\Device\ST\STM32F1xx\Include\stm32f103xe.h)(0x689C3A9F)
-I (..\Drivers\CMSIS\Include\core_cm3.h)(0x692EF9A1)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\stdint.h)(0x63884908)
-I (..\Drivers\CMSIS\Include\cmsis_version.h)(0x689C3A94)
-I (..\Drivers\CMSIS\Include\cmsis_compiler.h)(0x689C3A94)
-I (..\Drivers\CMSIS\Include\cmsis_armclang.h)(0x689C3A94)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\arm_compat.h)(0x63884908)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\arm_acle.h)(0x63884908)
-I (..\Drivers\CMSIS\Device\ST\STM32F1xx\Include\system_stm32f1xx.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\Legacy\stm32_hal_legacy.h)(0x689C3A9F)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\stddef.h)(0x63884908)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_rcc_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_gpio.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_gpio_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_exti.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_dma.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_dma_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_cortex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_adc.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_adc_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_flash.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_flash_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_iwdg.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_pwr.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_spi.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_tim.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_tim_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_uart.h)(0x689C3A9F)
-F (../Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_flash.c)(0x689C3A9F)(-xc -std=c99 --target=arm-arm-none-eabi -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -c-fno-rtti -funsigned-char -fshort-enums -fshort-wchar-D__MICROLIB -gdwarf-4 -O0 -ffunction-sections -Wno-packed -Wno-missing-variable-declarations -Wno-missing-prototypes -Wno-missing-noreturn -Wno-sign-conversion -Wno-nonportable-include-path -Wno-reserved-id-macro -Wno-unused-macros -Wno-documentation-unknown-command -Wno-documentation -Wno-license-management -Wno-parentheses-equality -Wno-reserved-identifier -I ../Drivers/CMSIS/Include -I ../Core/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F1xx/Include -I ../APP -I ../BSP -I ../MID/MID_foc_float -I ../MID/MID_segger_rtt -I ../MID/MID_foc -I ../MID/MID_SoftIIC/SoftIIC_Fast -I ../COM -I ../MID/MID_cm_backtrace-I./RTE/_Xiaomi_CyberDog1-ID:/Keil5/Packs/ARM/CMSIS/5.7.0/CMSIS/Core/Include-ID:/Keil5/Packs/ARM/CMSIS/5.7.0/CMSIS/DSP/Include-ID:/Keil5/Packs/GigaDevice/GD32F30x_DFP/2.2.1/Device/Include-D__UVISION_VERSION="538" -D_RTE_ -DGD32F30X_HD -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F103xE -DARM_MATH_CM4-o xiaomi_cyberdog1/stm32f1xx_hal_flash.o -MD)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal.h)(0x689C3A9F)
-I (..\Core\Inc\stm32f1xx_hal_conf.h)(0x692EF7E8)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_rcc.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_def.h)(0x689C3A9F)
-I (..\Drivers\CMSIS\Device\ST\STM32F1xx\Include\stm32f1xx.h)(0x689C3A9F)
-I (..\Drivers\CMSIS\Device\ST\STM32F1xx\Include\stm32f103xe.h)(0x689C3A9F)
-I (..\Drivers\CMSIS\Include\core_cm3.h)(0x692EF9A1)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\stdint.h)(0x63884908)
-I (..\Drivers\CMSIS\Include\cmsis_version.h)(0x689C3A94)
-I (..\Drivers\CMSIS\Include\cmsis_compiler.h)(0x689C3A94)
-I (..\Drivers\CMSIS\Include\cmsis_armclang.h)(0x689C3A94)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\arm_compat.h)(0x63884908)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\arm_acle.h)(0x63884908)
-I (..\Drivers\CMSIS\Device\ST\STM32F1xx\Include\system_stm32f1xx.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\Legacy\stm32_hal_legacy.h)(0x689C3A9F)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\stddef.h)(0x63884908)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_rcc_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_gpio.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_gpio_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_exti.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_dma.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_dma_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_cortex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_adc.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_adc_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_flash.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_flash_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_iwdg.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_pwr.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_spi.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_tim.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_tim_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_uart.h)(0x689C3A9F)
-F (../Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_flash_ex.c)(0x689C3A9F)(-xc -std=c99 --target=arm-arm-none-eabi -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -c-fno-rtti -funsigned-char -fshort-enums -fshort-wchar-D__MICROLIB -gdwarf-4 -O0 -ffunction-sections -Wno-packed -Wno-missing-variable-declarations -Wno-missing-prototypes -Wno-missing-noreturn -Wno-sign-conversion -Wno-nonportable-include-path -Wno-reserved-id-macro -Wno-unused-macros -Wno-documentation-unknown-command -Wno-documentation -Wno-license-management -Wno-parentheses-equality -Wno-reserved-identifier -I ../Drivers/CMSIS/Include -I ../Core/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F1xx/Include -I ../APP -I ../BSP -I ../MID/MID_foc_float -I ../MID/MID_segger_rtt -I ../MID/MID_foc -I ../MID/MID_SoftIIC/SoftIIC_Fast -I ../COM -I ../MID/MID_cm_backtrace-I./RTE/_Xiaomi_CyberDog1-ID:/Keil5/Packs/ARM/CMSIS/5.7.0/CMSIS/Core/Include-ID:/Keil5/Packs/ARM/CMSIS/5.7.0/CMSIS/DSP/Include-ID:/Keil5/Packs/GigaDevice/GD32F30x_DFP/2.2.1/Device/Include-D__UVISION_VERSION="538" -D_RTE_ -DGD32F30X_HD -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F103xE -DARM_MATH_CM4-o xiaomi_cyberdog1/stm32f1xx_hal_flash_ex.o -MD)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal.h)(0x689C3A9F)
-I (..\Core\Inc\stm32f1xx_hal_conf.h)(0x692EF7E8)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_rcc.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_def.h)(0x689C3A9F)
-I (..\Drivers\CMSIS\Device\ST\STM32F1xx\Include\stm32f1xx.h)(0x689C3A9F)
-I (..\Drivers\CMSIS\Device\ST\STM32F1xx\Include\stm32f103xe.h)(0x689C3A9F)
-I (..\Drivers\CMSIS\Include\core_cm3.h)(0x692EF9A1)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\stdint.h)(0x63884908)
-I (..\Drivers\CMSIS\Include\cmsis_version.h)(0x689C3A94)
-I (..\Drivers\CMSIS\Include\cmsis_compiler.h)(0x689C3A94)
-I (..\Drivers\CMSIS\Include\cmsis_armclang.h)(0x689C3A94)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\arm_compat.h)(0x63884908)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\arm_acle.h)(0x63884908)
-I (..\Drivers\CMSIS\Device\ST\STM32F1xx\Include\system_stm32f1xx.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\Legacy\stm32_hal_legacy.h)(0x689C3A9F)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\stddef.h)(0x63884908)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_rcc_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_gpio.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_gpio_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_exti.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_dma.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_dma_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_cortex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_adc.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_adc_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_flash.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_flash_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_iwdg.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_pwr.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_spi.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_tim.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_tim_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_uart.h)(0x689C3A9F)
-F (../Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_exti.c)(0x689C3A9F)(-xc -std=c99 --target=arm-arm-none-eabi -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -c-fno-rtti -funsigned-char -fshort-enums -fshort-wchar-D__MICROLIB -gdwarf-4 -O0 -ffunction-sections -Wno-packed -Wno-missing-variable-declarations -Wno-missing-prototypes -Wno-missing-noreturn -Wno-sign-conversion -Wno-nonportable-include-path -Wno-reserved-id-macro -Wno-unused-macros -Wno-documentation-unknown-command -Wno-documentation -Wno-license-management -Wno-parentheses-equality -Wno-reserved-identifier -I ../Drivers/CMSIS/Include -I ../Core/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F1xx/Include -I ../APP -I ../BSP -I ../MID/MID_foc_float -I ../MID/MID_segger_rtt -I ../MID/MID_foc -I ../MID/MID_SoftIIC/SoftIIC_Fast -I ../COM -I ../MID/MID_cm_backtrace-I./RTE/_Xiaomi_CyberDog1-ID:/Keil5/Packs/ARM/CMSIS/5.7.0/CMSIS/Core/Include-ID:/Keil5/Packs/ARM/CMSIS/5.7.0/CMSIS/DSP/Include-ID:/Keil5/Packs/GigaDevice/GD32F30x_DFP/2.2.1/Device/Include-D__UVISION_VERSION="538" -D_RTE_ -DGD32F30X_HD -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F103xE -DARM_MATH_CM4-o xiaomi_cyberdog1/stm32f1xx_hal_exti.o -MD)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal.h)(0x689C3A9F)
-I (..\Core\Inc\stm32f1xx_hal_conf.h)(0x692EF7E8)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_rcc.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_def.h)(0x689C3A9F)
-I (..\Drivers\CMSIS\Device\ST\STM32F1xx\Include\stm32f1xx.h)(0x689C3A9F)
-I (..\Drivers\CMSIS\Device\ST\STM32F1xx\Include\stm32f103xe.h)(0x689C3A9F)
-I (..\Drivers\CMSIS\Include\core_cm3.h)(0x692EF9A1)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\stdint.h)(0x63884908)
-I (..\Drivers\CMSIS\Include\cmsis_version.h)(0x689C3A94)
-I (..\Drivers\CMSIS\Include\cmsis_compiler.h)(0x689C3A94)
-I (..\Drivers\CMSIS\Include\cmsis_armclang.h)(0x689C3A94)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\arm_compat.h)(0x63884908)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\arm_acle.h)(0x63884908)
-I (..\Drivers\CMSIS\Device\ST\STM32F1xx\Include\system_stm32f1xx.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\Legacy\stm32_hal_legacy.h)(0x689C3A9F)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\stddef.h)(0x63884908)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_rcc_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_gpio.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_gpio_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_exti.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_dma.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_dma_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_cortex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_adc.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_adc_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_flash.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_flash_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_iwdg.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_pwr.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_spi.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_tim.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_tim_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_uart.h)(0x689C3A9F)
-F (../Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_iwdg.c)(0x689C3A9F)(-xc -std=c99 --target=arm-arm-none-eabi -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -c-fno-rtti -funsigned-char -fshort-enums -fshort-wchar-D__MICROLIB -gdwarf-4 -O0 -ffunction-sections -Wno-packed -Wno-missing-variable-declarations -Wno-missing-prototypes -Wno-missing-noreturn -Wno-sign-conversion -Wno-nonportable-include-path -Wno-reserved-id-macro -Wno-unused-macros -Wno-documentation-unknown-command -Wno-documentation -Wno-license-management -Wno-parentheses-equality -Wno-reserved-identifier -I ../Drivers/CMSIS/Include -I ../Core/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F1xx/Include -I ../APP -I ../BSP -I ../MID/MID_foc_float -I ../MID/MID_segger_rtt -I ../MID/MID_foc -I ../MID/MID_SoftIIC/SoftIIC_Fast -I ../COM -I ../MID/MID_cm_backtrace-I./RTE/_Xiaomi_CyberDog1-ID:/Keil5/Packs/ARM/CMSIS/5.7.0/CMSIS/Core/Include-ID:/Keil5/Packs/ARM/CMSIS/5.7.0/CMSIS/DSP/Include-ID:/Keil5/Packs/GigaDevice/GD32F30x_DFP/2.2.1/Device/Include-D__UVISION_VERSION="538" -D_RTE_ -DGD32F30X_HD -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F103xE -DARM_MATH_CM4-o xiaomi_cyberdog1/stm32f1xx_hal_iwdg.o -MD)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal.h)(0x689C3A9F)
-I (..\Core\Inc\stm32f1xx_hal_conf.h)(0x692EF7E8)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_rcc.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_def.h)(0x689C3A9F)
-I (..\Drivers\CMSIS\Device\ST\STM32F1xx\Include\stm32f1xx.h)(0x689C3A9F)
-I (..\Drivers\CMSIS\Device\ST\STM32F1xx\Include\stm32f103xe.h)(0x689C3A9F)
-I (..\Drivers\CMSIS\Include\core_cm3.h)(0x692EF9A1)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\stdint.h)(0x63884908)
-I (..\Drivers\CMSIS\Include\cmsis_version.h)(0x689C3A94)
-I (..\Drivers\CMSIS\Include\cmsis_compiler.h)(0x689C3A94)
-I (..\Drivers\CMSIS\Include\cmsis_armclang.h)(0x689C3A94)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\arm_compat.h)(0x63884908)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\arm_acle.h)(0x63884908)
-I (..\Drivers\CMSIS\Device\ST\STM32F1xx\Include\system_stm32f1xx.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\Legacy\stm32_hal_legacy.h)(0x689C3A9F)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\stddef.h)(0x63884908)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_rcc_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_gpio.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_gpio_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_exti.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_dma.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_dma_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_cortex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_adc.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_adc_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_flash.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_flash_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_iwdg.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_pwr.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_spi.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_tim.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_tim_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_uart.h)(0x689C3A9F)
-F (../Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c)(0x689C3A9F)(-xc -std=c99 --target=arm-arm-none-eabi -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -c-fno-rtti -funsigned-char -fshort-enums -fshort-wchar-D__MICROLIB -gdwarf-4 -O0 -ffunction-sections -Wno-packed -Wno-missing-variable-declarations -Wno-missing-prototypes -Wno-missing-noreturn -Wno-sign-conversion -Wno-nonportable-include-path -Wno-reserved-id-macro -Wno-unused-macros -Wno-documentation-unknown-command -Wno-documentation -Wno-license-management -Wno-parentheses-equality -Wno-reserved-identifier -I ../Drivers/CMSIS/Include -I ../Core/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F1xx/Include -I ../APP -I ../BSP -I ../MID/MID_foc_float -I ../MID/MID_segger_rtt -I ../MID/MID_foc -I ../MID/MID_SoftIIC/SoftIIC_Fast -I ../COM -I ../MID/MID_cm_backtrace-I./RTE/_Xiaomi_CyberDog1-ID:/Keil5/Packs/ARM/CMSIS/5.7.0/CMSIS/Core/Include-ID:/Keil5/Packs/ARM/CMSIS/5.7.0/CMSIS/DSP/Include-ID:/Keil5/Packs/GigaDevice/GD32F30x_DFP/2.2.1/Device/Include-D__UVISION_VERSION="538" -D_RTE_ -DGD32F30X_HD -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F103xE -DARM_MATH_CM4-o xiaomi_cyberdog1/stm32f1xx_hal_spi.o -MD)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal.h)(0x689C3A9F)
-I (..\Core\Inc\stm32f1xx_hal_conf.h)(0x692EF7E8)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_rcc.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_def.h)(0x689C3A9F)
-I (..\Drivers\CMSIS\Device\ST\STM32F1xx\Include\stm32f1xx.h)(0x689C3A9F)
-I (..\Drivers\CMSIS\Device\ST\STM32F1xx\Include\stm32f103xe.h)(0x689C3A9F)
-I (..\Drivers\CMSIS\Include\core_cm3.h)(0x692EF9A1)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\stdint.h)(0x63884908)
-I (..\Drivers\CMSIS\Include\cmsis_version.h)(0x689C3A94)
-I (..\Drivers\CMSIS\Include\cmsis_compiler.h)(0x689C3A94)
-I (..\Drivers\CMSIS\Include\cmsis_armclang.h)(0x689C3A94)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\arm_compat.h)(0x63884908)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\arm_acle.h)(0x63884908)
-I (..\Drivers\CMSIS\Device\ST\STM32F1xx\Include\system_stm32f1xx.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\Legacy\stm32_hal_legacy.h)(0x689C3A9F)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\stddef.h)(0x63884908)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_rcc_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_gpio.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_gpio_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_exti.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_dma.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_dma_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_cortex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_adc.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_adc_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_flash.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_flash_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_iwdg.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_pwr.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_spi.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_tim.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_tim_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_uart.h)(0x689C3A9F)
-F (../Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_tim.c)(0x689C3A9F)(-xc -std=c99 --target=arm-arm-none-eabi -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -c-fno-rtti -funsigned-char -fshort-enums -fshort-wchar-D__MICROLIB -gdwarf-4 -O0 -ffunction-sections -Wno-packed -Wno-missing-variable-declarations -Wno-missing-prototypes -Wno-missing-noreturn -Wno-sign-conversion -Wno-nonportable-include-path -Wno-reserved-id-macro -Wno-unused-macros -Wno-documentation-unknown-command -Wno-documentation -Wno-license-management -Wno-parentheses-equality -Wno-reserved-identifier -I ../Drivers/CMSIS/Include -I ../Core/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F1xx/Include -I ../APP -I ../BSP -I ../MID/MID_foc_float -I ../MID/MID_segger_rtt -I ../MID/MID_foc -I ../MID/MID_SoftIIC/SoftIIC_Fast -I ../COM -I ../MID/MID_cm_backtrace-I./RTE/_Xiaomi_CyberDog1-ID:/Keil5/Packs/ARM/CMSIS/5.7.0/CMSIS/Core/Include-ID:/Keil5/Packs/ARM/CMSIS/5.7.0/CMSIS/DSP/Include-ID:/Keil5/Packs/GigaDevice/GD32F30x_DFP/2.2.1/Device/Include-D__UVISION_VERSION="538" -D_RTE_ -DGD32F30X_HD -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F103xE -DARM_MATH_CM4-o xiaomi_cyberdog1/stm32f1xx_hal_tim.o -MD)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal.h)(0x689C3A9F)
-I (..\Core\Inc\stm32f1xx_hal_conf.h)(0x692EF7E8)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_rcc.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_def.h)(0x689C3A9F)
-I (..\Drivers\CMSIS\Device\ST\STM32F1xx\Include\stm32f1xx.h)(0x689C3A9F)
-I (..\Drivers\CMSIS\Device\ST\STM32F1xx\Include\stm32f103xe.h)(0x689C3A9F)
-I (..\Drivers\CMSIS\Include\core_cm3.h)(0x692EF9A1)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\stdint.h)(0x63884908)
-I (..\Drivers\CMSIS\Include\cmsis_version.h)(0x689C3A94)
-I (..\Drivers\CMSIS\Include\cmsis_compiler.h)(0x689C3A94)
-I (..\Drivers\CMSIS\Include\cmsis_armclang.h)(0x689C3A94)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\arm_compat.h)(0x63884908)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\arm_acle.h)(0x63884908)
-I (..\Drivers\CMSIS\Device\ST\STM32F1xx\Include\system_stm32f1xx.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\Legacy\stm32_hal_legacy.h)(0x689C3A9F)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\stddef.h)(0x63884908)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_rcc_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_gpio.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_gpio_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_exti.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_dma.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_dma_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_cortex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_adc.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_adc_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_flash.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_flash_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_iwdg.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_pwr.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_spi.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_tim.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_tim_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_uart.h)(0x689C3A9F)
-F (../Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_tim_ex.c)(0x689C3A9F)(-xc -std=c99 --target=arm-arm-none-eabi -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -c-fno-rtti -funsigned-char -fshort-enums -fshort-wchar-D__MICROLIB -gdwarf-4 -O0 -ffunction-sections -Wno-packed -Wno-missing-variable-declarations -Wno-missing-prototypes -Wno-missing-noreturn -Wno-sign-conversion -Wno-nonportable-include-path -Wno-reserved-id-macro -Wno-unused-macros -Wno-documentation-unknown-command -Wno-documentation -Wno-license-management -Wno-parentheses-equality -Wno-reserved-identifier -I ../Drivers/CMSIS/Include -I ../Core/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F1xx/Include -I ../APP -I ../BSP -I ../MID/MID_foc_float -I ../MID/MID_segger_rtt -I ../MID/MID_foc -I ../MID/MID_SoftIIC/SoftIIC_Fast -I ../COM -I ../MID/MID_cm_backtrace-I./RTE/_Xiaomi_CyberDog1-ID:/Keil5/Packs/ARM/CMSIS/5.7.0/CMSIS/Core/Include-ID:/Keil5/Packs/ARM/CMSIS/5.7.0/CMSIS/DSP/Include-ID:/Keil5/Packs/GigaDevice/GD32F30x_DFP/2.2.1/Device/Include-D__UVISION_VERSION="538" -D_RTE_ -DGD32F30X_HD -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F103xE -DARM_MATH_CM4-o xiaomi_cyberdog1/stm32f1xx_hal_tim_ex.o -MD)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal.h)(0x689C3A9F)
-I (..\Core\Inc\stm32f1xx_hal_conf.h)(0x692EF7E8)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_rcc.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_def.h)(0x689C3A9F)
-I (..\Drivers\CMSIS\Device\ST\STM32F1xx\Include\stm32f1xx.h)(0x689C3A9F)
-I (..\Drivers\CMSIS\Device\ST\STM32F1xx\Include\stm32f103xe.h)(0x689C3A9F)
-I (..\Drivers\CMSIS\Include\core_cm3.h)(0x692EF9A1)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\stdint.h)(0x63884908)
-I (..\Drivers\CMSIS\Include\cmsis_version.h)(0x689C3A94)
-I (..\Drivers\CMSIS\Include\cmsis_compiler.h)(0x689C3A94)
-I (..\Drivers\CMSIS\Include\cmsis_armclang.h)(0x689C3A94)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\arm_compat.h)(0x63884908)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\arm_acle.h)(0x63884908)
-I (..\Drivers\CMSIS\Device\ST\STM32F1xx\Include\system_stm32f1xx.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\Legacy\stm32_hal_legacy.h)(0x689C3A9F)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\stddef.h)(0x63884908)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_rcc_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_gpio.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_gpio_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_exti.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_dma.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_dma_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_cortex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_adc.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_adc_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_flash.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_flash_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_iwdg.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_pwr.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_spi.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_tim.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_tim_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_uart.h)(0x689C3A9F)
-F (../Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_uart.c)(0x689C3A9F)(-xc -std=c99 --target=arm-arm-none-eabi -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -c-fno-rtti -funsigned-char -fshort-enums -fshort-wchar-D__MICROLIB -gdwarf-4 -O0 -ffunction-sections -Wno-packed -Wno-missing-variable-declarations -Wno-missing-prototypes -Wno-missing-noreturn -Wno-sign-conversion -Wno-nonportable-include-path -Wno-reserved-id-macro -Wno-unused-macros -Wno-documentation-unknown-command -Wno-documentation -Wno-license-management -Wno-parentheses-equality -Wno-reserved-identifier -I ../Drivers/CMSIS/Include -I ../Core/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F1xx/Include -I ../APP -I ../BSP -I ../MID/MID_foc_float -I ../MID/MID_segger_rtt -I ../MID/MID_foc -I ../MID/MID_SoftIIC/SoftIIC_Fast -I ../COM -I ../MID/MID_cm_backtrace-I./RTE/_Xiaomi_CyberDog1-ID:/Keil5/Packs/ARM/CMSIS/5.7.0/CMSIS/Core/Include-ID:/Keil5/Packs/ARM/CMSIS/5.7.0/CMSIS/DSP/Include-ID:/Keil5/Packs/GigaDevice/GD32F30x_DFP/2.2.1/Device/Include-D__UVISION_VERSION="538" -D_RTE_ -DGD32F30X_HD -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F103xE -DARM_MATH_CM4-o xiaomi_cyberdog1/stm32f1xx_hal_uart.o -MD)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal.h)(0x689C3A9F)
-I (..\Core\Inc\stm32f1xx_hal_conf.h)(0x692EF7E8)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_rcc.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_def.h)(0x689C3A9F)
-I (..\Drivers\CMSIS\Device\ST\STM32F1xx\Include\stm32f1xx.h)(0x689C3A9F)
-I (..\Drivers\CMSIS\Device\ST\STM32F1xx\Include\stm32f103xe.h)(0x689C3A9F)
-I (..\Drivers\CMSIS\Include\core_cm3.h)(0x692EF9A1)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\stdint.h)(0x63884908)
-I (..\Drivers\CMSIS\Include\cmsis_version.h)(0x689C3A94)
-I (..\Drivers\CMSIS\Include\cmsis_compiler.h)(0x689C3A94)
-I (..\Drivers\CMSIS\Include\cmsis_armclang.h)(0x689C3A94)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\arm_compat.h)(0x63884908)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\arm_acle.h)(0x63884908)
-I (..\Drivers\CMSIS\Device\ST\STM32F1xx\Include\system_stm32f1xx.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\Legacy\stm32_hal_legacy.h)(0x689C3A9F)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\stddef.h)(0x63884908)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_rcc_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_gpio.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_gpio_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_exti.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_dma.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_dma_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_cortex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_adc.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_adc_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_flash.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_flash_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_iwdg.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_pwr.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_spi.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_tim.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_tim_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_uart.h)(0x689C3A9F)
-F (../Core/Src/system_stm32f1xx.c)(0x68EA63A4)(-xc -std=c99 --target=arm-arm-none-eabi -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -c-fno-rtti -funsigned-char -fshort-enums -fshort-wchar-D__MICROLIB -gdwarf-4 -O0 -ffunction-sections -Wno-packed -Wno-missing-variable-declarations -Wno-missing-prototypes -Wno-missing-noreturn -Wno-sign-conversion -Wno-nonportable-include-path -Wno-reserved-id-macro -Wno-unused-macros -Wno-documentation-unknown-command -Wno-documentation -Wno-license-management -Wno-parentheses-equality -Wno-reserved-identifier -I ../Drivers/CMSIS/Include -I ../Core/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F1xx/Include -I ../APP -I ../BSP -I ../MID/MID_foc_float -I ../MID/MID_segger_rtt -I ../MID/MID_foc -I ../MID/MID_SoftIIC/SoftIIC_Fast -I ../COM -I ../MID/MID_cm_backtrace-I./RTE/_Xiaomi_CyberDog1-ID:/Keil5/Packs/ARM/CMSIS/5.7.0/CMSIS/Core/Include-ID:/Keil5/Packs/ARM/CMSIS/5.7.0/CMSIS/DSP/Include-ID:/Keil5/Packs/GigaDevice/GD32F30x_DFP/2.2.1/Device/Include-D__UVISION_VERSION="538" -D_RTE_ -DGD32F30X_HD -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F103xE -DARM_MATH_CM4-o xiaomi_cyberdog1/system_stm32f1xx.o -MD)
-I (..\Drivers\CMSIS\Device\ST\STM32F1xx\Include\stm32f1xx.h)(0x689C3A9F)
-I (..\Drivers\CMSIS\Device\ST\STM32F1xx\Include\stm32f103xe.h)(0x689C3A9F)
-I (..\Drivers\CMSIS\Include\core_cm3.h)(0x692EF9A1)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\stdint.h)(0x63884908)
-I (..\Drivers\CMSIS\Include\cmsis_version.h)(0x689C3A94)
-I (..\Drivers\CMSIS\Include\cmsis_compiler.h)(0x689C3A94)
-I (..\Drivers\CMSIS\Include\cmsis_armclang.h)(0x689C3A94)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\arm_compat.h)(0x63884908)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\arm_acle.h)(0x63884908)
-I (..\Drivers\CMSIS\Device\ST\STM32F1xx\Include\system_stm32f1xx.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal.h)(0x689C3A9F)
-I (..\Core\Inc\stm32f1xx_hal_conf.h)(0x692EF7E8)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_rcc.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_def.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\Legacy\stm32_hal_legacy.h)(0x689C3A9F)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\stddef.h)(0x63884908)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_rcc_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_gpio.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_gpio_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_exti.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_dma.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_dma_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_cortex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_adc.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_adc_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_flash.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_flash_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_iwdg.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_pwr.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_spi.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_tim.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_tim_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_uart.h)(0x689C3A9F)
-F (..\APP\FOC_run.c)(0x6961069C)(-xc -std=c99 --target=arm-arm-none-eabi -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -c-fno-rtti -funsigned-char -fshort-enums -fshort-wchar-D__MICROLIB -gdwarf-4 -O0 -ffunction-sections -Wno-packed -Wno-missing-variable-declarations -Wno-missing-prototypes -Wno-missing-noreturn -Wno-sign-conversion -Wno-nonportable-include-path -Wno-reserved-id-macro -Wno-unused-macros -Wno-documentation-unknown-command -Wno-documentation -Wno-license-management -Wno-parentheses-equality -Wno-reserved-identifier -I ../Drivers/CMSIS/Include -I ../Core/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F1xx/Include -I ../APP -I ../BSP -I ../MID/MID_foc_float -I ../MID/MID_segger_rtt -I ../MID/MID_foc -I ../MID/MID_SoftIIC/SoftIIC_Fast -I ../COM -I ../MID/MID_cm_backtrace-I./RTE/_Xiaomi_CyberDog1-ID:/Keil5/Packs/ARM/CMSIS/5.7.0/CMSIS/Core/Include-ID:/Keil5/Packs/ARM/CMSIS/5.7.0/CMSIS/DSP/Include-ID:/Keil5/Packs/GigaDevice/GD32F30x_DFP/2.2.1/Device/Include-D__UVISION_VERSION="538" -D_RTE_ -DGD32F30X_HD -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F103xE -DARM_MATH_CM4-o xiaomi_cyberdog1/foc_run.o -MD)
-I (..\APP\FOC_run.h)(0x6925C6B7)
-I (..\APP\main_user.h)(0x6925C78E)
-I (..\Core\Inc\main.h)(0x68F8E623)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal.h)(0x689C3A9F)
-I (..\Core\Inc\stm32f1xx_hal_conf.h)(0x692EF7E8)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_rcc.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_def.h)(0x689C3A9F)
-I (..\Drivers\CMSIS\Device\ST\STM32F1xx\Include\stm32f1xx.h)(0x689C3A9F)
-I (..\Drivers\CMSIS\Device\ST\STM32F1xx\Include\stm32f103xe.h)(0x689C3A9F)
-I (..\Drivers\CMSIS\Include\core_cm3.h)(0x692EF9A1)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\stdint.h)(0x63884908)
-I (..\Drivers\CMSIS\Include\cmsis_version.h)(0x689C3A94)
-I (..\Drivers\CMSIS\Include\cmsis_compiler.h)(0x689C3A94)
-I (..\Drivers\CMSIS\Include\cmsis_armclang.h)(0x689C3A94)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\arm_compat.h)(0x63884908)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\arm_acle.h)(0x63884908)
-I (..\Drivers\CMSIS\Device\ST\STM32F1xx\Include\system_stm32f1xx.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\Legacy\stm32_hal_legacy.h)(0x689C3A9F)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\stddef.h)(0x63884908)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_rcc_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_gpio.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_gpio_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_exti.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_dma.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_dma_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_cortex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_adc.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_adc_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_flash.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_flash_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_iwdg.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_pwr.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_spi.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_tim.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_tim_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_uart.h)(0x689C3A9F)
-I (D:\Keil5\Packs\ARM\CMSIS\5.7.0\CMSIS\DSP\Include\arm_math.h)(0x5E8ED122)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\string.h)(0x63884908)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\math.h)(0x63884908)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\float.h)(0x63884908)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\limits.h)(0x63884908)
-I (..\COM\filter.h)(0x6905FF32)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\stdbool.h)(0x63884908)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\stdio.h)(0x63884908)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\stdlib.h)(0x63884908)
-I (..\BSP\ThreeHall.h)(0x68F11B59)
-I (..\MID\MID_foc\IQ_math.h)(0x68EFB5F1)
-I (..\APP\Task_function.h)(0x68EFB4EA)
-I (..\BSP\Timer.h)(0x6720D2D9)
-I (..\MID\MID_segger_rtt\SEGGER_RTT_Port.h)(0x69184A2C)
-I (..\MID\MID_segger_rtt\SEGGER_RTT.h)(0x6368DCBD)
-I (..\MID\MID_segger_rtt\SEGGER_RTT_Conf.h)(0x6368DCBD)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\stdarg.h)(0x63884908)
-I (..\MID\MID_foc_float\foc.h)(0x69384E2E)
-I (..\MID\MID_foc_float\foc_pid.h)(0x69060450)
-I (..\MID\MID_foc_float\speed_pid.h)(0x69063B6D)
-I (..\MID\MID_foc_float\position_pid.h)(0x69078735)
-I (..\MID\MID_foc_float\Para_identify.h)(0x693855BD)
-I (..\BSP\AS5600.h)(0x6907806C)
-I (..\MID\MID_foc\dead_comp.h)(0x69610373)
-F (..\APP\FOC_run.h)(0x6925C6B7)()
-F (..\APP\main_user.c)(0x6961047E)(-xc -std=c99 --target=arm-arm-none-eabi -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -c-fno-rtti -funsigned-char -fshort-enums -fshort-wchar-D__MICROLIB -gdwarf-4 -O0 -ffunction-sections -Wno-packed -Wno-missing-variable-declarations -Wno-missing-prototypes -Wno-missing-noreturn -Wno-sign-conversion -Wno-nonportable-include-path -Wno-reserved-id-macro -Wno-unused-macros -Wno-documentation-unknown-command -Wno-documentation -Wno-license-management -Wno-parentheses-equality -Wno-reserved-identifier -I ../Drivers/CMSIS/Include -I ../Core/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F1xx/Include -I ../APP -I ../BSP -I ../MID/MID_foc_float -I ../MID/MID_segger_rtt -I ../MID/MID_foc -I ../MID/MID_SoftIIC/SoftIIC_Fast -I ../COM -I ../MID/MID_cm_backtrace-I./RTE/_Xiaomi_CyberDog1-ID:/Keil5/Packs/ARM/CMSIS/5.7.0/CMSIS/Core/Include-ID:/Keil5/Packs/ARM/CMSIS/5.7.0/CMSIS/DSP/Include-ID:/Keil5/Packs/GigaDevice/GD32F30x_DFP/2.2.1/Device/Include-D__UVISION_VERSION="538" -D_RTE_ -DGD32F30X_HD -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F103xE -DARM_MATH_CM4-o xiaomi_cyberdog1/main_user.o -MD)
-I (..\APP\main_user.h)(0x6925C78E)
-I (..\Core\Inc\main.h)(0x68F8E623)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal.h)(0x689C3A9F)
-I (..\Core\Inc\stm32f1xx_hal_conf.h)(0x692EF7E8)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_rcc.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_def.h)(0x689C3A9F)
-I (..\Drivers\CMSIS\Device\ST\STM32F1xx\Include\stm32f1xx.h)(0x689C3A9F)
-I (..\Drivers\CMSIS\Device\ST\STM32F1xx\Include\stm32f103xe.h)(0x689C3A9F)
-I (..\Drivers\CMSIS\Include\core_cm3.h)(0x692EF9A1)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\stdint.h)(0x63884908)
-I (..\Drivers\CMSIS\Include\cmsis_version.h)(0x689C3A94)
-I (..\Drivers\CMSIS\Include\cmsis_compiler.h)(0x689C3A94)
-I (..\Drivers\CMSIS\Include\cmsis_armclang.h)(0x689C3A94)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\arm_compat.h)(0x63884908)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\arm_acle.h)(0x63884908)
-I (..\Drivers\CMSIS\Device\ST\STM32F1xx\Include\system_stm32f1xx.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\Legacy\stm32_hal_legacy.h)(0x689C3A9F)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\stddef.h)(0x63884908)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_rcc_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_gpio.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_gpio_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_exti.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_dma.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_dma_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_cortex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_adc.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_adc_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_flash.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_flash_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_iwdg.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_pwr.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_spi.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_tim.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_tim_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_uart.h)(0x689C3A9F)
-I (D:\Keil5\Packs\ARM\CMSIS\5.7.0\CMSIS\DSP\Include\arm_math.h)(0x5E8ED122)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\string.h)(0x63884908)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\math.h)(0x63884908)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\float.h)(0x63884908)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\limits.h)(0x63884908)
-I (..\COM\filter.h)(0x6905FF32)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\stdbool.h)(0x63884908)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\stdio.h)(0x63884908)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\stdlib.h)(0x63884908)
-I (..\Core\Inc\iwdg.h)(0x692EF7E4)
-I (..\APP\FOC_run.h)(0x6925C6B7)
-I (..\BSP\Timer.h)(0x6720D2D9)
-I (..\BSP\ThreeHall.h)(0x68F11B59)
-I (..\MID\MID_foc\IQ_math.h)(0x68EFB5F1)
-I (..\APP\Task_function.h)(0x68EFB4EA)
-I (..\MID\MID_foc_float\foc_pid.h)(0x69060450)
-I (..\MID\MID_foc_float\foc.h)(0x69384E2E)
-I (..\MID\MID_foc_float\speed_pid.h)(0x69063B6D)
-I (..\MID\MID_foc_float\position_pid.h)(0x69078735)
-I (..\BSP\AS5600.h)(0x6907806C)
-I (..\MID\MID_SoftIIC\SoftIIC_Fast\Soft_IIC.h)(0x68FCEFDC)
-I (..\BSP\drv83xx.h)(0x68F7AE5A)
-I (..\MID\MID_foc\dead_comp.h)(0x69610373)
-I (..\MID\MID_segger_rtt\SEGGER_RTT_Port.h)(0x69184A2C)
-I (..\MID\MID_segger_rtt\SEGGER_RTT.h)(0x6368DCBD)
-I (..\MID\MID_segger_rtt\SEGGER_RTT_Conf.h)(0x6368DCBD)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\stdarg.h)(0x63884908)
-I (..\MID\MID_cm_backtrace\cm_backtrace.h)(0x691871CC)
-I (..\MID\MID_cm_backtrace\cmb_def.h)(0x62F5C726)
-I (..\MID\MID_cm_backtrace\cmb_cfg.h)(0x69187D51)
-F (..\APP\main_user.h)(0x6925C78E)()
-F (..\APP\Task_function.c)(0x68F64F7C)(-xc -std=c99 --target=arm-arm-none-eabi -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -c-fno-rtti -funsigned-char -fshort-enums -fshort-wchar-D__MICROLIB -gdwarf-4 -O0 -ffunction-sections -Wno-packed -Wno-missing-variable-declarations -Wno-missing-prototypes -Wno-missing-noreturn -Wno-sign-conversion -Wno-nonportable-include-path -Wno-reserved-id-macro -Wno-unused-macros -Wno-documentation-unknown-command -Wno-documentation -Wno-license-management -Wno-parentheses-equality -Wno-reserved-identifier -I ../Drivers/CMSIS/Include -I ../Core/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F1xx/Include -I ../APP -I ../BSP -I ../MID/MID_foc_float -I ../MID/MID_segger_rtt -I ../MID/MID_foc -I ../MID/MID_SoftIIC/SoftIIC_Fast -I ../COM -I ../MID/MID_cm_backtrace-I./RTE/_Xiaomi_CyberDog1-ID:/Keil5/Packs/ARM/CMSIS/5.7.0/CMSIS/Core/Include-ID:/Keil5/Packs/ARM/CMSIS/5.7.0/CMSIS/DSP/Include-ID:/Keil5/Packs/GigaDevice/GD32F30x_DFP/2.2.1/Device/Include-D__UVISION_VERSION="538" -D_RTE_ -DGD32F30X_HD -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F103xE -DARM_MATH_CM4-o xiaomi_cyberdog1/task_function.o -MD)
-I (..\APP\Task_function.h)(0x68EFB4EA)
-I (..\Core\Inc\main.h)(0x68F8E623)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal.h)(0x689C3A9F)
-I (..\Core\Inc\stm32f1xx_hal_conf.h)(0x692EF7E8)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_rcc.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_def.h)(0x689C3A9F)
-I (..\Drivers\CMSIS\Device\ST\STM32F1xx\Include\stm32f1xx.h)(0x689C3A9F)
-I (..\Drivers\CMSIS\Device\ST\STM32F1xx\Include\stm32f103xe.h)(0x689C3A9F)
-I (..\Drivers\CMSIS\Include\core_cm3.h)(0x692EF9A1)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\stdint.h)(0x63884908)
-I (..\Drivers\CMSIS\Include\cmsis_version.h)(0x689C3A94)
-I (..\Drivers\CMSIS\Include\cmsis_compiler.h)(0x689C3A94)
-I (..\Drivers\CMSIS\Include\cmsis_armclang.h)(0x689C3A94)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\arm_compat.h)(0x63884908)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\arm_acle.h)(0x63884908)
-I (..\Drivers\CMSIS\Device\ST\STM32F1xx\Include\system_stm32f1xx.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\Legacy\stm32_hal_legacy.h)(0x689C3A9F)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\stddef.h)(0x63884908)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_rcc_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_gpio.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_gpio_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_exti.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_dma.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_dma_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_cortex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_adc.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_adc_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_flash.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_flash_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_iwdg.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_pwr.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_spi.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_tim.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_tim_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_uart.h)(0x689C3A9F)
-I (..\BSP\Timer.h)(0x6720D2D9)
-I (..\APP\main_user.h)(0x6925C78E)
-I (D:\Keil5\Packs\ARM\CMSIS\5.7.0\CMSIS\DSP\Include\arm_math.h)(0x5E8ED122)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\string.h)(0x63884908)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\math.h)(0x63884908)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\float.h)(0x63884908)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\limits.h)(0x63884908)
-I (..\COM\filter.h)(0x6905FF32)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\stdbool.h)(0x63884908)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\stdio.h)(0x63884908)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\stdlib.h)(0x63884908)
-I (..\APP\FOC_run.h)(0x6925C6B7)
-I (..\MID\MID_segger_rtt\SEGGER_RTT_Port.h)(0x69184A2C)
-I (..\MID\MID_segger_rtt\SEGGER_RTT.h)(0x6368DCBD)
-I (..\MID\MID_segger_rtt\SEGGER_RTT_Conf.h)(0x6368DCBD)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\stdarg.h)(0x63884908)
-I (..\MID\MID_foc_float\foc_pid.h)(0x69060450)
-I (..\MID\MID_foc_float\foc.h)(0x69384E2E)
-F (..\APP\Task_function.h)(0x68EFB4EA)()
-F (..\BSP\AS5600.c)(0x690780AF)(-xc -std=c99 --target=arm-arm-none-eabi -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -c-fno-rtti -funsigned-char -fshort-enums -fshort-wchar-D__MICROLIB -gdwarf-4 -O0 -ffunction-sections -Wno-packed -Wno-missing-variable-declarations -Wno-missing-prototypes -Wno-missing-noreturn -Wno-sign-conversion -Wno-nonportable-include-path -Wno-reserved-id-macro -Wno-unused-macros -Wno-documentation-unknown-command -Wno-documentation -Wno-license-management -Wno-parentheses-equality -Wno-reserved-identifier -I ../Drivers/CMSIS/Include -I ../Core/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F1xx/Include -I ../APP -I ../BSP -I ../MID/MID_foc_float -I ../MID/MID_segger_rtt -I ../MID/MID_foc -I ../MID/MID_SoftIIC/SoftIIC_Fast -I ../COM -I ../MID/MID_cm_backtrace-I./RTE/_Xiaomi_CyberDog1-ID:/Keil5/Packs/ARM/CMSIS/5.7.0/CMSIS/Core/Include-ID:/Keil5/Packs/ARM/CMSIS/5.7.0/CMSIS/DSP/Include-ID:/Keil5/Packs/GigaDevice/GD32F30x_DFP/2.2.1/Device/Include-D__UVISION_VERSION="538" -D_RTE_ -DGD32F30X_HD -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F103xE -DARM_MATH_CM4-o xiaomi_cyberdog1/as5600.o -MD)
-I (..\BSP\AS5600.h)(0x6907806C)
-I (..\Core\Inc\main.h)(0x68F8E623)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal.h)(0x689C3A9F)
-I (..\Core\Inc\stm32f1xx_hal_conf.h)(0x692EF7E8)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_rcc.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_def.h)(0x689C3A9F)
-I (..\Drivers\CMSIS\Device\ST\STM32F1xx\Include\stm32f1xx.h)(0x689C3A9F)
-I (..\Drivers\CMSIS\Device\ST\STM32F1xx\Include\stm32f103xe.h)(0x689C3A9F)
-I (..\Drivers\CMSIS\Include\core_cm3.h)(0x692EF9A1)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\stdint.h)(0x63884908)
-I (..\Drivers\CMSIS\Include\cmsis_version.h)(0x689C3A94)
-I (..\Drivers\CMSIS\Include\cmsis_compiler.h)(0x689C3A94)
-I (..\Drivers\CMSIS\Include\cmsis_armclang.h)(0x689C3A94)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\arm_compat.h)(0x63884908)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\arm_acle.h)(0x63884908)
-I (..\Drivers\CMSIS\Device\ST\STM32F1xx\Include\system_stm32f1xx.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\Legacy\stm32_hal_legacy.h)(0x689C3A9F)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\stddef.h)(0x63884908)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_rcc_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_gpio.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_gpio_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_exti.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_dma.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_dma_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_cortex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_adc.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_adc_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_flash.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_flash_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_iwdg.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_pwr.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_spi.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_tim.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_tim_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_uart.h)(0x689C3A9F)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\stdbool.h)(0x63884908)
-I (D:\Keil5\Packs\ARM\CMSIS\5.7.0\CMSIS\DSP\Include\arm_math.h)(0x5E8ED122)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\string.h)(0x63884908)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\math.h)(0x63884908)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\float.h)(0x63884908)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\limits.h)(0x63884908)
-I (..\MID\MID_SoftIIC\SoftIIC_Fast\Soft_IIC.h)(0x68FCEFDC)
-F (..\BSP\AS5600.h)(0x6907806C)()
-F (..\BSP\CAN.c)(0x68DE8386)(-xc -std=c99 --target=arm-arm-none-eabi -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -c-fno-rtti -funsigned-char -fshort-enums -fshort-wchar-D__MICROLIB -gdwarf-4 -O0 -ffunction-sections -Wno-packed -Wno-missing-variable-declarations -Wno-missing-prototypes -Wno-missing-noreturn -Wno-sign-conversion -Wno-nonportable-include-path -Wno-reserved-id-macro -Wno-unused-macros -Wno-documentation-unknown-command -Wno-documentation -Wno-license-management -Wno-parentheses-equality -Wno-reserved-identifier -I ../Drivers/CMSIS/Include -I ../Core/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F1xx/Include -I ../APP -I ../BSP -I ../MID/MID_foc_float -I ../MID/MID_segger_rtt -I ../MID/MID_foc -I ../MID/MID_SoftIIC/SoftIIC_Fast -I ../COM -I ../MID/MID_cm_backtrace-I./RTE/_Xiaomi_CyberDog1-ID:/Keil5/Packs/ARM/CMSIS/5.7.0/CMSIS/Core/Include-ID:/Keil5/Packs/ARM/CMSIS/5.7.0/CMSIS/DSP/Include-ID:/Keil5/Packs/GigaDevice/GD32F30x_DFP/2.2.1/Device/Include-D__UVISION_VERSION="538" -D_RTE_ -DGD32F30X_HD -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F103xE -DARM_MATH_CM4-o xiaomi_cyberdog1/can.o -MD)
-I (..\BSP\CAN.h)(0x68DE837F)
-I (..\BSP\timer.h)(0x6720D2D9)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal.h)(0x689C3A9F)
-I (..\Core\Inc\stm32f1xx_hal_conf.h)(0x692EF7E8)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_rcc.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_def.h)(0x689C3A9F)
-I (..\Drivers\CMSIS\Device\ST\STM32F1xx\Include\stm32f1xx.h)(0x689C3A9F)
-I (..\Drivers\CMSIS\Device\ST\STM32F1xx\Include\stm32f103xe.h)(0x689C3A9F)
-I (..\Drivers\CMSIS\Include\core_cm3.h)(0x692EF9A1)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\stdint.h)(0x63884908)
-I (..\Drivers\CMSIS\Include\cmsis_version.h)(0x689C3A94)
-I (..\Drivers\CMSIS\Include\cmsis_compiler.h)(0x689C3A94)
-I (..\Drivers\CMSIS\Include\cmsis_armclang.h)(0x689C3A94)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\arm_compat.h)(0x63884908)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\arm_acle.h)(0x63884908)
-I (..\Drivers\CMSIS\Device\ST\STM32F1xx\Include\system_stm32f1xx.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\Legacy\stm32_hal_legacy.h)(0x689C3A9F)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\stddef.h)(0x63884908)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_rcc_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_gpio.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_gpio_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_exti.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_dma.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_dma_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_cortex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_adc.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_adc_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_flash.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_flash_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_iwdg.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_pwr.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_spi.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_tim.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_tim_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_uart.h)(0x689C3A9F)
-F (..\BSP\CAN.h)(0x68DE837F)()
-F (..\BSP\ThreeHall.c)(0x690225B3)(-xc -std=c99 --target=arm-arm-none-eabi -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -c-fno-rtti -funsigned-char -fshort-enums -fshort-wchar-D__MICROLIB -gdwarf-4 -O0 -ffunction-sections -Wno-packed -Wno-missing-variable-declarations -Wno-missing-prototypes -Wno-missing-noreturn -Wno-sign-conversion -Wno-nonportable-include-path -Wno-reserved-id-macro -Wno-unused-macros -Wno-documentation-unknown-command -Wno-documentation -Wno-license-management -Wno-parentheses-equality -Wno-reserved-identifier -I ../Drivers/CMSIS/Include -I ../Core/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F1xx/Include -I ../APP -I ../BSP -I ../MID/MID_foc_float -I ../MID/MID_segger_rtt -I ../MID/MID_foc -I ../MID/MID_SoftIIC/SoftIIC_Fast -I ../COM-I./RTE/_Xiaomi_CyberDog1-ID:/Keil5/Packs/ARM/CMSIS/5.7.0/CMSIS/Core/Include-ID:/Keil5/Packs/ARM/CMSIS/5.7.0/CMSIS/DSP/Include-ID:/Keil5/Packs/GigaDevice/GD32F30x_DFP/2.2.1/Device/Include-D__UVISION_VERSION="538" -D_RTE_ -DGD32F30X_HD -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F103xE -DARM_MATH_CM4-o xiaomi_cyberdog1/threehall.o -MD)
-I (..\BSP\ThreeHall.h)(0x68F11B59)
-I (..\APP\main_user.h)(0x69022254)
-I (..\Core\Inc\main.h)(0x68F8E623)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal.h)(0x689C3A9F)
-I (..\Core\Inc\stm32f1xx_hal_conf.h)(0x68F4D648)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_rcc.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_def.h)(0x689C3A9F)
-I (..\Drivers\CMSIS\Device\ST\STM32F1xx\Include\stm32f1xx.h)(0x689C3A9F)
-I (..\Drivers\CMSIS\Device\ST\STM32F1xx\Include\stm32f103xe.h)(0x689C3A9F)
-I (..\Drivers\CMSIS\Include\core_cm3.h)(0x68FCB9C5)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\stdint.h)(0x63884908)
-I (..\Drivers\CMSIS\Include\cmsis_version.h)(0x689C3A94)
-I (..\Drivers\CMSIS\Include\cmsis_compiler.h)(0x689C3A94)
-I (..\Drivers\CMSIS\Include\cmsis_armclang.h)(0x689C3A94)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\arm_compat.h)(0x63884908)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\arm_acle.h)(0x63884908)
-I (..\Drivers\CMSIS\Device\ST\STM32F1xx\Include\system_stm32f1xx.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\Legacy\stm32_hal_legacy.h)(0x689C3A9F)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\stddef.h)(0x63884908)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_rcc_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_gpio.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_gpio_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_exti.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_dma.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_dma_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_cortex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_adc.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_adc_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_flash.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_flash_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_pwr.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_spi.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_tim.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_tim_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_uart.h)(0x689C3A9F)
-I (D:\Keil5\Packs\ARM\CMSIS\5.7.0\CMSIS\DSP\Include\arm_math.h)(0x5E8ED122)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\string.h)(0x63884908)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\math.h)(0x63884908)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\float.h)(0x63884908)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\limits.h)(0x63884908)
-I (..\COM\filter.h)(0x69018052)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\stdbool.h)(0x63884908)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\stdio.h)(0x63884908)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\stdlib.h)(0x63884908)
-I (..\MID\MID_foc\IQ_math.h)(0x68EFB5F1)
-I (..\Core\Inc\tim.h)(0x68F4AC14)
-I (..\APP\FOC_run.h)(0x690226CE)
-F (..\BSP\ThreeHall.h)(0x68F11B59)()
-F (..\MID\MID_SoftIIC\SoftIIC_Fast\Soft_IIC.c)(0x68FCF1B6)(-xc -std=c99 --target=arm-arm-none-eabi -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -c-fno-rtti -funsigned-char -fshort-enums -fshort-wchar-D__MICROLIB -gdwarf-4 -O0 -ffunction-sections -Wno-packed -Wno-missing-variable-declarations -Wno-missing-prototypes -Wno-missing-noreturn -Wno-sign-conversion -Wno-nonportable-include-path -Wno-reserved-id-macro -Wno-unused-macros -Wno-documentation-unknown-command -Wno-documentation -Wno-license-management -Wno-parentheses-equality -Wno-reserved-identifier -I ../Drivers/CMSIS/Include -I ../Core/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F1xx/Include -I ../APP -I ../BSP -I ../MID/MID_foc_float -I ../MID/MID_segger_rtt -I ../MID/MID_foc -I ../MID/MID_SoftIIC/SoftIIC_Fast -I ../COM -I ../MID/MID_cm_backtrace-I./RTE/_Xiaomi_CyberDog1-ID:/Keil5/Packs/ARM/CMSIS/5.7.0/CMSIS/Core/Include-ID:/Keil5/Packs/ARM/CMSIS/5.7.0/CMSIS/DSP/Include-ID:/Keil5/Packs/GigaDevice/GD32F30x_DFP/2.2.1/Device/Include-D__UVISION_VERSION="538" -D_RTE_ -DGD32F30X_HD -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F103xE -DARM_MATH_CM4-o xiaomi_cyberdog1/soft_iic.o -MD)
-I (..\MID\MID_SoftIIC\SoftIIC_Fast\Soft_IIC.h)(0x68FCEFDC)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\stdint.h)(0x63884908)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\stdbool.h)(0x63884908)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\string.h)(0x63884908)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal.h)(0x689C3A9F)
-I (..\Core\Inc\stm32f1xx_hal_conf.h)(0x692EF7E8)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_rcc.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_def.h)(0x689C3A9F)
-I (..\Drivers\CMSIS\Device\ST\STM32F1xx\Include\stm32f1xx.h)(0x689C3A9F)
-I (..\Drivers\CMSIS\Device\ST\STM32F1xx\Include\stm32f103xe.h)(0x689C3A9F)
-I (..\Drivers\CMSIS\Include\core_cm3.h)(0x692EF9A1)
-I (..\Drivers\CMSIS\Include\cmsis_version.h)(0x689C3A94)
-I (..\Drivers\CMSIS\Include\cmsis_compiler.h)(0x689C3A94)
-I (..\Drivers\CMSIS\Include\cmsis_armclang.h)(0x689C3A94)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\arm_compat.h)(0x63884908)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\arm_acle.h)(0x63884908)
-I (..\Drivers\CMSIS\Device\ST\STM32F1xx\Include\system_stm32f1xx.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\Legacy\stm32_hal_legacy.h)(0x689C3A9F)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\stddef.h)(0x63884908)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_rcc_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_gpio.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_gpio_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_exti.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_dma.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_dma_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_cortex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_adc.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_adc_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_flash.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_flash_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_iwdg.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_pwr.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_spi.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_tim.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_tim_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_uart.h)(0x689C3A9F)
-F (..\MID\MID_SoftIIC\SoftIIC_Fast\Soft_IIC.h)(0x68FCEFDC)()
-F (..\BSP\drv83xx.c)(0x69078A28)(-xc -std=c99 --target=arm-arm-none-eabi -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -c-fno-rtti -funsigned-char -fshort-enums -fshort-wchar-D__MICROLIB -gdwarf-4 -O0 -ffunction-sections -Wno-packed -Wno-missing-variable-declarations -Wno-missing-prototypes -Wno-missing-noreturn -Wno-sign-conversion -Wno-nonportable-include-path -Wno-reserved-id-macro -Wno-unused-macros -Wno-documentation-unknown-command -Wno-documentation -Wno-license-management -Wno-parentheses-equality -Wno-reserved-identifier -I ../Drivers/CMSIS/Include -I ../Core/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F1xx/Include -I ../APP -I ../BSP -I ../MID/MID_foc_float -I ../MID/MID_segger_rtt -I ../MID/MID_foc -I ../MID/MID_SoftIIC/SoftIIC_Fast -I ../COM -I ../MID/MID_cm_backtrace-I./RTE/_Xiaomi_CyberDog1-ID:/Keil5/Packs/ARM/CMSIS/5.7.0/CMSIS/Core/Include-ID:/Keil5/Packs/ARM/CMSIS/5.7.0/CMSIS/DSP/Include-ID:/Keil5/Packs/GigaDevice/GD32F30x_DFP/2.2.1/Device/Include-D__UVISION_VERSION="538" -D_RTE_ -DGD32F30X_HD -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F103xE -DARM_MATH_CM4-o xiaomi_cyberdog1/drv83xx.o -MD)
-I (..\BSP\drv83xx.h)(0x68F7AE5A)
-I (..\Core\Inc\main.h)(0x68F8E623)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal.h)(0x689C3A9F)
-I (..\Core\Inc\stm32f1xx_hal_conf.h)(0x692EF7E8)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_rcc.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_def.h)(0x689C3A9F)
-I (..\Drivers\CMSIS\Device\ST\STM32F1xx\Include\stm32f1xx.h)(0x689C3A9F)
-I (..\Drivers\CMSIS\Device\ST\STM32F1xx\Include\stm32f103xe.h)(0x689C3A9F)
-I (..\Drivers\CMSIS\Include\core_cm3.h)(0x692EF9A1)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\stdint.h)(0x63884908)
-I (..\Drivers\CMSIS\Include\cmsis_version.h)(0x689C3A94)
-I (..\Drivers\CMSIS\Include\cmsis_compiler.h)(0x689C3A94)
-I (..\Drivers\CMSIS\Include\cmsis_armclang.h)(0x689C3A94)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\arm_compat.h)(0x63884908)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\arm_acle.h)(0x63884908)
-I (..\Drivers\CMSIS\Device\ST\STM32F1xx\Include\system_stm32f1xx.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\Legacy\stm32_hal_legacy.h)(0x689C3A9F)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\stddef.h)(0x63884908)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_rcc_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_gpio.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_gpio_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_exti.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_dma.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_dma_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_cortex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_adc.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_adc_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_flash.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_flash_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_iwdg.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_pwr.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_spi.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_tim.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_tim_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_uart.h)(0x689C3A9F)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\stdio.h)(0x63884908)
-I (..\BSP\drv83xx_reg.h)(0x68F7B288)
-F (..\BSP\drv83xx.h)(0x68F7AE5A)()
-F (..\BSP\drv83xx_reg.h)(0x68F7B288)()
-F (..\MID\MID_foc_float\foc.c)(0x692465FC)(-xc -std=c99 --target=arm-arm-none-eabi -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -c-fno-rtti -funsigned-char -fshort-enums -fshort-wchar-D__MICROLIB -gdwarf-4 -O0 -ffunction-sections -Wno-packed -Wno-missing-variable-declarations -Wno-missing-prototypes -Wno-missing-noreturn -Wno-sign-conversion -Wno-nonportable-include-path -Wno-reserved-id-macro -Wno-unused-macros -Wno-documentation-unknown-command -Wno-documentation -Wno-license-management -Wno-parentheses-equality -Wno-reserved-identifier -I ../Drivers/CMSIS/Include -I ../Core/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F1xx/Include -I ../APP -I ../BSP -I ../MID/MID_foc_float -I ../MID/MID_segger_rtt -I ../MID/MID_foc -I ../MID/MID_SoftIIC/SoftIIC_Fast -I ../COM -I ../MID/MID_cm_backtrace-I./RTE/_Xiaomi_CyberDog1-ID:/Keil5/Packs/ARM/CMSIS/5.7.0/CMSIS/Core/Include-ID:/Keil5/Packs/ARM/CMSIS/5.7.0/CMSIS/DSP/Include-ID:/Keil5/Packs/GigaDevice/GD32F30x_DFP/2.2.1/Device/Include-D__UVISION_VERSION="538" -D_RTE_ -DGD32F30X_HD -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F103xE -DARM_MATH_CM4-o xiaomi_cyberdog1/foc.o -MD)
-I (..\MID\MID_foc_float\foc.h)(0x69384E2E)
-I (..\APP\main_user.h)(0x6925C78E)
-I (..\Core\Inc\main.h)(0x68F8E623)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal.h)(0x689C3A9F)
-I (..\Core\Inc\stm32f1xx_hal_conf.h)(0x692EF7E8)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_rcc.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_def.h)(0x689C3A9F)
-I (..\Drivers\CMSIS\Device\ST\STM32F1xx\Include\stm32f1xx.h)(0x689C3A9F)
-I (..\Drivers\CMSIS\Device\ST\STM32F1xx\Include\stm32f103xe.h)(0x689C3A9F)
-I (..\Drivers\CMSIS\Include\core_cm3.h)(0x692EF9A1)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\stdint.h)(0x63884908)
-I (..\Drivers\CMSIS\Include\cmsis_version.h)(0x689C3A94)
-I (..\Drivers\CMSIS\Include\cmsis_compiler.h)(0x689C3A94)
-I (..\Drivers\CMSIS\Include\cmsis_armclang.h)(0x689C3A94)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\arm_compat.h)(0x63884908)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\arm_acle.h)(0x63884908)
-I (..\Drivers\CMSIS\Device\ST\STM32F1xx\Include\system_stm32f1xx.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\Legacy\stm32_hal_legacy.h)(0x689C3A9F)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\stddef.h)(0x63884908)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_rcc_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_gpio.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_gpio_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_exti.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_dma.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_dma_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_cortex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_adc.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_adc_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_flash.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_flash_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_iwdg.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_pwr.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_spi.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_tim.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_tim_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_uart.h)(0x689C3A9F)
-I (D:\Keil5\Packs\ARM\CMSIS\5.7.0\CMSIS\DSP\Include\arm_math.h)(0x5E8ED122)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\string.h)(0x63884908)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\math.h)(0x63884908)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\float.h)(0x63884908)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\limits.h)(0x63884908)
-I (..\COM\filter.h)(0x6905FF32)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\stdbool.h)(0x63884908)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\stdio.h)(0x63884908)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\stdlib.h)(0x63884908)
-F (..\MID\MID_foc_float\foc.h)(0x69384E2E)()
-F (..\MID\MID_foc_float\foc_pid.c)(0x6906D755)(-xc -std=c99 --target=arm-arm-none-eabi -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -c-fno-rtti -funsigned-char -fshort-enums -fshort-wchar-D__MICROLIB -gdwarf-4 -O0 -ffunction-sections -Wno-packed -Wno-missing-variable-declarations -Wno-missing-prototypes -Wno-missing-noreturn -Wno-sign-conversion -Wno-nonportable-include-path -Wno-reserved-id-macro -Wno-unused-macros -Wno-documentation-unknown-command -Wno-documentation -Wno-license-management -Wno-parentheses-equality -Wno-reserved-identifier -I ../Drivers/CMSIS/Include -I ../Core/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F1xx/Include -I ../APP -I ../BSP -I ../MID/MID_foc_float -I ../MID/MID_segger_rtt -I ../MID/MID_foc -I ../MID/MID_SoftIIC/SoftIIC_Fast -I ../COM -I ../MID/MID_cm_backtrace-I./RTE/_Xiaomi_CyberDog1-ID:/Keil5/Packs/ARM/CMSIS/5.7.0/CMSIS/Core/Include-ID:/Keil5/Packs/ARM/CMSIS/5.7.0/CMSIS/DSP/Include-ID:/Keil5/Packs/GigaDevice/GD32F30x_DFP/2.2.1/Device/Include-D__UVISION_VERSION="538" -D_RTE_ -DGD32F30X_HD -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F103xE -DARM_MATH_CM4-o xiaomi_cyberdog1/foc_pid.o -MD)
-I (..\MID\MID_foc_float\foc_pid.h)(0x69060450)
-I (..\MID\MID_foc_float\foc.h)(0x69384E2E)
-I (..\APP\main_user.h)(0x6925C78E)
-I (..\Core\Inc\main.h)(0x68F8E623)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal.h)(0x689C3A9F)
-I (..\Core\Inc\stm32f1xx_hal_conf.h)(0x692EF7E8)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_rcc.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_def.h)(0x689C3A9F)
-I (..\Drivers\CMSIS\Device\ST\STM32F1xx\Include\stm32f1xx.h)(0x689C3A9F)
-I (..\Drivers\CMSIS\Device\ST\STM32F1xx\Include\stm32f103xe.h)(0x689C3A9F)
-I (..\Drivers\CMSIS\Include\core_cm3.h)(0x692EF9A1)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\stdint.h)(0x63884908)
-I (..\Drivers\CMSIS\Include\cmsis_version.h)(0x689C3A94)
-I (..\Drivers\CMSIS\Include\cmsis_compiler.h)(0x689C3A94)
-I (..\Drivers\CMSIS\Include\cmsis_armclang.h)(0x689C3A94)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\arm_compat.h)(0x63884908)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\arm_acle.h)(0x63884908)
-I (..\Drivers\CMSIS\Device\ST\STM32F1xx\Include\system_stm32f1xx.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\Legacy\stm32_hal_legacy.h)(0x689C3A9F)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\stddef.h)(0x63884908)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_rcc_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_gpio.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_gpio_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_exti.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_dma.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_dma_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_cortex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_adc.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_adc_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_flash.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_flash_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_iwdg.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_pwr.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_spi.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_tim.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_tim_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_uart.h)(0x689C3A9F)
-I (D:\Keil5\Packs\ARM\CMSIS\5.7.0\CMSIS\DSP\Include\arm_math.h)(0x5E8ED122)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\string.h)(0x63884908)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\math.h)(0x63884908)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\float.h)(0x63884908)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\limits.h)(0x63884908)
-I (..\COM\filter.h)(0x6905FF32)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\stdbool.h)(0x63884908)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\stdio.h)(0x63884908)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\stdlib.h)(0x63884908)
-F (..\MID\MID_foc_float\foc_pid.h)(0x69060450)()
-F (..\MID\MID_foc_float\speed_pid.c)(0x6907168F)(-xc -std=c99 --target=arm-arm-none-eabi -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -c-fno-rtti -funsigned-char -fshort-enums -fshort-wchar-D__MICROLIB -gdwarf-4 -O0 -ffunction-sections -Wno-packed -Wno-missing-variable-declarations -Wno-missing-prototypes -Wno-missing-noreturn -Wno-sign-conversion -Wno-nonportable-include-path -Wno-reserved-id-macro -Wno-unused-macros -Wno-documentation-unknown-command -Wno-documentation -Wno-license-management -Wno-parentheses-equality -Wno-reserved-identifier -I ../Drivers/CMSIS/Include -I ../Core/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F1xx/Include -I ../APP -I ../BSP -I ../MID/MID_foc_float -I ../MID/MID_segger_rtt -I ../MID/MID_foc -I ../MID/MID_SoftIIC/SoftIIC_Fast -I ../COM -I ../MID/MID_cm_backtrace-I./RTE/_Xiaomi_CyberDog1-ID:/Keil5/Packs/ARM/CMSIS/5.7.0/CMSIS/Core/Include-ID:/Keil5/Packs/ARM/CMSIS/5.7.0/CMSIS/DSP/Include-ID:/Keil5/Packs/GigaDevice/GD32F30x_DFP/2.2.1/Device/Include-D__UVISION_VERSION="538" -D_RTE_ -DGD32F30X_HD -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F103xE -DARM_MATH_CM4-o xiaomi_cyberdog1/speed_pid.o -MD)
-I (..\MID\MID_foc_float\speed_pid.h)(0x69063B6D)
-I (..\MID\MID_foc_float\foc.h)(0x69384E2E)
-I (..\APP\main_user.h)(0x6925C78E)
-I (..\Core\Inc\main.h)(0x68F8E623)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal.h)(0x689C3A9F)
-I (..\Core\Inc\stm32f1xx_hal_conf.h)(0x692EF7E8)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_rcc.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_def.h)(0x689C3A9F)
-I (..\Drivers\CMSIS\Device\ST\STM32F1xx\Include\stm32f1xx.h)(0x689C3A9F)
-I (..\Drivers\CMSIS\Device\ST\STM32F1xx\Include\stm32f103xe.h)(0x689C3A9F)
-I (..\Drivers\CMSIS\Include\core_cm3.h)(0x692EF9A1)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\stdint.h)(0x63884908)
-I (..\Drivers\CMSIS\Include\cmsis_version.h)(0x689C3A94)
-I (..\Drivers\CMSIS\Include\cmsis_compiler.h)(0x689C3A94)
-I (..\Drivers\CMSIS\Include\cmsis_armclang.h)(0x689C3A94)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\arm_compat.h)(0x63884908)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\arm_acle.h)(0x63884908)
-I (..\Drivers\CMSIS\Device\ST\STM32F1xx\Include\system_stm32f1xx.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\Legacy\stm32_hal_legacy.h)(0x689C3A9F)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\stddef.h)(0x63884908)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_rcc_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_gpio.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_gpio_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_exti.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_dma.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_dma_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_cortex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_adc.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_adc_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_flash.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_flash_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_iwdg.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_pwr.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_spi.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_tim.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_tim_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_uart.h)(0x689C3A9F)
-I (D:\Keil5\Packs\ARM\CMSIS\5.7.0\CMSIS\DSP\Include\arm_math.h)(0x5E8ED122)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\string.h)(0x63884908)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\math.h)(0x63884908)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\float.h)(0x63884908)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\limits.h)(0x63884908)
-I (..\COM\filter.h)(0x6905FF32)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\stdbool.h)(0x63884908)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\stdio.h)(0x63884908)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\stdlib.h)(0x63884908)
-I (..\BSP\AS5600.h)(0x6907806C)
-F (..\MID\MID_foc_float\speed_pid.h)(0x69063B6D)()
-F (..\MID\MID_foc\IQ_math.c)(0x67D98A5B)(-xc -std=c99 --target=arm-arm-none-eabi -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -c-fno-rtti -funsigned-char -fshort-enums -fshort-wchar-D__MICROLIB -gdwarf-4 -O0 -ffunction-sections -Wno-packed -Wno-missing-variable-declarations -Wno-missing-prototypes -Wno-missing-noreturn -Wno-sign-conversion -Wno-nonportable-include-path -Wno-reserved-id-macro -Wno-unused-macros -Wno-documentation-unknown-command -Wno-documentation -Wno-license-management -Wno-parentheses-equality -Wno-reserved-identifier -I ../Drivers/CMSIS/Include -I ../Core/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F1xx/Include -I ../APP -I ../BSP -I ../MID/MID_foc_float -I ../MID/MID_segger_rtt -I ../MID/MID_foc -I ../MID/MID_SoftIIC/SoftIIC_Fast -I ../COM -I ../MID/MID_cm_backtrace-I./RTE/_Xiaomi_CyberDog1-ID:/Keil5/Packs/ARM/CMSIS/5.7.0/CMSIS/Core/Include-ID:/Keil5/Packs/ARM/CMSIS/5.7.0/CMSIS/DSP/Include-ID:/Keil5/Packs/GigaDevice/GD32F30x_DFP/2.2.1/Device/Include-D__UVISION_VERSION="538" -D_RTE_ -DGD32F30X_HD -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F103xE -DARM_MATH_CM4-o xiaomi_cyberdog1/iq_math.o -MD)
-I (..\MID\MID_foc\IQ_math.h)(0x68EFB5F1)
-I (..\Core\Inc\main.h)(0x68F8E623)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal.h)(0x689C3A9F)
-I (..\Core\Inc\stm32f1xx_hal_conf.h)(0x692EF7E8)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_rcc.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_def.h)(0x689C3A9F)
-I (..\Drivers\CMSIS\Device\ST\STM32F1xx\Include\stm32f1xx.h)(0x689C3A9F)
-I (..\Drivers\CMSIS\Device\ST\STM32F1xx\Include\stm32f103xe.h)(0x689C3A9F)
-I (..\Drivers\CMSIS\Include\core_cm3.h)(0x692EF9A1)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\stdint.h)(0x63884908)
-I (..\Drivers\CMSIS\Include\cmsis_version.h)(0x689C3A94)
-I (..\Drivers\CMSIS\Include\cmsis_compiler.h)(0x689C3A94)
-I (..\Drivers\CMSIS\Include\cmsis_armclang.h)(0x689C3A94)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\arm_compat.h)(0x63884908)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\arm_acle.h)(0x63884908)
-I (..\Drivers\CMSIS\Device\ST\STM32F1xx\Include\system_stm32f1xx.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\Legacy\stm32_hal_legacy.h)(0x689C3A9F)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\stddef.h)(0x63884908)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_rcc_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_gpio.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_gpio_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_exti.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_dma.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_dma_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_cortex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_adc.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_adc_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_flash.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_flash_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_iwdg.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_pwr.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_spi.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_tim.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_tim_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_uart.h)(0x689C3A9F)
-F (..\MID\MID_foc\IQ_math.h)(0x68EFB5F1)()
-F (..\MID\MID_foc_float\position_pid.c)(0x6907889E)(-xc -std=c99 --target=arm-arm-none-eabi -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -c-fno-rtti -funsigned-char -fshort-enums -fshort-wchar-D__MICROLIB -gdwarf-4 -O0 -ffunction-sections -Wno-packed -Wno-missing-variable-declarations -Wno-missing-prototypes -Wno-missing-noreturn -Wno-sign-conversion -Wno-nonportable-include-path -Wno-reserved-id-macro -Wno-unused-macros -Wno-documentation-unknown-command -Wno-documentation -Wno-license-management -Wno-parentheses-equality -Wno-reserved-identifier -I ../Drivers/CMSIS/Include -I ../Core/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F1xx/Include -I ../APP -I ../BSP -I ../MID/MID_foc_float -I ../MID/MID_segger_rtt -I ../MID/MID_foc -I ../MID/MID_SoftIIC/SoftIIC_Fast -I ../COM -I ../MID/MID_cm_backtrace-I./RTE/_Xiaomi_CyberDog1-ID:/Keil5/Packs/ARM/CMSIS/5.7.0/CMSIS/Core/Include-ID:/Keil5/Packs/ARM/CMSIS/5.7.0/CMSIS/DSP/Include-ID:/Keil5/Packs/GigaDevice/GD32F30x_DFP/2.2.1/Device/Include-D__UVISION_VERSION="538" -D_RTE_ -DGD32F30X_HD -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F103xE -DARM_MATH_CM4-o xiaomi_cyberdog1/position_pid.o -MD)
-I (..\MID\MID_foc_float\position_pid.h)(0x69078735)
-I (..\MID\MID_foc_float\foc.h)(0x69384E2E)
-I (..\APP\main_user.h)(0x6925C78E)
-I (..\Core\Inc\main.h)(0x68F8E623)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal.h)(0x689C3A9F)
-I (..\Core\Inc\stm32f1xx_hal_conf.h)(0x692EF7E8)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_rcc.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_def.h)(0x689C3A9F)
-I (..\Drivers\CMSIS\Device\ST\STM32F1xx\Include\stm32f1xx.h)(0x689C3A9F)
-I (..\Drivers\CMSIS\Device\ST\STM32F1xx\Include\stm32f103xe.h)(0x689C3A9F)
-I (..\Drivers\CMSIS\Include\core_cm3.h)(0x692EF9A1)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\stdint.h)(0x63884908)
-I (..\Drivers\CMSIS\Include\cmsis_version.h)(0x689C3A94)
-I (..\Drivers\CMSIS\Include\cmsis_compiler.h)(0x689C3A94)
-I (..\Drivers\CMSIS\Include\cmsis_armclang.h)(0x689C3A94)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\arm_compat.h)(0x63884908)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\arm_acle.h)(0x63884908)
-I (..\Drivers\CMSIS\Device\ST\STM32F1xx\Include\system_stm32f1xx.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\Legacy\stm32_hal_legacy.h)(0x689C3A9F)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\stddef.h)(0x63884908)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_rcc_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_gpio.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_gpio_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_exti.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_dma.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_dma_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_cortex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_adc.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_adc_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_flash.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_flash_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_iwdg.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_pwr.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_spi.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_tim.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_tim_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_uart.h)(0x689C3A9F)
-I (D:\Keil5\Packs\ARM\CMSIS\5.7.0\CMSIS\DSP\Include\arm_math.h)(0x5E8ED122)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\string.h)(0x63884908)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\math.h)(0x63884908)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\float.h)(0x63884908)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\limits.h)(0x63884908)
-I (..\COM\filter.h)(0x6905FF32)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\stdbool.h)(0x63884908)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\stdio.h)(0x63884908)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\stdlib.h)(0x63884908)
-F (..\MID\MID_foc_float\position_pid.h)(0x69078735)()
-F (..\MID\MID_foc_float\Para_identify.c)(0x696103B7)(-xc -std=c99 --target=arm-arm-none-eabi -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -c-fno-rtti -funsigned-char -fshort-enums -fshort-wchar-D__MICROLIB -gdwarf-4 -O0 -ffunction-sections -Wno-packed -Wno-missing-variable-declarations -Wno-missing-prototypes -Wno-missing-noreturn -Wno-sign-conversion -Wno-nonportable-include-path -Wno-reserved-id-macro -Wno-unused-macros -Wno-documentation-unknown-command -Wno-documentation -Wno-license-management -Wno-parentheses-equality -Wno-reserved-identifier -I ../Drivers/CMSIS/Include -I ../Core/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F1xx/Include -I ../APP -I ../BSP -I ../MID/MID_foc_float -I ../MID/MID_segger_rtt -I ../MID/MID_foc -I ../MID/MID_SoftIIC/SoftIIC_Fast -I ../COM -I ../MID/MID_cm_backtrace-I./RTE/_Xiaomi_CyberDog1-ID:/Keil5/Packs/ARM/CMSIS/5.7.0/CMSIS/Core/Include-ID:/Keil5/Packs/ARM/CMSIS/5.7.0/CMSIS/DSP/Include-ID:/Keil5/Packs/GigaDevice/GD32F30x_DFP/2.2.1/Device/Include-D__UVISION_VERSION="538" -D_RTE_ -DGD32F30X_HD -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F103xE -DARM_MATH_CM4-o xiaomi_cyberdog1/para_identify.o -MD)
-I (..\MID\MID_foc_float\Para_identify.h)(0x693855BD)
-I (..\MID\MID_foc_float\foc.h)(0x69384E2E)
-I (..\APP\main_user.h)(0x6925C78E)
-I (..\Core\Inc\main.h)(0x68F8E623)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal.h)(0x689C3A9F)
-I (..\Core\Inc\stm32f1xx_hal_conf.h)(0x692EF7E8)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_rcc.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_def.h)(0x689C3A9F)
-I (..\Drivers\CMSIS\Device\ST\STM32F1xx\Include\stm32f1xx.h)(0x689C3A9F)
-I (..\Drivers\CMSIS\Device\ST\STM32F1xx\Include\stm32f103xe.h)(0x689C3A9F)
-I (..\Drivers\CMSIS\Include\core_cm3.h)(0x692EF9A1)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\stdint.h)(0x63884908)
-I (..\Drivers\CMSIS\Include\cmsis_version.h)(0x689C3A94)
-I (..\Drivers\CMSIS\Include\cmsis_compiler.h)(0x689C3A94)
-I (..\Drivers\CMSIS\Include\cmsis_armclang.h)(0x689C3A94)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\arm_compat.h)(0x63884908)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\arm_acle.h)(0x63884908)
-I (..\Drivers\CMSIS\Device\ST\STM32F1xx\Include\system_stm32f1xx.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\Legacy\stm32_hal_legacy.h)(0x689C3A9F)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\stddef.h)(0x63884908)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_rcc_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_gpio.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_gpio_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_exti.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_dma.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_dma_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_cortex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_adc.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_adc_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_flash.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_flash_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_iwdg.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_pwr.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_spi.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_tim.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_tim_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_uart.h)(0x689C3A9F)
-I (D:\Keil5\Packs\ARM\CMSIS\5.7.0\CMSIS\DSP\Include\arm_math.h)(0x5E8ED122)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\string.h)(0x63884908)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\math.h)(0x63884908)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\float.h)(0x63884908)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\limits.h)(0x63884908)
-I (..\COM\filter.h)(0x6905FF32)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\stdbool.h)(0x63884908)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\stdio.h)(0x63884908)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\stdlib.h)(0x63884908)
-F (..\MID\MID_foc_float\Para_identify.h)(0x693855BD)()
-F (..\MID\MID_foc\dead_comp.c)(0x69610A23)(-xc -std=c99 --target=arm-arm-none-eabi -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -c-fno-rtti -funsigned-char -fshort-enums -fshort-wchar-D__MICROLIB -gdwarf-4 -O0 -ffunction-sections -Wno-packed -Wno-missing-variable-declarations -Wno-missing-prototypes -Wno-missing-noreturn -Wno-sign-conversion -Wno-nonportable-include-path -Wno-reserved-id-macro -Wno-unused-macros -Wno-documentation-unknown-command -Wno-documentation -Wno-license-management -Wno-parentheses-equality -Wno-reserved-identifier -I ../Drivers/CMSIS/Include -I ../Core/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F1xx/Include -I ../APP -I ../BSP -I ../MID/MID_foc_float -I ../MID/MID_segger_rtt -I ../MID/MID_foc -I ../MID/MID_SoftIIC/SoftIIC_Fast -I ../COM -I ../MID/MID_cm_backtrace-I./RTE/_Xiaomi_CyberDog1-ID:/Keil5/Packs/ARM/CMSIS/5.7.0/CMSIS/Core/Include-ID:/Keil5/Packs/ARM/CMSIS/5.7.0/CMSIS/DSP/Include-ID:/Keil5/Packs/GigaDevice/GD32F30x_DFP/2.2.1/Device/Include-D__UVISION_VERSION="538" -D_RTE_ -DGD32F30X_HD -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F103xE -DARM_MATH_CM4-o xiaomi_cyberdog1/dead_comp.o -MD)
-I (..\MID\MID_foc\dead_comp.h)(0x69610373)
-I (..\MID\MID_foc_float\foc.h)(0x69384E2E)
-I (..\APP\main_user.h)(0x6925C78E)
-I (..\Core\Inc\main.h)(0x68F8E623)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal.h)(0x689C3A9F)
-I (..\Core\Inc\stm32f1xx_hal_conf.h)(0x692EF7E8)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_rcc.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_def.h)(0x689C3A9F)
-I (..\Drivers\CMSIS\Device\ST\STM32F1xx\Include\stm32f1xx.h)(0x689C3A9F)
-I (..\Drivers\CMSIS\Device\ST\STM32F1xx\Include\stm32f103xe.h)(0x689C3A9F)
-I (..\Drivers\CMSIS\Include\core_cm3.h)(0x692EF9A1)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\stdint.h)(0x63884908)
-I (..\Drivers\CMSIS\Include\cmsis_version.h)(0x689C3A94)
-I (..\Drivers\CMSIS\Include\cmsis_compiler.h)(0x689C3A94)
-I (..\Drivers\CMSIS\Include\cmsis_armclang.h)(0x689C3A94)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\arm_compat.h)(0x63884908)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\arm_acle.h)(0x63884908)
-I (..\Drivers\CMSIS\Device\ST\STM32F1xx\Include\system_stm32f1xx.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\Legacy\stm32_hal_legacy.h)(0x689C3A9F)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\stddef.h)(0x63884908)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_rcc_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_gpio.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_gpio_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_exti.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_dma.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_dma_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_cortex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_adc.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_adc_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_flash.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_flash_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_iwdg.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_pwr.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_spi.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_tim.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_tim_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_uart.h)(0x689C3A9F)
-I (D:\Keil5\Packs\ARM\CMSIS\5.7.0\CMSIS\DSP\Include\arm_math.h)(0x5E8ED122)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\string.h)(0x63884908)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\math.h)(0x63884908)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\float.h)(0x63884908)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\limits.h)(0x63884908)
-I (..\COM\filter.h)(0x6905FF32)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\stdbool.h)(0x63884908)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\stdio.h)(0x63884908)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\stdlib.h)(0x63884908)
-F (..\MID\MID_foc\dead_comp.h)(0x69610373)()
-F (..\MID\MID_segger_rtt\SEGGER_RTT.c)(0x6368DCBD)(-xc -std=c99 --target=arm-arm-none-eabi -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -c-fno-rtti -funsigned-char -fshort-enums -fshort-wchar-D__MICROLIB -gdwarf-4 -O0 -ffunction-sections -Wno-packed -Wno-missing-variable-declarations -Wno-missing-prototypes -Wno-missing-noreturn -Wno-sign-conversion -Wno-nonportable-include-path -Wno-reserved-id-macro -Wno-unused-macros -Wno-documentation-unknown-command -Wno-documentation -Wno-license-management -Wno-parentheses-equality -Wno-reserved-identifier -I ../Drivers/CMSIS/Include -I ../Core/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F1xx/Include -I ../APP -I ../BSP -I ../MID/MID_foc_float -I ../MID/MID_segger_rtt -I ../MID/MID_foc -I ../MID/MID_SoftIIC/SoftIIC_Fast -I ../COM -I ../MID/MID_cm_backtrace-I./RTE/_Xiaomi_CyberDog1-ID:/Keil5/Packs/ARM/CMSIS/5.7.0/CMSIS/Core/Include-ID:/Keil5/Packs/ARM/CMSIS/5.7.0/CMSIS/DSP/Include-ID:/Keil5/Packs/GigaDevice/GD32F30x_DFP/2.2.1/Device/Include-D__UVISION_VERSION="538" -D_RTE_ -DGD32F30X_HD -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F103xE -DARM_MATH_CM4-o xiaomi_cyberdog1/segger_rtt.o -MD)
-I (..\MID\MID_segger_rtt\SEGGER_RTT.h)(0x6368DCBD)
-I (..\MID\MID_segger_rtt\SEGGER_RTT_Conf.h)(0x6368DCBD)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\stdlib.h)(0x63884908)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\stdarg.h)(0x63884908)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\string.h)(0x63884908)
-F (..\MID\MID_segger_rtt\SEGGER_RTT.h)(0x6368DCBD)()
-F (..\MID\MID_segger_rtt\SEGGER_RTT_Conf.h)(0x6368DCBD)()
-F (..\MID\MID_segger_rtt\SEGGER_RTT_Port.c)(0x69184A35)(-xc -std=c99 --target=arm-arm-none-eabi -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -c-fno-rtti -funsigned-char -fshort-enums -fshort-wchar-D__MICROLIB -gdwarf-4 -O0 -ffunction-sections -Wno-packed -Wno-missing-variable-declarations -Wno-missing-prototypes -Wno-missing-noreturn -Wno-sign-conversion -Wno-nonportable-include-path -Wno-reserved-id-macro -Wno-unused-macros -Wno-documentation-unknown-command -Wno-documentation -Wno-license-management -Wno-parentheses-equality -Wno-reserved-identifier -I ../Drivers/CMSIS/Include -I ../Core/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F1xx/Include -I ../APP -I ../BSP -I ../MID/MID_foc_float -I ../MID/MID_segger_rtt -I ../MID/MID_foc -I ../MID/MID_SoftIIC/SoftIIC_Fast -I ../COM -I ../MID/MID_cm_backtrace-I./RTE/_Xiaomi_CyberDog1-ID:/Keil5/Packs/ARM/CMSIS/5.7.0/CMSIS/Core/Include-ID:/Keil5/Packs/ARM/CMSIS/5.7.0/CMSIS/DSP/Include-ID:/Keil5/Packs/GigaDevice/GD32F30x_DFP/2.2.1/Device/Include-D__UVISION_VERSION="538" -D_RTE_ -DGD32F30X_HD -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F103xE -DARM_MATH_CM4-o xiaomi_cyberdog1/segger_rtt_port.o -MD)
-I (..\MID\MID_segger_rtt\SEGGER_RTT_Port.h)(0x69184A2C)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\stdint.h)(0x63884908)
-I (..\MID\MID_segger_rtt\SEGGER_RTT.h)(0x6368DCBD)
-I (..\MID\MID_segger_rtt\SEGGER_RTT_Conf.h)(0x6368DCBD)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\stdlib.h)(0x63884908)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\stdarg.h)(0x63884908)
-I (..\MID\MID_foc_float\foc.h)(0x69384E2E)
-I (..\APP\main_user.h)(0x6925C78E)
-I (..\Core\Inc\main.h)(0x68F8E623)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal.h)(0x689C3A9F)
-I (..\Core\Inc\stm32f1xx_hal_conf.h)(0x692EF7E8)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_rcc.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_def.h)(0x689C3A9F)
-I (..\Drivers\CMSIS\Device\ST\STM32F1xx\Include\stm32f1xx.h)(0x689C3A9F)
-I (..\Drivers\CMSIS\Device\ST\STM32F1xx\Include\stm32f103xe.h)(0x689C3A9F)
-I (..\Drivers\CMSIS\Include\core_cm3.h)(0x692EF9A1)
-I (..\Drivers\CMSIS\Include\cmsis_version.h)(0x689C3A94)
-I (..\Drivers\CMSIS\Include\cmsis_compiler.h)(0x689C3A94)
-I (..\Drivers\CMSIS\Include\cmsis_armclang.h)(0x689C3A94)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\arm_compat.h)(0x63884908)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\arm_acle.h)(0x63884908)
-I (..\Drivers\CMSIS\Device\ST\STM32F1xx\Include\system_stm32f1xx.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\Legacy\stm32_hal_legacy.h)(0x689C3A9F)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\stddef.h)(0x63884908)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_rcc_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_gpio.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_gpio_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_exti.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_dma.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_dma_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_cortex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_adc.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_adc_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_flash.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_flash_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_iwdg.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_pwr.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_spi.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_tim.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_tim_ex.h)(0x689C3A9F)
-I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_uart.h)(0x689C3A9F)
-I (D:\Keil5\Packs\ARM\CMSIS\5.7.0\CMSIS\DSP\Include\arm_math.h)(0x5E8ED122)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\string.h)(0x63884908)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\math.h)(0x63884908)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\float.h)(0x63884908)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\limits.h)(0x63884908)
-I (..\COM\filter.h)(0x6905FF32)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\stdbool.h)(0x63884908)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\stdio.h)(0x63884908)
-F (..\MID\MID_segger_rtt\SEGGER_RTT_Port.h)(0x69184A2C)()
-F (..\MID\MID_segger_rtt\SEGGER_RTT_printf.c)(0x6368DCBD)(-xc -std=c99 --target=arm-arm-none-eabi -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -c-fno-rtti -funsigned-char -fshort-enums -fshort-wchar-D__MICROLIB -gdwarf-4 -O0 -ffunction-sections -Wno-packed -Wno-missing-variable-declarations -Wno-missing-prototypes -Wno-missing-noreturn -Wno-sign-conversion -Wno-nonportable-include-path -Wno-reserved-id-macro -Wno-unused-macros -Wno-documentation-unknown-command -Wno-documentation -Wno-license-management -Wno-parentheses-equality -Wno-reserved-identifier -I ../Drivers/CMSIS/Include -I ../Core/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F1xx/Include -I ../APP -I ../BSP -I ../MID/MID_foc_float -I ../MID/MID_segger_rtt -I ../MID/MID_foc -I ../MID/MID_SoftIIC/SoftIIC_Fast -I ../COM -I ../MID/MID_cm_backtrace-I./RTE/_Xiaomi_CyberDog1-ID:/Keil5/Packs/ARM/CMSIS/5.7.0/CMSIS/Core/Include-ID:/Keil5/Packs/ARM/CMSIS/5.7.0/CMSIS/DSP/Include-ID:/Keil5/Packs/GigaDevice/GD32F30x_DFP/2.2.1/Device/Include-D__UVISION_VERSION="538" -D_RTE_ -DGD32F30X_HD -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F103xE -DARM_MATH_CM4-o xiaomi_cyberdog1/segger_rtt_printf.o -MD)
-I (..\MID\MID_segger_rtt\SEGGER_RTT.h)(0x6368DCBD)
-I (..\MID\MID_segger_rtt\SEGGER_RTT_Conf.h)(0x6368DCBD)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\stdlib.h)(0x63884908)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\stdarg.h)(0x63884908)
-F (..\COM\filter.c)(0x69610A96)(-xc -std=c99 --target=arm-arm-none-eabi -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -c-fno-rtti -funsigned-char -fshort-enums -fshort-wchar-D__MICROLIB -gdwarf-4 -O0 -ffunction-sections -Wno-packed -Wno-missing-variable-declarations -Wno-missing-prototypes -Wno-missing-noreturn -Wno-sign-conversion -Wno-nonportable-include-path -Wno-reserved-id-macro -Wno-unused-macros -Wno-documentation-unknown-command -Wno-documentation -Wno-license-management -Wno-parentheses-equality -Wno-reserved-identifier -I ../Drivers/CMSIS/Include -I ../Core/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F1xx/Include -I ../APP -I ../BSP -I ../MID/MID_foc_float -I ../MID/MID_segger_rtt -I ../MID/MID_foc -I ../MID/MID_SoftIIC/SoftIIC_Fast -I ../COM -I ../MID/MID_cm_backtrace-I./RTE/_Xiaomi_CyberDog1-ID:/Keil5/Packs/ARM/CMSIS/5.7.0/CMSIS/Core/Include-ID:/Keil5/Packs/ARM/CMSIS/5.7.0/CMSIS/DSP/Include-ID:/Keil5/Packs/GigaDevice/GD32F30x_DFP/2.2.1/Device/Include-D__UVISION_VERSION="538" -D_RTE_ -DGD32F30X_HD -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F103xE -DARM_MATH_CM4-o xiaomi_cyberdog1/filter.o -MD)
-I (..\COM\filter.h)(0x6905FF32)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\stdbool.h)(0x63884908)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\stdio.h)(0x63884908)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\string.h)(0x63884908)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\stdlib.h)(0x63884908)
-I (D:\Keil5\Packs\ARM\CMSIS\5.7.0\CMSIS\DSP\Include\arm_math.h)(0x5E8ED122)
-I (..\Drivers\CMSIS\Include\cmsis_compiler.h)(0x689C3A94)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\stdint.h)(0x63884908)
-I (..\Drivers\CMSIS\Include\cmsis_armclang.h)(0x689C3A94)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\arm_compat.h)(0x63884908)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\arm_acle.h)(0x63884908)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\math.h)(0x63884908)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\float.h)(0x63884908)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\limits.h)(0x63884908)
-F (..\COM\filter.h)(0x6905FF32)()
-F (..\MID\MID_cm_backtrace\cm_backtrace.c)(0x62F5C726)(-xc -std=c99 --target=arm-arm-none-eabi -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -c-fno-rtti -funsigned-char -fshort-enums -fshort-wchar-D__MICROLIB -gdwarf-4 -O0 -ffunction-sections -Wno-packed -Wno-missing-variable-declarations -Wno-missing-prototypes -Wno-missing-noreturn -Wno-sign-conversion -Wno-nonportable-include-path -Wno-reserved-id-macro -Wno-unused-macros -Wno-documentation-unknown-command -Wno-documentation -Wno-license-management -Wno-parentheses-equality -Wno-reserved-identifier -I ../Drivers/CMSIS/Include -I ../Core/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F1xx/Include -I ../APP -I ../BSP -I ../MID/MID_foc_float -I ../MID/MID_segger_rtt -I ../MID/MID_foc -I ../MID/MID_SoftIIC/SoftIIC_Fast -I ../COM -I ../MID/MID_cm_backtrace-I./RTE/_Xiaomi_CyberDog1-ID:/Keil5/Packs/ARM/CMSIS/5.7.0/CMSIS/Core/Include-ID:/Keil5/Packs/ARM/CMSIS/5.7.0/CMSIS/DSP/Include-ID:/Keil5/Packs/GigaDevice/GD32F30x_DFP/2.2.1/Device/Include-D__UVISION_VERSION="538" -D_RTE_ -DGD32F30X_HD -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F103xE -DARM_MATH_CM4-o xiaomi_cyberdog1/cm_backtrace.o -MD)
-I (..\MID\MID_cm_backtrace\cm_backtrace.h)(0x691871CC)
-I (..\MID\MID_cm_backtrace\cmb_def.h)(0x62F5C726)
-I (..\MID\MID_cm_backtrace\cmb_cfg.h)(0x69187D51)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\stdint.h)(0x63884908)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\stdlib.h)(0x63884908)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\stdbool.h)(0x63884908)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\string.h)(0x63884908)
-I (D:\Keil5\Core\ARM\ARMCLANG\include\stdio.h)(0x63884908)
-I (..\MID\MID_cm_backtrace\Languages\en-US\cmb_en_US.h)(0x62F5C726)
-F (..\MID\MID_cm_backtrace\cm_backtrace.h)(0x691871CC)()
-F (..\MID\MID_cm_backtrace\cmb_cfg.h)(0x69187D51)()
-F (..\MID\MID_cm_backtrace\cmb_def.h)(0x62F5C726)()
-F (..\MID\MID_cm_backtrace\cmb_fault.S)(0x62F5C726)(--target=arm-arm-none-eabi -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -masm=auto  -Wa,armasm,--diag_suppress=A1950W -c-gdwarf-4 -D__MICROLIB-I./RTE/_Xiaomi_CyberDog1-ID:/Keil5/Packs/ARM/CMSIS/5.7.0/CMSIS/Core/Include-ID:/Keil5/Packs/ARM/CMSIS/5.7.0/CMSIS/DSP/Include-ID:/Keil5/Packs/GigaDevice/GD32F30x_DFP/2.2.1/Device/Include-D__UVISION_VERSION=538 -D_RTE_ -DGD32F30X_HD -D_RTE_-o xiaomi_cyberdog1/cmb_fault.o)
-F (D:/Keil5/Packs/ARM/CMSIS/5.7.0/CMSIS/DSP/Lib/ARM/arm_cortexM4lf_math.lib)(0x5E8ED124)()

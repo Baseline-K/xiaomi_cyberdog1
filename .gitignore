@@ -3,6 +3,16 @@ bin-debug/
 bin-release/
 [Oo]bj/
 [Bb]in/
+build/
+
+# Simulink build artifacts
+**/slprj/
+*_ert_rtw/
+*.slxc
+*.mexw64
+
+# User-specific debugger state
+*.jdebug.user
 
 # Other files and folders
 .settings/
