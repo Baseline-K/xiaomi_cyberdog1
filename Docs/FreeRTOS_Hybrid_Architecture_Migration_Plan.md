@@ -85,6 +85,19 @@
 
 RAM 足以支持一个精简 FreeRTOS 配置，但最终任务栈必须通过高水位实测确定，不能只按估算值发布。
 
+### 2.1 Phase 0 实测基线（2026-08-17，提交 3ce8d53）
+
+速度环恢复后实测（Debug 构建 `-Og -g3`，工具链 gnu-tools-for-stm32 14.3.1）：
+
+| 项目 | 实测值 | 说明 |
+|---|---|---|
+| FOC 10 kHz ADC ISR | ~60 us / 周期（典型值） | 预算 100 us；avg/P99/max 的正式统计待 Phase 1 用 RTT 采集补充 |
+| `bsp_as5600GetAngle()` 软件 I2C | ~37 us | 占 ISR 60%，是 WCET 大头；Phase 1 后单独评估硬件 SPI/DMA 或降采样+角度预测 |
+| Flash 占用 | 65044 B ≈ 63.5 KiB | text 64100 + data 944；512 KiB 的 12.4% |
+| RAM 静态占用 | 9904 B ≈ 9.7 KiB | data 944 + bss 8960；64 KiB 的 15.2% |
+
+Phase 0 控制修复项已通过验收（速度环正反转受控、Start/Stop 无残留积分）。FOC ISR 最坏时间在 100 us 预算的 60%，满足验收门，但余量仅约 40 us，Phase 4 加入 `Safety_FastStep()` 前需复核。
+
 ---
 
 ## 3. 目标架构
