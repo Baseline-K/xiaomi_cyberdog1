@@ -103,7 +103,7 @@ Phase 0 控制修复项已通过验收（速度环正反转受控、Start/Stop �
 CubeMX 时基改为 TIM6 后实测再生成会带来以下改动，每次再生成后需复查：
 
 - **`Core/Src/main.c`：`MX_IWDG_Init();` 会被重新启用**，而当前无人喂狗 → 每 ~160ms 复位。需重新注释为 `//MX_IWDG_Init();`（Phase 4 实现喂狗后再启用）。
-- **`Core/Src/stm32f1xx_it.c`：SVC/PendSV/SysTick 处理器会被重生成**。FreeRTOS 接入后需重新把三个向量映射到 `vPortSVCHandler/xPortPendSVHandler/xPortSysTickHandler`。
+- **`Core/Src/stm32f1xx_it.c`：SVC/PendSV/SysTick 空壳处理器会被重新生成**。当前采用 **Direct Routing**（`FreeRTOSConfig.h` 中 `#define vPortSVCHandler SVC_Handler` 等，端口函数直接占用向量名），因此这三个空壳必须删除，否则与端口重命名函数重复符号；再生成后需再次删除。HAL timebase 已迁 TIM6，`SysTick_Handler` 删除无副作用。
 - **`Core/Src/tim.c`：`TIM1_BRK_IRQHandler` 及其 NVIC 使能会被移除**。当前 `BreakState=TIM_BREAK_DISABLE`，硬件 Break 未用，无影响；Phase 4 若启用 Break 需重建该中断。
 - **`cmake/stm32cubemx/CMakeLists.txt`** 会加回 `stm32f1xx_hal_can.c`，由顶层 CMake 的 GD32 补丁自动替换，无需手工处理。
 - **`Middlewares/` 目录会被清理**——FreeRTOS-Kernel 现独立放根目录 `FreeRTOS-Kernel/`，不受影响。
@@ -594,19 +594,24 @@ FreeRTOS Cortex-M端口需要接管 `SVC`、`PendSV` 和通常的 `SysTick`。�
 
 工作项：
 
-- [ ] 添加固定版本的 FreeRTOS Kernel源码和许可证文件。
-- [ ] 加入 Cortex-M4F端口与 `FreeRTOSConfig.h`。
-- [ ] 配置 SVC/PendSV/SysTick向量和 HAL timebase。
-- [ ] 创建一个低优先级 `BringUpTask`，仅翻转调试GPIO/递增计数器。
-- [ ] FOC、CAN、状态控制仍保持原路径，确认内核本身不影响控制。
-- [ ] 打开 `configASSERT`、栈溢出钩子和故障记录。
+- [x] 添加固定版本的 FreeRTOS Kernel源码和许可证文件。
+- [x] 加入 Cortex-M4F端口与 `FreeRTOSConfig.h`（位于 `Code_Source/CONFIG/`）。
+- [x] 配置 SVC/PendSV/SysTick向量和 HAL timebase（TIM6）。
+- [x] 创建一个低优先级 `BringUpTask`，仅翻转调试GPIO/递增计数器。
+- [x] FOC、CAN、状态控制仍保持原路径，确认内核本身不影响控制。
+- [x] 打开 `configASSERT`、栈溢出钩子和故障记录。
 
-验收门：
+验收门（2026-08-18 硬件实测通过）：
 
-- 调度器稳定运行，1 ms tick准确。
-- 10 kHz FOC中断周期、执行时间和抖动相对 Phase 0无显著退化。
-- Start/Stop和CAN行为与裸机基线一致。
+- 调度器稳定运行，1 ms tick准确（RTT 心跳 `tick` 每 1s +1000）。
+- 10 kHz FOC中断周期、执行时间相对 Phase 0无显著退化（电机控制正常）。
+- Start/Stop和CAN行为与裸机基线一致（速度/模式/启停指令正常）。
 - 中断优先级断言无触发。
+
+bring-up 修复记录：
+
+- **DRV83xx `Delay_us` 卡死**：HAL 时基迁到 TIM6 后 SysTick 计数器无人使能（drv83xx.c 直接读 `SysTick->VAL` 做微秒延时），在 `main_user()` 初始化处仅使能计数器（不开中断）解决；FreeRTOS 启动后接管 SysTick。
+- **任务不运行（V11.3.0 Direct Routing）**：V11.3.0 端口默认 `configCHECK_HANDLER_INSTALLATION=1`，`xPortStartScheduler` 断言向量表 SVC/PendSV **直接**指向端口函数。采用 Direct Routing（FreeRTOSConfig.h 中 `#define vPortSVCHandler SVC_Handler` 等三个宏），并从 `stm32f1xx_it.c` 删除 SVC/PendSV/SysTick 空壳（见 §2.2 备注）。
 
 回退点：移除调度器启动和 FreeRTOS构建源即可恢复 Phase 0。
 
@@ -781,8 +786,10 @@ Code_Source/
     AS5600.c/.h
     ...
 
+  CONFIG/
+    FreeRTOSConfig.h          # 配置（不放入 Core/，避免 CubeMX 再生成覆盖）
+
 Core/
-  Inc/FreeRTOSConfig.h
 ```
 
 建议将 FreeRTOS源码作为固定版本的独立目录或 Git submodule管理；若当前工程不适合 submodule，则将版本号、来源提交和许可证一并记录在 `FreeRTOS-Kernel/README.md`。

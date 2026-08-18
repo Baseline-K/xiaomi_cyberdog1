@@ -89,6 +89,17 @@ extern void vAssertCalled(const char *pcFile, unsigned long ulLine);
 #define configENABLE_BACKWARD_COMPATIBILITY        1
 
 /*-----------------------------------------------------------
+ * Direct Routing（V11.3.0 端口要求，configCHECK_HANDLER_INSTALLATION=1）
+ * 把端口处理器函数重命名为向量表名，使向量表直接指向
+ * vPortSVCHandler / xPortPendSVHandler / xPortSysTickHandler，
+ * 满足 xPortStartScheduler 里的向量安装断言。
+ * 注意：stm32f1xx_it.c 中不得再定义 SVC_Handler / PendSV_Handler / SysTick_Handler。
+ *----------------------------------------------------------*/
+#define vPortSVCHandler      SVC_Handler
+#define xPortPendSVHandler   PendSV_Handler
+#define xPortSysTickHandler  SysTick_Handler
+
+/*-----------------------------------------------------------
  * 说明：vApplicationGetIdleTaskMemory / 各钩子回调由应用实现（app_tasks.c）。
  * 静态内存回调的前置声明由内核 tasks.c 在包含 task.h 后自行提供，
  * 不在本配置文件中声明（此处类型尚未定义）。

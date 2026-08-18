@@ -28,6 +28,10 @@
 #include "SEGGER_RTT_Port.h"
 #include "cm_backtrace.h"
 
+#include "FreeRTOS.h"
+#include "task.h"
+#include "app_tasks.h"
+
 void fault_test_by_div0(void) {
     volatile int * SCB_CCR = (volatile int *) 0xE000ED14; // SCB->CCR
     int x, y, z;
@@ -67,6 +71,12 @@ void main_user(void)
 	
 	/******* 用户区初始化  **********/
 	//DWT_Init();    //调试计数器
+	/* GD32_NOTE: HAL 时基已迁移到 TIM6（SysTick 预留给 FreeRTOS），但调度器启动前
+	 * 无人使能 SysTick 计数器。drv83xx.c 的 Delay_us() 直接读 SysTick->VAL 做微秒延时，
+	 * 此处仅使能计数器、不开中断；vTaskStartScheduler() 后 FreeRTOS 会接管 SysTick 配置。 */
+	SysTick->CTRL = SysTick_CTRL_CLKSOURCE_Msk | SysTick_CTRL_ENABLE_Msk;
+	SysTick->LOAD = 0x00FFFFFFUL;
+	SysTick->VAL  = 0UL;
 	SEGGER_RTT_Init();             //RTT Viewer打印数据（先初始化RTT，避免PLUS通道配置被重置）
 	SEGGER_RTT_PLUS_Port_Init();   //J-Scope调试变量曲线
 	printf("Segger RTT Init Success!\r\n");
@@ -123,48 +133,37 @@ void main_user(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-	uint32_t previousMillis = 0;
-	uint32_t prevCanMillis = 0;
-  const uint32_t interval = 10; // 单位 ms 间隔
-	
-		 
-  while (1)
-  {
-		  
-			 // 获取当前的系统时间
-			 uint32_t currentMillis = HAL_GetTick();
+	// Phase 1：创建静态任务（BringUpTask + LegacyMainTask）并启动 FreeRTOS 调度器
+	AppTasks_Init();
+	vTaskStartScheduler();
 
-			 // 1ms：控制接口处理（CAN + RTT）
-			 if (currentMillis - prevCanMillis >= 1U) {
-				 prevCanMillis = currentMillis;
-				 CANopen_OD_Process();   // CAN 弹帧→解析→写 MotorCtrl 影子
-				 MotorCtrl_Process();    // start/stop 请求
-				 RTT_Cmd_Process();      // RTT 命令 → MotorCtrl
-			 }
+	// 调度器正常不应返回；若返回（无任务/错误）则挂死便于调试
+	while (1)
+	{
+	}
+  /* USER CODE END WHILE */
+}
 
-		 // 检查是否已达到间隔时间
-		 if (currentMillis - previousMillis >= interval) {
-				previousMillis = currentMillis;  // 更新上次执行的时间
-			 
-			 //HAL_IWDG_Refresh(&hiwdg);
-        // 调用要定时执行的函数
-			 //ADCSampPare.RP_speed_Voltage = 300;
-			 
-//			 __disable_irq();
-//				start = DWT->CYCCNT; // 记录起始时间
-// 
-			//   bsp_as5600GetAngle(&Encoder_AS5600.angle);
-			//   //bsp_as5600_DMAGetAngle(&Encoder_AS5600.angle);
-			//   Encoder_AS5600.eleangle	= fmodf(Encoder_AS5600.angle * Motor_Params.Pole_Pairs, Two_PI);
 
-			 
-			  //HAL_IWDG_Refresh(&hiwdg);  // 喂狗，重装载计数器
+/* LegacyMainTask：Phase 1 过渡任务，承载原 main_user() 的 while(1) 轮询循环。
+ * 用 vTaskDelayUntil 以 1ms tick 阻塞执行（与裸机 HAL_GetTick 轮询等效），
+ * 让出 CPU 给低优先级任务。Phase 2 由 CommTask 接管 CAN 后移除。 */
+void LegacyMainTask(void *pvParam)
+{
+	TickType_t xLastWake = xTaskGetTickCount();
 
-		 }
+	(void) pvParam;
 
-		
-		
-  }
+	for (;;)
+	{
+		vTaskDelayUntil(&xLastWake, pdMS_TO_TICKS(1));
+
+		CANopen_OD_Process();   // CAN 弹帧→解析→写 MotorCtrl 影子
+		MotorCtrl_Process();    // start/stop 请求
+		RTT_Cmd_Process();      // RTT 命令 → MotorCtrl
+
+		/* 原 while(1) 的 10ms 间隔块仅含注释掉的调试代码，已省略 */
+	}
 }
 
 
