@@ -6,7 +6,13 @@
 #ifndef APP_TASKS_H
 #define APP_TASKS_H
 
-/* 创建 Phase 1 的静态任务（BringUpTask + LegacyMainTask）。
+#include "task.h"   /* TaskHandle_t */
+
+/* CommTask 句柄：CAN RX ISR（stm32f1xx_it.c）用 vTaskNotifyGiveFromISR 通知。
+ * 调度器启动前为 NULL，ISR 需判空保护。 */
+extern TaskHandle_t xCommTaskHandle;
+
+/* 创建 Phase 1 的静态任务（BringUpTask + LegacyMainTask + CommTask）。
  * 在 vTaskStartScheduler() 之前调用；所有任务均为 xTaskCreateStatic。 */
 void AppTasks_Init(void);
 

@@ -158,7 +158,7 @@ void LegacyMainTask(void *pvParam)
 	{
 		vTaskDelayUntil(&xLastWake, pdMS_TO_TICKS(1));
 
-		CANopen_OD_Process();   // CAN 弹帧→解析→写 MotorCtrl 影子
+		/* CAN 协议解析已由 CommTask（任务通知驱动）承担（Phase 2），此处不再调用 */
 		MotorCtrl_Process();    // start/stop 请求
 		RTT_Cmd_Process();      // RTT 命令 → MotorCtrl
 

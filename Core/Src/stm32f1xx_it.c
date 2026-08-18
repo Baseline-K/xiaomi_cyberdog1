@@ -22,6 +22,9 @@
 #include "stm32f1xx_it.h"
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+#include "FreeRTOS.h"
+#include "task.h"
+#include "app_tasks.h"   /* xCommTaskHandle */
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -253,7 +256,14 @@ void USB_LP_CAN1_RX0_IRQHandler(void)
   /* USER CODE END USB_LP_CAN1_RX0_IRQn 0 */
   HAL_CAN_IRQHandler(&hcan);
   /* USER CODE BEGIN USB_LP_CAN1_RX0_IRQn 1 */
-
+  /* CAN 收到帧（硬件过滤器已精确匹配 SDO）→ 通知 CommTask 批处理。
+   * 调度器启动前 xCommTaskHandle==NULL 时不通知，帧留在环形缓冲等首个唤醒。 */
+  if (xCommTaskHandle != NULL)
+  {
+    BaseType_t xHigherPriorityTaskWoken = pdFALSE;
+    vTaskNotifyGiveFromISR(xCommTaskHandle, &xHigherPriorityTaskWoken);
+    portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
+  }
   /* USER CODE END USB_LP_CAN1_RX0_IRQn 1 */
 }
 

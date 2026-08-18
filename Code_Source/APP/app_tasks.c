@@ -14,6 +14,7 @@
 #include "main.h"
 #include "app_tasks.h"
 #include "SEGGER_RTT.h"
+#include "CANopen_OD.h"
 
 /*-----------------------------------------------------------
  * 任务栈/TCB 静态内存与句柄
@@ -25,6 +26,28 @@ static TaskHandle_t  BringUpTaskHandle;
 static StackType_t   LegacyMainTaskStack[configMINIMAL_STACK_SIZE * 4];  /* 2 KB，含 printf/RTT 调用链 */
 static StaticTask_t  LegacyMainTaskTCB;
 static TaskHandle_t  LegacyMainTaskHandle;
+
+static StackType_t   CommTaskStack[configMINIMAL_STACK_SIZE * 3];   /* 1.5 KB，CAN 解析+应答调用链 */
+static StaticTask_t  CommTaskTCB;
+TaskHandle_t         xCommTaskHandle;   /* 非 static：供 CAN RX ISR 通知 */
+
+/*-----------------------------------------------------------
+ * CommTask：CAN 协议解析任务（计划 §3.2 优先级 3）
+ * CAN RX ISR 收帧入环形缓冲 → vTaskNotifyGiveFromISR 唤醒本任务 → 批量弹帧处理。
+ *----------------------------------------------------------*/
+static void CommTask_Entry(void *pvParam)
+{
+    (void) pvParam;
+
+    for (;;)
+    {
+        /* 等待 CAN 帧通知（通知值计数累加，忽略具体值） */
+        xTaskNotifyWait(0UL, 0xFFFFFFFFUL, NULL, portMAX_DELAY);
+
+        /* 一次性批处理缓冲内全部帧（内部 while PopFrame） */
+        CANopen_OD_Process();
+    }
+}
 
 /*-----------------------------------------------------------
  * BringUpTask：低优先级验证任务，翻转板载 LED(PC13) 并计数
@@ -67,7 +90,7 @@ void AppTasks_Init(void)
                                           &BringUpTaskTCB);
     configASSERT(BringUpTaskHandle != NULL);
 
-    /* LegacyMainTask：优先级 2，承载原 while(1) 轮询（CAN/MotorCtrl/RTT） */
+    /* LegacyMainTask：优先级 2，承载原 while(1) 轮询（MotorCtrl/RTT） */
     LegacyMainTaskHandle = xTaskCreateStatic(LegacyMainTask,
                                              "LegacyMain",
                                              sizeof(LegacyMainTaskStack) / sizeof(StackType_t),
@@ -76,6 +99,16 @@ void AppTasks_Init(void)
                                              LegacyMainTaskStack,
                                              &LegacyMainTaskTCB);
     configASSERT(LegacyMainTaskHandle != NULL);
+
+    /* CommTask：优先级 3，CAN 协议解析（任务通知驱动） */
+    xCommTaskHandle = xTaskCreateStatic(CommTask_Entry,
+                                        "Comm",
+                                        sizeof(CommTaskStack) / sizeof(StackType_t),
+                                        (void *) NULL,
+                                        3,
+                                        CommTaskStack,
+                                        &CommTaskTCB);
+    configASSERT(xCommTaskHandle != NULL);
 }
 
 /*-----------------------------------------------------------
