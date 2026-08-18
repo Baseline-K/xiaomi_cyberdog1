@@ -1,17 +1,10 @@
 #include "FOC_run.h"
-#include "ThreeHall.h"
 #include "Timer.h"
 #include "main_user.h"
 #include "SEGGER_RTT_Port.h"
 
 #include "foc.h"
-#include "foc_pid.h"
-#include "speed_pid.h"
-#include "position_pid.h"
-#include "Para_identify.h"
 #include "AS5600.h"
-
-#include "dead_comp.h"
 
 #define DEBUG 1
 #if DEBUG

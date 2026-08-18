@@ -16,20 +16,14 @@
 
 #include "FOC_run.h"
 #include "Timer.h"
-#include "ThreeHall.h"
-#include "IQ_math.h"
 #include "CANopen_OD.h"
 #include "MotorCtrl.h"
 #include "CAN_bsp.h"
 #include "RTT_Cmd.h"
 
-#include "foc_pid.h"
-#include "speed_pid.h"
-#include "position_pid.h"
 #include "AS5600.h"
 #include "Soft_IIC.h"
 #include "drv83xx.h"
-#include "dead_comp.h"
 
 #include "SEGGER_RTT_Port.h"
 #include "cm_backtrace.h"
@@ -48,9 +42,6 @@ void fault_test_by_div0(void) {
 
 void DWT_Init(void);
 void Uart_485_Init(void);
-
-IQSin_Cos    AngleSin_Cos = IQSin_Cos_DEFAULTS ;
-
 
 extern uint32_t start,end,cycles;
 extern float time_us;
@@ -121,8 +112,6 @@ void main_user(void)
 	 Encoder_PLL_eleFilter = Angle_PLL_filter_init(FOC_Frequency, 250.0f, 1.0f/4096.0f * 2 *PI * 0.1f * Motor_Params.Pole_Pairs, 
 	                                               2.0f * (Motor_Params.RPM_Rating/60) * 2*PI * Motor_Params.Pole_Pairs);
 	 
-	 DeadTime_Compensation_Init(&Motor_Params);
-
 	 FOC_Generated_Init();    // Simulink 生成 FOC 算法参数初始化
 	 MotorState.ctrl_mode = CTRL_MODE_SPEED;
 	 CAN_bsp_Init();          // CAN 控制接口（过滤器/接收/回调）
@@ -180,31 +169,17 @@ void main_user(void)
 
 
 void Param_init(void)
-{ 
-	  current_q_pid_Init(&current_q_pid, Motor_Params);
-	  current_d_pid_Init(&current_d_pid, Motor_Params);
-		speed_pid_init(Motor_Params, N);
-	  position_PID_Init(&position_pid,Motor_Params);
-		//ThreeHallPara_init();   // 三霍尔角度传感器的参数初始化
-	  bsp_as5600Init();
-		SEGGER_RTT_TimeStamp_reset(); 
+{
+		// 注：Simulink 生成代码内部自带电流/速度/位置 PID，旧 MID_foc PID 结构已移除
+		bsp_as5600Init();
+		SEGGER_RTT_TimeStamp_reset();
 }
 
 void Param_deinit(void)
 {
-	//memset(&TestPare, 0, sizeof(TestPare));
-	//memset(&TaskTimePare, 0, sizeof(TaskTimePare));
-	memset(&AngleSin_Cos, 0, sizeof(AngleSin_Cos));
-	//memset(&Hall_Three, 0, sizeof(Hall_Three));
-	//memset(&Encoder_AS5600, 0, sizeof(Encoder_AS5600));
-	
 	memset(&foc_dq_v, 0, sizeof(foc_dq_v));
 	memset(&foc_dq_i, 0, sizeof(foc_dq_i));
-	memset(&current_q_pid, 0, sizeof(current_q_pid));
-	memset(&current_d_pid, 0, sizeof(current_d_pid));
-	memset(&speed_pid, 0, sizeof(speed_pid));
-	memset(&position_pid, 0, sizeof(position_pid));
-	
+
 	Angle_PLL_filter_clear(Encoder_PLL_mecFilter);
 	Angle_PLL_filter_clear(Encoder_PLL_eleFilter);
 }

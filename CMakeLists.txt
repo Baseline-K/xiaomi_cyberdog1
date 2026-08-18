@@ -86,6 +86,15 @@ target_sources(${CMAKE_PROJECT_NAME} PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/Simulink_Model/generated/CyberDog_Motor_FOC.c
     ${CMAKE_CURRENT_SOURCE_DIR}/Simulink_Model/generated/CyberDog_Motor_FOC_data.c
     ${CMAKE_CURRENT_SOURCE_DIR}/Simulink_Model/generated/rt_nonfinite.c
+    # FreeRTOS Kernel（固定版本 V11.3.0，见 FreeRTOS-Kernel/README.md）
+    ${CMAKE_CURRENT_SOURCE_DIR}/FreeRTOS-Kernel/tasks.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/FreeRTOS-Kernel/queue.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/FreeRTOS-Kernel/list.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/FreeRTOS-Kernel/timers.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/FreeRTOS-Kernel/event_groups.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/FreeRTOS-Kernel/stream_buffer.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/FreeRTOS-Kernel/portable/GCC/ARM_CM4F/port.c
+    # 注意：configSUPPORT_DYNAMIC_ALLOCATION=0，不链接任何 MemMang heap_*.c（内核不引用 pvPortMalloc）
 )
 
 # Add include paths
@@ -101,7 +110,6 @@ target_include_directories(${CMAKE_PROJECT_NAME} BEFORE PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/Code_Source/SERVICE
     ${CMAKE_CURRENT_SOURCE_DIR}/Code_Source/CONFIG
     ${CMAKE_CURRENT_SOURCE_DIR}/Code_Source/MID/MID_foc
-    ${CMAKE_CURRENT_SOURCE_DIR}/Code_Source/MID/MID_foc_float
     ${CMAKE_CURRENT_SOURCE_DIR}/Code_Source/MID/MID_SoftIIC
     ${CMAKE_CURRENT_SOURCE_DIR}/Code_Source/MID/MID_SoftIIC/SoftIIC_Fast
     ${CMAKE_CURRENT_SOURCE_DIR}/Code_Source/MID/MID_SoftIIC/SoftIIC_General
@@ -109,6 +117,9 @@ target_include_directories(${CMAKE_PROJECT_NAME} BEFORE PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/Code_Source/MID/MID_segger_rtt
     # Simulink 生成的 FOC 算法头文件
     ${CMAKE_CURRENT_SOURCE_DIR}/Simulink_Model/generated
+    # FreeRTOS Kernel 头文件与端口
+    ${CMAKE_CURRENT_SOURCE_DIR}/FreeRTOS-Kernel/include
+    ${CMAKE_CURRENT_SOURCE_DIR}/FreeRTOS-Kernel/portable/GCC/ARM_CM4F
 )
 
 # Add project symbols (macros)

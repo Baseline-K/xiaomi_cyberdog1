@@ -98,6 +98,16 @@ RAM 足以支持一个精简 FreeRTOS 配置，但最终任务栈必须通过高
 
 Phase 0 控制修复项已通过验收（速度环正反转受控、Start/Stop 无残留积分）。FOC ISR 最坏时间在 100 us 预算的 60%，满足验收门，但余量仅约 40 us，Phase 4 加入 `Safety_FastStep()` 前需复核。
 
+### 2.2 CubeMX 再生成后需重做事项（2026-08-18）
+
+CubeMX 时基改为 TIM6 后实测再生成会带来以下改动，每次再生成后需复查：
+
+- **`Core/Src/main.c`：`MX_IWDG_Init();` 会被重新启用**，而当前无人喂狗 → 每 ~160ms 复位。需重新注释为 `//MX_IWDG_Init();`（Phase 4 实现喂狗后再启用）。
+- **`Core/Src/stm32f1xx_it.c`：SVC/PendSV/SysTick 处理器会被重生成**。FreeRTOS 接入后需重新把三个向量映射到 `vPortSVCHandler/xPortPendSVHandler/xPortSysTickHandler`。
+- **`Core/Src/tim.c`：`TIM1_BRK_IRQHandler` 及其 NVIC 使能会被移除**。当前 `BreakState=TIM_BREAK_DISABLE`，硬件 Break 未用，无影响；Phase 4 若启用 Break 需重建该中断。
+- **`cmake/stm32cubemx/CMakeLists.txt`** 会加回 `stm32f1xx_hal_can.c`，由顶层 CMake 的 GD32 补丁自动替换，无需手工处理。
+- **`Middlewares/` 目录会被清理**——FreeRTOS-Kernel 现独立放根目录 `FreeRTOS-Kernel/`，不受影响。
+
 ---
 
 ## 3. 目标架构
@@ -160,6 +170,29 @@ TIM1 PWM ──触发 ADC ──>│ ADC ISR，10 kHz             │
 - 队列、事件组、软件定时器如需使用，也采用静态创建接口。
 - 发布前启用并记录 `uxTaskGetStackHighWaterMark()`，将每个栈保留至少 30%余量。
 - 第一版不启用 FreeRTOS 软件定时器；周期任务使用 `vTaskDelayUntil()`。
+
+### 3.3 与《电机驱动器RTOS架构建议》文档的映射
+
+`Docs/电机驱动器RTOS架构建议.md` 作为长期总体框架，与本计划的关系如下（本计划是它的分阶段落地路径）：
+
+| 架构建议文档 | 本计划 | 说明 |
+|---|---|---|
+| MotorManagerTask | `MotorStateTask` | 状态机/启停/故障处理唯一所有者，概念一致 |
+| CommunicationTask | `CommTask` | 一致 |
+| DiagnosticTask | `DiagTask` | 一致 |
+| WatchDogTask | 计划 §6.2 的"独立健康汇总喂狗" | 架构文档建议独立任务；计划允许先并入 DiagTask，稳定后再拆 |
+| ScopeTask | 现有 SEGGER RTT PLUS/J-Scope | 由 DiagTask 承担，控制 ISR 只写快照 |
+| ParameterTask | Phase 6 之后 | Flash 参数持久化，与计划"参数更新仅在PWM关闭"一致 |
+| LogTask | `Logger_FaultLog` + DiagTask | 一致 |
+| 控制环分频 | 计划 §Phase 6 候选方案 A | 架构文档给出 40k/4k/2k/1k 示例；本工程按 10k/1k 分频 |
+
+需要纳入本计划的具体落点（已在对应章节体现或待实现时遵守）：
+
+- **命令快照结构**：架构文档 §13.3 的 `MotorReference_t`（position/speed/torque/iq_ref + control_mode + enable）作为 `MotorCommand` 快照的基准结构；ISR 每周期读快照，绝不等 Mutex。
+- **遥测快照结构**：架构文档 §13.4 的 `MotorRealtimeState_t`（position/speed/iq/id/torque/vbus）作为遥测快照基准结构。
+- **事件通知优先 Task Notification**：架构文档 §13.1 建议单事件优先用 Task Notification（开销小）；本计划 §4.1/§6.6 的故障通知即采用任务通知位兜底。
+- **ISR 绝不等 Task**：架构文档 §14 与本计划 §7 完全一致。
+- **优先级次序**：控制实时性 > 指令/状态管理 > 通信 > 诊断 > 调试/日志/Flash，与本计划 §3.1 任务表一致。
 
 ---
 
@@ -723,8 +756,8 @@ if (++speed_div >= 10) {
 不要求立即移动现有文件，先通过清晰接口完成迁移。稳定后可整理为：
 
 ```text
-Middlewares/
-  FreeRTOS-Kernel/
+FreeRTOS-Kernel/              # 根目录独立存放（V11.3.0 剪枝快照）
+Simulink_Model/               # 根目录独立存放（模型 + generated + scripts + backups）
 
 Code_Source/
   APP/
@@ -752,7 +785,11 @@ Core/
   Inc/FreeRTOSConfig.h
 ```
 
-建议将 FreeRTOS源码作为固定版本的独立目录或 Git submodule管理；若当前工程不适合 submodule，则将版本号、来源提交和许可证一并记录在 `Middlewares/FreeRTOS-Kernel/README.md`。
+建议将 FreeRTOS源码作为固定版本的独立目录或 Git submodule管理；若当前工程不适合 submodule，则将版本号、来源提交和许可证一并记录在 `FreeRTOS-Kernel/README.md`。
+
+> **目录命名备注（2026-08-18 实测）**：本工程不用 `Middlewares/` 名称——CubeMX 再生成会清理它认识的 `Middlewares/` 目录（曾导致 FreeRTOS-Kernel 源码被删）。故 `FreeRTOS-Kernel/` 独立于项目根目录。
+>
+> **MID_foc 清理（2026-08-18）**：旧手写 FOC 代码已最大化移除（Axis_transform/Over_Modulation/PI_Cale/Svpwm_dq/IQ_math/dead_comp + MID_foc_float 全部 + BSP/ThreeHall）。`MID_foc/` 现仅保留 Simulink 适配层依赖的 `foc.h`/`foc.c`（`PWM_PERIOD`/`PWM_HalfPerMax`/`FOC_Frequency`/`Motor_Params`/`foc_abc_current_i` 等）。FOC_run.c 的 `#else` 手写分支保留但 USE_GENERATED_FOC=1 时不编译，待后续清理。
 
 ---
 
