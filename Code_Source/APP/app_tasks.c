@@ -15,6 +15,8 @@
 #include "app_tasks.h"
 #include "SEGGER_RTT.h"
 #include "CANopen_OD.h"
+#include "CAN_bsp.h"
+#include "motor_state_machine.h"
 
 /*-----------------------------------------------------------
  * 任务栈/TCB 静态内存与句柄
@@ -31,21 +33,70 @@ static StackType_t   CommTaskStack[configMINIMAL_STACK_SIZE * 3];   /* 1.5 KB，
 static StaticTask_t  CommTaskTCB;
 TaskHandle_t         xCommTaskHandle;   /* 非 static：供 CAN RX ISR 通知 */
 
+static StackType_t   MotorStateTaskStack[configMINIMAL_STACK_SIZE * 2];  /* 1 KB */
+static StaticTask_t  MotorStateTaskTCB;
+static TaskHandle_t  MotorStateTaskHandle;
+
 /*-----------------------------------------------------------
- * CommTask：CAN 协议解析任务（计划 §3.2 优先级 3）
- * CAN RX ISR 收帧入环形缓冲 → vTaskNotifyGiveFromISR 唤醒本任务 → 批量弹帧处理。
+ * MotorStateTask：状态机唯一写入者（计划 §3.2 优先级 4）
+ * 队列 + 1ms 巡检 fault_pending；事件驱动 + 定期 Do。
  *----------------------------------------------------------*/
-static void CommTask_Entry(void *pvParam)
+static void MotorStateTask_Entry(void *pvParam)
 {
     (void) pvParam;
 
     for (;;)
     {
-        /* 等待 CAN 帧通知（通知值计数累加，忽略具体值） */
-        xTaskNotifyWait(0UL, 0xFFFFFFFFUL, NULL, portMAX_DELAY);
+        MotorStateMachine_Step();
+    }
+}
+
+/*-----------------------------------------------------------
+ * CommTask：CAN 协议解析任务（计划 §3.2 优先级 3）
+ * CAN RX ISR 收帧入环形缓冲 → vTaskNotifyGiveFromISR 唤醒本任务 → 批量弹帧处理。
+ * 同时周期性发送心跳测试帧，便于用 CAN 分析仪验证 TX。
+ *----------------------------------------------------------*/
+#define CAN_HB_PERIOD_MS   100U   /* 心跳周期，改这里即可调整发送频率 */
+#define CAN_HB_MARKER      0xFEU  /* 心跳标记 data[0]，与分析仪区分 */
+
+/* 心跳帧：ID=0x581，data[0]=0xFE 标记，data[1]=节点号，data[2..4]=时间戳，data[6..7]=递增计数 */
+static void CAN_SendHeartbeat(void)
+{
+    uint8_t d[8] = {0};
+    static uint16_t seq = 0U;
+    uint32_t tick = HAL_GetTick();
+
+    d[0] = CAN_HB_MARKER;
+    d[1] = (uint8_t)CAN_NODE_ID;
+    d[2] = (uint8_t)(tick & 0xFFU);
+    d[3] = (uint8_t)((tick >> 8) & 0xFFU);
+    d[4] = (uint8_t)((tick >> 16) & 0xFFU);
+    d[6] = (uint8_t)(seq & 0xFFU);
+    d[7] = (uint8_t)(seq >> 8);
+    seq++;
+    CAN_bsp_Send(CAN_ID_SDO_TX, d, 8);
+}
+
+static void CommTask_Entry(void *pvParam)
+{
+    (void) pvParam;
+    const TickType_t xHbPeriod = pdMS_TO_TICKS(CAN_HB_PERIOD_MS);
+    TickType_t xLastHb = xTaskGetTickCount();
+
+    for (;;)
+    {
+        /* 等待 CAN 帧通知（通知值计数累加，忽略具体值）；带超时以便周期发心跳 */
+        xTaskNotifyWait(0UL, 0xFFFFFFFFUL, NULL, xHbPeriod);
 
         /* 一次性批处理缓冲内全部帧（内部 while PopFrame） */
         CANopen_OD_Process();
+
+        /* 周期发送心跳测试帧（验证 TX，分析仪可见） */
+        if ((xTaskGetTickCount() - xLastHb) >= xHbPeriod)
+        {
+            xLastHb = xTaskGetTickCount();
+            CAN_SendHeartbeat();
+        }
     }
 }
 
@@ -80,6 +131,9 @@ static void BringUpTask_Entry(void *pvParam)
  *----------------------------------------------------------*/
 void AppTasks_Init(void)
 {
+    /* 状态机初始化：创建静态事件队列 + 投递 EVENT_INIT */
+    MotorStateMachine_Init();
+
     /* BringUpTask：优先级 1，验证内核运行 */
     BringUpTaskHandle = xTaskCreateStatic(BringUpTask_Entry,
                                           "BringUp",
@@ -109,6 +163,16 @@ void AppTasks_Init(void)
                                         CommTaskStack,
                                         &CommTaskTCB);
     configASSERT(xCommTaskHandle != NULL);
+
+    /* MotorStateTask：优先级 4，状态机唯一写入者 */
+    MotorStateTaskHandle = xTaskCreateStatic(MotorStateTask_Entry,
+                                             "MotorState",
+                                             sizeof(MotorStateTaskStack) / sizeof(StackType_t),
+                                             (void *) NULL,
+                                             4,
+                                             MotorStateTaskStack,
+                                             &MotorStateTaskTCB);
+    configASSERT(MotorStateTaskHandle != NULL);
 }
 
 /*-----------------------------------------------------------

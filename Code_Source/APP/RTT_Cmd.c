@@ -14,6 +14,8 @@
 #include "RTT_Cmd.h"
 #include "SEGGER_RTT.h"
 #include "MotorCtrl.h"
+#include "motor_state_machine.h"
+#include "main.h"   /* HAL_GetTick */
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -38,10 +40,39 @@ static void print_help(void)
 
 static void print_status(void)
 {
-    printf("enable=%u mode=%u speed_rps=%.3f iq_ref_A=%.3f state=%u\r\n",
+    uint32_t posted, dropped, illegal, fault_forced;
+    const char *sn = "S_?";
+    switch (MotorState_GetCurrent()) {
+    case S_INIT:       sn = "S_INIT";       break;
+    case S_IDLE:       sn = "S_IDLE";       break;
+    case S_CALIB:      sn = "S_CALIB";      break;
+    case S_RUN:        sn = "S_RUN";        break;
+    case S_STOP:       sn = "S_STOP";       break;
+    case S_FAULT_NOW:  sn = "S_FAULT_NOW";  break;
+    case S_FAULT_OVER: sn = "S_FAULT_OVER"; break;
+    case S_STANDBY:    sn = "S_STANDBY";    break;
+    default:           break;
+    }
+    MotorState_GetStats(&posted, &dropped, &illegal, &fault_forced);
+    printf("enable=%u mode=%u speed_rps=%.3f iq_ref_A=%.3f state=%u | FSM=%s posted=%lu dropped=%lu illegal=%lu fault=%lu\r\n",
            (unsigned)MotorCtrl.enable, (unsigned)MotorCtrl.mode,
            (double)MotorCtrl.speed_rps, (double)MotorCtrl.iq_ref_A,
-           (unsigned)MotorCtrl.state);
+           (unsigned)MotorCtrl.state, sn,
+           (unsigned long)posted, (unsigned long)dropped,
+           (unsigned long)illegal, (unsigned long)fault_forced);
+}
+
+/* 把命令构造为事件投递（参数取自 MotorCtrl 影子值，3b 由状态机提交快照） */
+static void post_cmd_event(motor_event_id_t id)
+{
+    MotorEvent_t evt = { 0 };
+    evt.id          = id;
+    evt.timestamp_ms = HAL_GetTick();
+    evt.mode        = MotorCtrl.mode_temp;
+    evt.speed_rps   = MotorCtrl.speed_rps_temp;
+    evt.iq_ref_A    = MotorCtrl.iq_ref_A_temp;
+    evt.pos_ref     = MotorCtrl.pos_ref_temp;
+    MotorStateMachine_PostEvent(&evt);
 }
 
 static void handle_line(char *line)
@@ -52,8 +83,9 @@ static void handle_line(char *line)
     if      (strncmp(p, "spd ", 4U) == 0)  { MotorCtrl_SetSpeedRPS((float)atof(p + 4)); printf("speed set to %.3f RPS\r\n", (double)MotorCtrl.speed_rps_temp); }
     else if (strncmp(p, "mode ", 5U) == 0) { MotorCtrl_SetMode((uint8_t)atoi(p + 5));   printf("mode set to %u\r\n", (unsigned)MotorCtrl.mode_temp); }
     else if (strncmp(p, "iq ", 3U) == 0)   { MotorCtrl_SetTorqueA((float)atof(p + 3));  printf("iq set to %.3f A\r\n", (double)MotorCtrl.iq_ref_A_temp); }
-    else if (strcmp(p, "start") == 0)      { MotorCtrl_Start();  printf("motor STARTED (enable=%u)\r\n", (unsigned)MotorCtrl.enable); }
-    else if (strcmp(p, "stop") == 0)       { MotorCtrl_Stop();   printf("motor STOPPED\r\n"); }
+    else if (strcmp(p, "start") == 0)      { post_cmd_event(EVENT_toRUN);  printf("start event posted\r\n"); }
+    else if (strcmp(p, "stop") == 0)       { post_cmd_event(EVENT_RUNtoSTOP); printf("stop event posted\r\n"); }
+    else if (strcmp(p, "fault") == 0)      { MotorStateMachine_PostFault(); printf("fault injected\r\n"); }
     else if (strcmp(p, "get") == 0)        { print_status(); }
     else if (strcmp(p, "help") == 0)       { print_help(); }
     else if (p[0] != '\0')                 { printf("unknown cmd: '%s' (type help)\r\n", p); }

@@ -17,6 +17,7 @@
 #include "CANopen_OD.h"
 #include "CAN_bsp.h"
 #include "MotorCtrl.h"
+#include "motor_state_machine.h"
 
 #define FW_VERSION 0x0100U    /* v1.0 */
 
@@ -55,6 +56,19 @@ static void reply_status(void)
     send_reply(r);
 }
 
+/* 命令 → 状态机事件（参数取自 MotorCtrl 影子值，3b 由状态机提交快照） */
+static void post_cmd_event(motor_event_id_t id)
+{
+    MotorEvent_t evt = { 0 };
+    evt.id          = id;
+    evt.timestamp_ms = HAL_GetTick();
+    evt.mode        = MotorCtrl.mode_temp;
+    evt.speed_rps   = MotorCtrl.speed_rps_temp;
+    evt.iq_ref_A    = MotorCtrl.iq_ref_A_temp;
+    evt.pos_ref     = MotorCtrl.pos_ref_temp;
+    MotorStateMachine_PostEvent(&evt);
+}
+
 static void HandleSDO(const uint8_t d[8])
 {
     uint16_t index = (uint16_t)((uint16_t)d[2] << 8) | d[1];
@@ -62,9 +76,9 @@ static void HandleSDO(const uint8_t d[8])
                                ((uint32_t)d[6] << 16) | ((uint32_t)d[7] << 24));
 
     switch (index) {
-    case 0x6040:  /* 控制字：启停 */
-        if      (d[4] == 0x1FU) { MotorCtrl_Start(); reply_pos(d); }
-        else if (d[4] == 0x06U) { MotorCtrl_Stop();  reply_pos(d); }
+    case 0x6040:  /* 控制字：启停 → 投递状态机事件（Phase 3，不再直接调 MotorCtrl） */
+        if      (d[4] == 0x1FU) { post_cmd_event(EVENT_toRUN);      reply_pos(d); }
+        else if (d[4] == 0x06U) { post_cmd_event(EVENT_RUNtoSTOP);   reply_pos(d); }
         else                     reply_neg(d);
         break;
     case 0x6060:  /* 工作模式 */
