@@ -5,6 +5,8 @@
 
 #include "foc.h"
 #include "AS5600.h"
+#include "Safety_Module.h"        /* Safety_FastStep */
+#include "motor_state_machine.h"  /* MotorStateMachine_PostFault */
 
 #define DEBUG 1
 #if DEBUG
@@ -85,13 +87,21 @@ void HAL_ADCEx_InjectedConvCpltCallback( ADC_HandleTypeDef *hadc)
 		foc_abc_current_i.ib  =  -((float)foc_abc_current_i.offset_phase_ib - foc_abc_current_i.adc_phase_ib) * I_SCALE;	//3.3/4096 /(40V/V) / (0.001Ω)
 		foc_abc_current_i.ia = - foc_abc_current_i.ic - foc_abc_current_i.ib;
 
-    Vbus = ADC_ConvertedValue[0]* V_SCALE; // ADC1->JDR2 * V_SCALE;  
+    Vbus = ADC_ConvertedValue[0]* V_SCALE; // ADC1->JDR2 * V_SCALE;
+		/*********************  Safety 快检（Phase 4） *************************/
+		{
+			SafetyFastInput_t fast_in = { Vbus, { foc_abc_current_i.ia, foc_abc_current_i.ib, foc_abc_current_i.ic } };
+			fault_mask_t fast_faults = 0;
+			Safety_FastStep(&fast_in, &Safety_Config, &fast_faults);
+			if (fast_faults != 0U) {
+				__HAL_TIM_MOE_DISABLE(&htim1);              /* 当场快速关 PWM 输出 */
+				MotorStateMachine_PostFault(fast_faults);   /* 原子锁存，任务 1ms 巡检进 FAULT */
+			}
+		}
 		/*********************  Processing EventTask   *************************/
 
 
-		/* Keep the 10 kHz sampling interrupt alive while stopped, but do not run
-		* the encoder, speed loop, current loop, or SVPWM calculations. */
-				/* Phase 3b：始终调用 FOC_Generated_Step——模型 PLL 常跑给实时转速；
+		/* Phase 3b：始终调用 FOC_Generated_Step——模型 PLL 常跑给实时转速；
 		 * coast/停机由模型 coast 输入处理（duty 强制 0.5），不再按 run_state 门控。 */
 #if USE_GENERATED_FOC
 		FOC_Generated_Step();

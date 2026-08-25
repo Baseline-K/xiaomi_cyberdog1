@@ -17,6 +17,12 @@
 #include "CANopen_OD.h"
 #include "CAN_bsp.h"
 #include "motor_state_machine.h"
+#include "motor_command_snapshot.h"
+#include "Safety_Module.h"
+#include "FOC_generated.h"
+#include "foc.h"   /* foc_abc_current_i */
+
+extern float Vbus;   /* FOC_run.c */
 
 /*-----------------------------------------------------------
  * 任务栈/TCB 静态内存与句柄
@@ -48,6 +54,53 @@ static void MotorStateTask_Entry(void *pvParam)
     for (;;)
     {
         MotorStateMachine_Step();
+    }
+}
+
+/*-----------------------------------------------------------
+ * SafetyTask：慢安全检测（计划 §3.2 优先级 5，3ms 绝对周期）
+ * 组装一致快照 → Safety_SlowStep → 新故障位 → PostFault。
+ *----------------------------------------------------------*/
+static StackType_t  SafetyTaskStack[configMINIMAL_STACK_SIZE * 3];  /* 1.5 KB */
+static StaticTask_t SafetyTaskTCB;
+static TaskHandle_t SafetyTaskHandle;
+
+static void SafetyTask_Entry(void *pvParam)
+{
+    SafetyRuntime_t rt = { 0 };
+    TickType_t xLastWake = xTaskGetTickCount();
+    uint32_t uPrevTick = xLastWake;
+
+    (void) pvParam;
+
+    for (;;)
+    {
+        vTaskDelayUntil(&xLastWake, pdMS_TO_TICKS(3));
+
+        uint32_t uNow = xTaskGetTickCount();
+
+        SafetySlowInput_t in = { 0 };
+        in.elapsed_ms = (uint32_t)(uNow - uPrevTick);   /* 实际经过时间（计划 §6.2） */
+        uPrevTick = uNow;
+
+        in.is_run = (MotorState_GetCurrent() == S_RUN);
+        in.measurement.vbus_V            = Vbus;
+        in.measurement.phase_current_A[0] = foc_abc_current_i.ia;
+        in.measurement.phase_current_A[1] = foc_abc_current_i.ib;
+        in.measurement.phase_current_A[2] = foc_abc_current_i.ic;
+        in.measurement.motor_speed_rps   = FOC_Generated_GetSpeedRps();
+        {
+            const MotorCommand_t *cmd = MotorCommand_Get();
+            in.measurement.target_speed_rps = cmd->speed_rps;
+            in.measurement.target_iq_A      = cmd->iq_ref_A;
+        }
+        in.measurement.can_rx_valid_seq   = CANopen_OD_GetValidSeq();
+
+        fault_mask_t new_faults = 0;
+        Safety_SlowStep(&in, &Safety_Config, &rt, &new_faults);
+        if (new_faults != 0U) {
+            MotorStateMachine_PostFault(new_faults);
+        }
     }
 }
 
@@ -173,6 +226,16 @@ void AppTasks_Init(void)
                                              MotorStateTaskStack,
                                              &MotorStateTaskTCB);
     configASSERT(MotorStateTaskHandle != NULL);
+
+    /* SafetyTask：优先级 5，慢安全检测（3ms 绝对周期） */
+    SafetyTaskHandle = xTaskCreateStatic(SafetyTask_Entry,
+                                         "Safety",
+                                         sizeof(SafetyTaskStack) / sizeof(StackType_t),
+                                         (void *) NULL,
+                                         5,
+                                         SafetyTaskStack,
+                                         &SafetyTaskTCB);
+    configASSERT(SafetyTaskHandle != NULL);
 }
 
 /*-----------------------------------------------------------

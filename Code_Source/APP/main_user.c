@@ -24,6 +24,7 @@
 #include "AS5600.h"
 #include "Soft_IIC.h"
 #include "drv83xx.h"
+#include "Safety_Module.h"   /* Safety_Config_Init */
 
 #include "SEGGER_RTT_Port.h"
 #include "cm_backtrace.h"
@@ -126,6 +127,7 @@ void main_user(void)
 	 MotorState.ctrl_mode = CTRL_MODE_SPEED;
 	 CAN_bsp_Init();          // CAN 控制接口（过滤器/接收/回调）
 	 MotorCtrl_Init();        // 电机控制层（默认停止）
+	 Safety_Config_Init(&Safety_Config);   // 安全阈值从 Motor_Params 推算（运行期只读）
 	 FOC_Interrupt_Start();   // 上电后持续运行 10 kHz FOC/采样中断
 
 	 //MX_IWDG_Init();

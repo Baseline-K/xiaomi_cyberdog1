@@ -15,6 +15,8 @@
 #include "SEGGER_RTT.h"
 #include "MotorCtrl.h"
 #include "motor_state_machine.h"
+#include "Safety_Module.h"
+#include "foc.h"   /* foc_abc_current_i */
 #include "main.h"   /* HAL_GetTick */
 #include <stdio.h>
 #include <stdlib.h>
@@ -88,6 +90,15 @@ static void handle_line(char *line)
     else if (strcmp(p, "fault") == 0)      { MotorStateMachine_PostFault(0x1U); printf("fault injected (bit0)\r\n"); }
     else if (strcmp(p, "clearfault") == 0) { MotorStateMachine_ClearFault(0x1U); printf("fault cleared\r\n"); }
     else if (strcmp(p, "calib") == 0)      { post_cmd_event(EVENT_IDLEtoCALIB); printf("calib event posted\r\n"); }
+    /* 安全检测测试强制（调试用） */
+    else if (strcmp(p, "safedbg overcurrent") == 0) { Safety_TestForce(SAFETY_TEST_FORCE_OVERCURRENT); printf("safedbg: force overcurrent\r\n"); }
+    else if (strcmp(p, "safedbg overvolt") == 0)    { Safety_TestForce(SAFETY_TEST_FORCE_OVERVOLT);    printf("safedbg: force overvolt\r\n"); }
+    else if (strcmp(p, "safedbg undervolt") == 0)   { Safety_TestForce(SAFETY_TEST_FORCE_UNDERVOLT);   printf("safedbg: force undervolt\r\n"); }
+    else if (strcmp(p, "safedbg clear") == 0)       { Safety_TestClear(0xFFFFFFFFUL); MotorStateMachine_ClearFault(0xFFFFFFFFUL); printf("safedbg: force+latched cleared\r\n"); }
+    /* 安全阈值调参（bring-up 校准用，确认后写回默认值） */
+    else if (strncmp(p, "safethr overcurrent ", 20U) == 0) { Safety_Config.current_over_A = (float)atof(p + 20); printf("overcurrent thr=%.2fA\r\n", (double)Safety_Config.current_over_A); }
+    else if (strncmp(p, "safethr short ", 14U) == 0)      { Safety_Config.shortcircuit_A = (float)atof(p + 14);    printf("short thr=%.2fA\r\n", (double)Safety_Config.shortcircuit_A); }
+    else if (strcmp(p, "cur") == 0)                      { printf("ia=%.3f ib=%.3f ic=%.3f\r\n", (double)foc_abc_current_i.ia, (double)foc_abc_current_i.ib, (double)foc_abc_current_i.ic); }
     else if (strcmp(p, "get") == 0)        { print_status(); }
     else if (strcmp(p, "help") == 0)       { print_help(); }
     else if (p[0] != '\0')                 { printf("unknown cmd: '%s' (type help)\r\n", p); }

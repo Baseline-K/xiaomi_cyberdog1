@@ -49,6 +49,14 @@ static void reply_version(void)
     send_reply(r);
 }
 
+/* 通信有效序号：每条有效控制帧 +1，SafetyTask 用于通信超时判定 */
+static volatile uint32_t g_can_rx_valid_seq = 0U;
+
+uint32_t CANopen_OD_GetValidSeq(void)
+{
+    return g_can_rx_valid_seq;
+}
+
 static void reply_status(void)
 {
     uint8_t r[8] = {0x60, 0x01, 0x30, 0x00, 0,0,0,0};
@@ -74,6 +82,8 @@ static void HandleSDO(const uint8_t d[8])
     uint16_t index = (uint16_t)((uint16_t)d[2] << 8) | d[1];
     int32_t  raw   = (int32_t)((uint32_t)d[4] | ((uint32_t)d[5] << 8) |
                                ((uint32_t)d[6] << 16) | ((uint32_t)d[7] << 24));
+
+    g_can_rx_valid_seq++;   /* 有效控制帧推进序号（Safety 通信超时用） */
 
     switch (index) {
     case 0x6040:  /* 控制字：启停 → 投递状态机事件（Phase 3，不再直接调 MotorCtrl） */

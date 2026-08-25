@@ -403,10 +403,13 @@ void MotorStateMachine_Step(void)
     /* 1. fault_pending 兜底（FOC ISR 置位，1ms 巡检） */
     if (g_fault_pending != 0U) {
         g_fault_pending = 0U;
-        g_stats_fault_forced++;
-        evt.id = EVENT_toFAULT;
-        evt.timestamp_ms = HAL_GetTick();
-        MotorStateMachine_ProcessEvent(&evt);
+        /* 已在故障态：故障位已由 PostFault 更新（可上报），不重复触发 toFAULT（防非法事件刷屏） */
+        if ((g_cur_state != S_FAULT_NOW) && (g_cur_state != S_FAULT_OVER)) {
+            g_stats_fault_forced++;
+            evt.id = EVENT_toFAULT;
+            evt.timestamp_ms = HAL_GetTick();
+            MotorStateMachine_ProcessEvent(&evt);
+        }
     }
 
     /* 2. stop_pending 兜底（队列满时 STOP 不丢） */
