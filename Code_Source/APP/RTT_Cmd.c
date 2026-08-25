@@ -85,7 +85,9 @@ static void handle_line(char *line)
     else if (strncmp(p, "iq ", 3U) == 0)   { MotorCtrl_SetTorqueA((float)atof(p + 3));  printf("iq set to %.3f A\r\n", (double)MotorCtrl.iq_ref_A_temp); }
     else if (strcmp(p, "start") == 0)      { post_cmd_event(EVENT_toRUN);  printf("start event posted\r\n"); }
     else if (strcmp(p, "stop") == 0)       { post_cmd_event(EVENT_RUNtoSTOP); printf("stop event posted\r\n"); }
-    else if (strcmp(p, "fault") == 0)      { MotorStateMachine_PostFault(); printf("fault injected\r\n"); }
+    else if (strcmp(p, "fault") == 0)      { MotorStateMachine_PostFault(0x1U); printf("fault injected (bit0)\r\n"); }
+    else if (strcmp(p, "clearfault") == 0) { MotorStateMachine_ClearFault(0x1U); printf("fault cleared\r\n"); }
+    else if (strcmp(p, "calib") == 0)      { post_cmd_event(EVENT_IDLEtoCALIB); printf("calib event posted\r\n"); }
     else if (strcmp(p, "get") == 0)        { print_status(); }
     else if (strcmp(p, "help") == 0)       { print_help(); }
     else if (p[0] != '\0')                 { printf("unknown cmd: '%s' (type help)\r\n", p); }

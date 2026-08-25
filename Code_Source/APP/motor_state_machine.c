@@ -39,6 +39,8 @@ static uint8_t        g_evt_queue_storage[MOTOR_EVT_QUEUE_LEN * sizeof(MotorEven
  *----------------------------------------------------------*/
 static motor_state_t          g_cur_state = S_INIT;
 static volatile uint8_t       g_fault_pending = 0U;   /* FOC ISR 原子置位 */
+static volatile uint8_t       g_stop_pending  = 0U;   /* STOP 锁存兜底（队列满不丢） */
+static volatile uint32_t      g_fault_bits    = 0U;   /* 故障位锁存 */
 static volatile uint32_t      g_stats_posted = 0U;
 static volatile uint32_t      g_stats_dropped = 0U;
 static volatile uint32_t      g_stats_illegal = 0U;
@@ -103,8 +105,18 @@ static void state_IDLE_entry(void)
 }
 static void state_IDLE_do(void) { }
 
-static void state_CALIB_entry(void) { }
-static void state_CALIB_do(void) { }
+static void state_CALIB_entry(void)
+{
+    /* 真实校准流程预留；当前角度零点校准已在 main_user 完成，直接通过 */
+    publish_coast();
+}
+static void state_CALIB_do(void)
+{
+    MotorEvent_t evt = { 0 };
+    evt.id = EVENT_toIDLE;
+    evt.timestamp_ms = HAL_GetTick();
+    MotorStateMachine_PostEvent(&evt);
+}
 static void state_CALIB_exit(void) { }
 
 static void state_RUN_entry(void)
@@ -152,11 +164,42 @@ static void state_STOP_do(void)
     }
 }
 
-static void state_FAULT_entry(void) { }
-static void state_FAULT_do(void) { }
-static void state_FAULT_exit(void) { }
+static void state_FAULT_entry(void)
+{
+    publish_coast();              /* coast：PLL 仍跑给转速，duty 0.5 */
+    PowerStage_Disable();         /* 立即关功率（硬件级安全） */
+    MotorState.run_state = RUNSTATE_STOPPED;
+    MotorCtrl.enable = 0U;
+    MotorCtrl.state  = MC_STATE_STOPPED;
+    MotorCtrl.faults |= (uint16_t)g_fault_bits;   /* 锁存故障位供状态上报 */
+    printf("FSM: FAULT_NOW, fault=0x%08lX\r\n", (unsigned long)g_fault_bits);
+}
+static void state_FAULT_do(void)
+{
+    /* 恢复判定：故障位全部清除后进入 FAULT_OVER（Phase 4 由 Safety 细化） */
+    if (g_fault_bits == 0U) {
+        MotorEvent_t evt = { 0 };
+        evt.id = EVENT_FAULTtoOVER;
+        evt.timestamp_ms = HAL_GetTick();
+        MotorStateMachine_PostEvent(&evt);
+    }
+}
+static void state_FAULT_exit(void)
+{
+    MotorCtrl.faults = 0U;   /* 清除锁存（分类清除策略 Phase 4 细化） */
+}
 
-static void state_FAULTOVER_do(void) { }
+static void state_FAULTOVER_do(void)
+{
+    /* 电机静止后才允许回 IDLE */
+    float speed = fabsf(FOC_Generated_GetSpeedRps());
+    if (speed < STOP_SPEED_THRESHOLD_RPS) {
+        MotorEvent_t evt = { 0 };
+        evt.id = EVENT_toIDLE;
+        evt.timestamp_ms = HAL_GetTick();
+        MotorStateMachine_PostEvent(&evt);
+    }
+}
 
 /*-----------------------------------------------------------
  * 动作表（参照参考工程 actionMap；状态序与 motor_state_t 一致）
@@ -319,7 +362,12 @@ int MotorStateMachine_PostEvent(const MotorEvent_t *evt)
 
     if (evt->id == EVENT_toFAULT) {
         /* FAULT 走独立锁存兜底（计划 §5.3/§4.1），保证不因队列满丢失 */
-        MotorStateMachine_PostFault();
+        MotorStateMachine_PostFault(0xFFFFFFFFUL);   /* 未知故障源，置全部位 */
+        return 1;
+    }
+    if (evt->id == EVENT_RUNtoSTOP) {
+        /* STOP 也走锁存兜底（计划 §5.3），队列满不丢 */
+        MotorStateMachine_PostStop();
         return 1;
     }
 
@@ -328,13 +376,24 @@ int MotorStateMachine_PostEvent(const MotorEvent_t *evt)
         g_stats_posted++;
         return 1;
     }
-    g_stats_dropped++;   /* 队列满（FAULT/STOP 的兜底在 3c 完善） */
+    g_stats_dropped++;
     return 0;
 }
 
-void MotorStateMachine_PostFault(void)
+void MotorStateMachine_PostFault(uint32_t mask)
 {
-    g_fault_pending = 1U;   /* 原子字节写，ISR 可安全调用 */
+    g_fault_bits   |= mask;       /* 原子字节写（32 位对齐，M4 单写），ISR 可安全调用 */
+    g_fault_pending = 1U;
+}
+
+void MotorStateMachine_ClearFault(uint32_t mask)
+{
+    g_fault_bits &= ~mask;
+}
+
+void MotorStateMachine_PostStop(void)
+{
+    g_stop_pending = 1U;          /* 原子字节写，ISR/任务可安全调用 */
 }
 
 void MotorStateMachine_Step(void)
@@ -350,12 +409,20 @@ void MotorStateMachine_Step(void)
         MotorStateMachine_ProcessEvent(&evt);
     }
 
-    /* 2. 取一个事件（1ms 超时） */
+    /* 2. stop_pending 兜底（队列满时 STOP 不丢） */
+    if (g_stop_pending != 0U) {
+        g_stop_pending = 0U;
+        evt.id = EVENT_RUNtoSTOP;
+        evt.timestamp_ms = HAL_GetTick();
+        MotorStateMachine_ProcessEvent(&evt);
+    }
+
+    /* 3. 取一个事件（1ms 超时） */
     if (xQueueReceive(g_evt_queue, &evt, pdMS_TO_TICKS(1)) == pdTRUE) {
         MotorStateMachine_ProcessEvent(&evt);
     }
 
-    /* 3. 跑当前态 Do（周期 ≈1ms，空闲时也在走） */
+    /* 4. 跑当前态 Do（周期 ≈1ms，空闲时也在走） */
     MotorStateMachine_Do();
 }
 

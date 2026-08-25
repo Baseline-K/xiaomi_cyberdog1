@@ -85,8 +85,14 @@ void MotorStateMachine_Init(void);
 /* 投递事件（任务上下文；EVENT_toFAULT 走 fault_pending 锁存兜底）。返回 1=成功/已兜底，0=队列满丢弃 */
 int MotorStateMachine_PostEvent(const MotorEvent_t *evt);
 
-/* 故障锁存（可由 ISR 原子调用，计划 §4.1 两段式） */
-void MotorStateMachine_PostFault(void);
+/* 故障锁存（可由 ISR 原子调用，计划 §4.1 两段式）。mask=故障位，与故障字取或 */
+void MotorStateMachine_PostFault(uint32_t mask);
+
+/* 清除故障位（恢复判定：故障位清零后 FAULT_NOW_do 才转 FAULT_OVER） */
+void MotorStateMachine_ClearFault(uint32_t mask);
+
+/* STOP 锁存兜底（队列满时 STOP 不丢失，计划 §5.3） */
+void MotorStateMachine_PostStop(void);
 
 /* 状态机步进：由 MotorStateTask 循环调用（1ms 超时取事件 + 巡检 pending + 跑 Do） */
 void MotorStateMachine_Step(void);
