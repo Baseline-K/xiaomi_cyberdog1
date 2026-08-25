@@ -3,9 +3,9 @@
  *
  * Code generated for Simulink model 'CyberDog_Motor_FOC'.
  *
- * Model version                  : 1.25
+ * Model version                  : 1.30
  * Simulink Coder version         : 25.2 (R2025b) 28-Jul-2025
- * C/C++ source code generated on : Sun Aug 16 02:05:08 2026
+ * C/C++ source code generated on : Tue Aug 25 01:00:16 2026
  *
  * Target selection: ert.tlc
  * Embedded hardware selection: Intel->x86-64 (Windows64)
@@ -103,13 +103,14 @@ typedef struct {
   real32_T pll_reset;                  /* '<Root>/pll_reset' */
   real32_T ref_speed;                  /* '<Root>/ref_speed' */
   real32_T ctrl_mode;                  /* '<Root>/ctrl_mode' */
+  real32_T coast;                      /* '<Root>/coast' */
 } ExtU_CyberDog_Motor_FOC_T;
 
 /* External outputs (root outports fed by signals with default storage) */
 typedef struct {
-  real32_T duty_u;                     /* '<Root>/duty_u' */
-  real32_T duty_v;                     /* '<Root>/duty_v' */
-  real32_T duty_w;                     /* '<Root>/duty_w' */
+  real_T duty_u;                       /* '<Root>/duty_u' */
+  real_T duty_v;                       /* '<Root>/duty_v' */
+  real_T duty_w;                       /* '<Root>/duty_w' */
   real32_T theta_elec_filt;            /* '<Root>/theta_elec_filt' */
   real32_T speed_meas_rps;             /* '<Root>/speed_meas_rps' */
 } ExtY_CyberDog_Motor_FOC_T;

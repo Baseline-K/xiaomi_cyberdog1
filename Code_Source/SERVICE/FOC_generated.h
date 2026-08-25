@@ -11,4 +11,7 @@ void FOC_Generated_Init(void);
 void FOC_Generated_Step(void);
 void FOC_Generated_Reset(void);
 
+/* 读取模型 PLL 输出的机械转速（RPS），coast 期间仍实时更新 */
+float FOC_Generated_GetSpeedRps(void);
+
 #endif /* FOC_GENERATED_H */

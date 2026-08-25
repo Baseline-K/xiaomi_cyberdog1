@@ -91,15 +91,8 @@ void HAL_ADCEx_InjectedConvCpltCallback( ADC_HandleTypeDef *hadc)
 
 		/* Keep the 10 kHz sampling interrupt alive while stopped, but do not run
 		* the encoder, speed loop, current loop, or SVPWM calculations. */
-		if(MotorState.run_state != RUNSTATE_RUNNING)
-		{
-			TIM1->CCR1 = TIM1->CCR2 = TIM1->CCR3 = PWM_HalfPerMax;
-			
-		}	
-		else{
-
-	
-		
+				/* Phase 3b：始终调用 FOC_Generated_Step——模型 PLL 常跑给实时转速；
+		 * coast/停机由模型 coast 输入处理（duty 强制 0.5），不再按 run_state 门控。 */
 #if USE_GENERATED_FOC
 		FOC_Generated_Step();
 #else
@@ -146,7 +139,6 @@ void HAL_ADCEx_InjectedConvCpltCallback( ADC_HandleTypeDef *hadc)
 		/*********************   FOC Algorithm END ***************************/
 			 
 #endif
-		}
 #if DEBUG	
 		//SEGGER_RTT_Port_Write();
 		JS_RTT_PLUS_SendData(); 

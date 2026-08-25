@@ -13,6 +13,7 @@
 #include "FOC_generated.h"
 #include "CyberDog_Motor_FOC.h"   /* 生成的算法接口 */
 #include "MotorCtrl.h"
+#include "motor_command_snapshot.h"
 #include "foc.h"
 #include "FOC_run.h"
 #include "AS5600.h"               /* Encoder_AS5600.eleangle */
@@ -84,28 +85,33 @@ void FOC_Generated_Reset(void)
 
 void FOC_Generated_Step(void)
 {
-    /* ---- 填充模型输入（来自 MotorCtrl 命令 + 编码器） ---- */
+    /* ---- 填充模型输入（来自命令快照 + 编码器） ---- */
+    const MotorCommand_t *cmd = MotorCommand_Get();
+
     CyberDog_Motor_FOC_U.ia         = foc_abc_current_i.ia;
     CyberDog_Motor_FOC_U.ib         = foc_abc_current_i.ib;
     CyberDog_Motor_FOC_U.eleangle   = Encoder_AS5600.eleangle;   /* 原始电角度 rad, PLL 在模型内部 */
-    CyberDog_Motor_FOC_U.pll_reset  = (MotorCtrl.enable) ? 0.0f : 1.0f;  /* 禁用时保持 Position=0 */
+    CyberDog_Motor_FOC_U.pll_reset  = 0.0f;   /* PLL 常跟踪（coast 也跟踪，保证转速实时） */
     CyberDog_Motor_FOC_U.id_ref     = 0.0f;
-    CyberDog_Motor_FOC_U.iq_ref     = MotorCtrl.iq_ref_A;     /* 转矩模式目标 */
-    CyberDog_Motor_FOC_U.ref_speed  = MotorCtrl.speed_rps;    /* 速度模式目标 */
-    CyberDog_Motor_FOC_U.ctrl_mode  = (MotorCtrl.mode == MC_MODE_SPEED) ? 1.0f : 0.0f;
+    CyberDog_Motor_FOC_U.iq_ref     = cmd->iq_ref_A;     /* 转矩模式目标 */
+    CyberDog_Motor_FOC_U.ref_speed  = cmd->speed_rps;    /* 速度模式目标 */
+    CyberDog_Motor_FOC_U.ctrl_mode  = (cmd->mode == MC_MODE_SPEED) ? 1.0f : 0.0f;
+    CyberDog_Motor_FOC_U.coast      = cmd->coast ? 1.0f : 0.0f;  /* 模型内 duty 强制 0.5（coast） */
 
-    /* ---- 启停门控：使能才跑算法，否则输出零差模电压 ---- */
-    if (MotorCtrl.enable) {
-        CyberDog_Motor_FOC_step();
-        /* 回写 PLL 输出到固件全局（供其他模块/legacy 路径读取） */
-        Predict_eleangle = CyberDog_Motor_FOC_Y.theta_elec_filt;                   /* 滤波后电角度 rad */
-        Encoder_PLL_eleFilter->PLL_Omega_filtered =                               /* 电角速度 rad/s */
-            CyberDog_Motor_FOC_Y.speed_meas_rps * (TWO_PI_F * Motor_Params.Pole_Pairs);
-        TIM1->CCR1 = (uint16_t)(CyberDog_Motor_FOC_Y.duty_u * PWM_PERIOD);
-        TIM1->CCR2 = (uint16_t)(CyberDog_Motor_FOC_Y.duty_v * PWM_PERIOD);
-        TIM1->CCR3 = (uint16_t)(CyberDog_Motor_FOC_Y.duty_w * PWM_PERIOD);
-    } else {
-        /* 三相 50% 占空比 = 零线间电压 = 零转矩（兜底，正常由 StopPWM 已停 PWM） */
-        TIM1->CCR1 = TIM1->CCR2 = TIM1->CCR3 = PWM_HalfPerMax;
-    }
+    /* ---- 始终 step：PLL 实时给 speed_meas_rps；coast 时模型输出 duty=0.5 ---- */
+    CyberDog_Motor_FOC_step();
+
+    /* 回写 PLL 输出到固件全局（供其他模块/legacy 路径读取） */
+    Predict_eleangle = CyberDog_Motor_FOC_Y.theta_elec_filt;                   /* 滤波后电角度 rad */
+    Encoder_PLL_eleFilter->PLL_Omega_filtered =                               /* 电角速度 rad/s */
+        CyberDog_Motor_FOC_Y.speed_meas_rps * (TWO_PI_F * Motor_Params.Pole_Pairs);
+
+    TIM1->CCR1 = (uint16_t)(CyberDog_Motor_FOC_Y.duty_u * PWM_PERIOD);
+    TIM1->CCR2 = (uint16_t)(CyberDog_Motor_FOC_Y.duty_v * PWM_PERIOD);
+    TIM1->CCR3 = (uint16_t)(CyberDog_Motor_FOC_Y.duty_w * PWM_PERIOD);
+}
+
+float FOC_Generated_GetSpeedRps(void)
+{
+    return CyberDog_Motor_FOC_Y.speed_meas_rps;   /* 机械转速 RPS（模型 PLL 输出） */
 }

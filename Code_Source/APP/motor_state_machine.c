@@ -12,8 +12,17 @@
 #include "FreeRTOS.h"
 #include "queue.h"
 #include "main.h"          /* HAL_GetTick */
+#include "motor_command_snapshot.h"
+#include "FOC_generated.h"
+#include "MotorCtrl.h"
+#include "FOC_run.h"       /* MotorState */
+#include "main_user.h"     /* Param_init / Param_deinit */
 
 #include <stdio.h>
+#include <math.h>
+
+#define STOP_SPEED_THRESHOLD_RPS  0.1f   /* 判定电机静止的转速阈值 */
+#define STOP_TIMEOUT_MS           3000U  /* 停机超时兜底 */
 
 #define MOTOR_EVT_QUEUE_LEN  8U
 
@@ -42,11 +51,41 @@ static void None_entry(void) { }
 static void None_do(void) { }
 static void None_exit(void) { }
 
-static void state_INIT_entry(void) { }
+/* ---- 待提交命令缓存（EVENT_toRUN 携带，S_RUN_entry 使用） ---- */
+static MotorCommand_t g_pending_cmd = { 0 };
+static uint32_t g_stop_tick = 0U;
+
+/* 发布 coast 快照（停机/滑行：duty 0.5、转矩模式 iq=0 避免速度环积分饱和） */
+static void publish_coast(void)
+{
+    MotorCommand_t cmd = { 0 };
+    cmd.enable    = 0U;
+    cmd.coast     = 1U;
+    cmd.mode      = 0U;       /* MC_MODE_TORQUE */
+    cmd.speed_rps = 0.0f;
+    cmd.iq_ref_A  = 0.0f;
+    cmd.pos_ref   = 0.0f;
+    MotorCommand_Publish(&cmd);
+}
+
+/* 发布运行快照（enable=1、coast=0，命令来自 g_pending_cmd） */
+static void publish_run(void)
+{
+    MotorCommand_t cmd = g_pending_cmd;
+    cmd.enable = 1U;
+    cmd.coast  = 0U;
+    MotorCommand_Publish(&cmd);
+}
+
+static void state_INIT_entry(void)
+{
+    /* 初始安全态：coast（PLL 常跑，duty 0.5） */
+    publish_coast();
+}
 static void state_INIT_do(void)
 {
     /* 本工程硬件初始化已在 main_user（调度器启动前）完成；
-     * 此处为业务初始化"通过"检查：直接转入 IDLE（计划 §5.5 步骤 2 接入 IDLE 前为纯软件）。 */
+     * 业务初始化"通过"检查：直接转入 IDLE。 */
     MotorEvent_t evt = { 0 };
     evt.id = EVENT_toIDLE;
     evt.timestamp_ms = HAL_GetTick();
@@ -54,25 +93,63 @@ static void state_INIT_do(void)
 }
 static void state_INIT_exit(void) { }
 
-static void state_IDLE_entry(void) { }
+static void state_IDLE_entry(void)
+{
+    publish_coast();
+    MotorState.run_state = RUNSTATE_STOPPED;
+    MotorCtrl.enable = 0U;
+    MotorCtrl.state  = MC_STATE_STOPPED;
+    PowerStage_Disable();
+}
 static void state_IDLE_do(void) { }
 
 static void state_CALIB_entry(void) { }
 static void state_CALIB_do(void) { }
 static void state_CALIB_exit(void) { }
 
-static void state_RUN_entry(void) { }
+static void state_RUN_entry(void)
+{
+    FOC_Generated_Reset();        /* 清模型积分器（防上次运行残留过冲） */
+    publish_run();
+    Param_init();
+    PowerStage_Enable();
+    MotorState.run_state = RUNSTATE_RUNNING;
+    MotorCtrl.enable = 1U;
+    MotorCtrl.state  = MC_STATE_RUNNING;
+    MotorCtrl.mode     = g_pending_cmd.mode;
+    MotorCtrl.speed_rps = g_pending_cmd.speed_rps;
+    MotorCtrl.iq_ref_A  = g_pending_cmd.iq_ref_A;
+    MotorCtrl.pos_ref   = g_pending_cmd.pos_ref;
+}
 static void state_RUN_do(void) { }
 static void state_RUN_exit(void) { }
 
-static void state_STOP_entry(void) { }
+static void state_STOP_entry(void)
+{
+    publish_coast();              /* coast：duty 0.5、PLL 仍跑给实时转速 */
+    PowerStage_Disable();
+    Param_deinit();
+    MotorState.run_state = RUNSTATE_STOPPED;
+    MotorCtrl.enable = 0U;
+    MotorCtrl.state  = MC_STATE_STOPPED;
+    g_stop_tick = HAL_GetTick();
+}
 static void state_STOP_do(void)
 {
-    /* 3a 软件测试：置停止后立即回 IDLE（占位；3b 改为"检测电机实际静止"再回 IDLE） */
-    MotorEvent_t evt = { 0 };
-    evt.id = EVENT_toIDLE;
-    evt.timestamp_ms = HAL_GetTick();
-    MotorStateMachine_PostEvent(&evt);
+    /* 实际转速低于阈值判定静止 → 回 IDLE；超时兜底强制回 IDLE */
+    float speed = fabsf(FOC_Generated_GetSpeedRps());
+    if (speed < STOP_SPEED_THRESHOLD_RPS) {
+        MotorEvent_t evt = { 0 };
+        evt.id = EVENT_toIDLE;
+        evt.timestamp_ms = HAL_GetTick();
+        MotorStateMachine_PostEvent(&evt);
+    } else if ((HAL_GetTick() - g_stop_tick) >= STOP_TIMEOUT_MS) {
+        printf("FSM: STOP timeout (speed=%.2f), force to IDLE\r\n", (double)speed);
+        MotorEvent_t evt = { 0 };
+        evt.id = EVENT_toIDLE;
+        evt.timestamp_ms = HAL_GetTick();
+        MotorStateMachine_PostEvent(&evt);
+    }
 }
 
 static void state_FAULT_entry(void) { }
@@ -171,6 +248,14 @@ static void MotorStateMachine_ProcessEvent(const MotorEvent_t *evt)
     motor_state_t cur = g_cur_state;
     uint32_t i;
 
+    /* 缓存 EVENT_toRUN 携带的命令参数（供 S_RUN_entry 提交快照） */
+    if (evt->id == EVENT_toRUN) {
+        g_pending_cmd.mode     = evt->mode;
+        g_pending_cmd.speed_rps = evt->speed_rps;
+        g_pending_cmd.iq_ref_A  = evt->iq_ref_A;
+        g_pending_cmd.pos_ref   = evt->pos_ref;
+    }
+
     for (i = 0; i < MOTOR_EVT_MAP_LEN; i++) {
         if ((eventMap[i].event == evt->id) && (eventMap[i].cur_state == cur)) {
             motor_state_t next = eventMap[i].next_state;
@@ -218,7 +303,10 @@ void MotorStateMachine_Init(void)
     g_cur_state = S_INIT;
     g_fault_pending = 0U;
 
-    /* 投递 EVENT_INIT：任务首个循环处理后进入 S_INIT Do（3b 做业务初始化检查） */
+    /* 初始安全快照：coast（调度器启动前 FOC ISR 就读取，需先处于安全态） */
+    publish_coast();
+
+    /* 投递 EVENT_INIT：任务首个循环处理后进入 S_INIT Do（业务初始化检查） */
     MotorEvent_t evt = { 0 };
     evt.id = EVENT_INIT;
     evt.timestamp_ms = HAL_GetTick();
