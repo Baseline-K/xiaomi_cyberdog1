@@ -18,7 +18,7 @@
                 {
                     "imageFileName": "${command:st-stm32-ide-debug-launch.get-projects-binary-from-context1}"
                 },
-                
+
             ]
         },
         {
@@ -31,7 +31,8 @@
             "cwd": "${workspaceFolder}",
             "executable": "${workspaceFolder}/build/Debug/Xiaomi_CyberDog1.elf",
             "gdbPath": "${env:CUBE_BUNDLE_PATH}/gnu-tools-for-stm32/14.3.1+st.2/bin/arm-none-eabi-gdb.exe",
-            "runToEntryPoint": "main"
+            "runToEntryPoint": "main",
+            "rtos": "FreeRTOS"
         }
     ]
 }

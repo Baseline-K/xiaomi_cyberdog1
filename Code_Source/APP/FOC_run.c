@@ -28,6 +28,7 @@ extern TIM_HandleTypeDef htim1;
 	
 uint32_t start,end,cycles;
 float time_us;
+volatile uint32_t g_foc_wcet_us = 0U;   /* FOC ISR 最大耗时（us），DiagTask 只读 */
 void (* func_ptr)(ADC_HandleTypeDef *hadc) = NULL;
 // 10khz  ADC注入组采样完成中断
 uint32_t Predict_ThreeHallangle;
@@ -163,6 +164,7 @@ void HAL_ADCEx_InjectedConvCpltCallback( ADC_HandleTypeDef *hadc)
 			cycles = end - start;
 		}
 		time_us  = (float)cycles / (SystemCoreClock / 1e6); // 转换为微秒
+		{ uint32_t w = (uint32_t)time_us; if (w > g_foc_wcet_us) g_foc_wcet_us = w; }  /* WCET 最大值 */
 		func_ptr = HAL_ADCEx_InjectedConvCpltCallback;
 #else
 									

@@ -69,6 +69,17 @@ extern void vAssertCalled(const char *pcFile, unsigned long ulLine);
 #define configASSERT( x ) if( ( x ) == 0 ) { vAssertCalled( __FILE__, __LINE__ ); taskDISABLE_INTERRUPTS(); for( ;; ); }
 
 /*-----------------------------------------------------------
+ * 运行时统计（uxTaskGetSystemState 输出各任务 CPU%）
+ * 计时源：DWT 周期计数器（120 MHz，已由 SEGGER_RTT_Port 的 DWT_Init 使能）
+ * 注意：vTaskGetRunTimeStats（格式化函数）需要动态分配，本项目纯静态，
+ *       改用 uxTaskGetSystemState 自行格式化。
+ *----------------------------------------------------------*/
+#define configUSE_TRACE_FACILITY           1
+#define configGENERATE_RUN_TIME_STATS      1
+#define portCONFIGURE_TIMER_FOR_RUN_TIME_STATS()   /* DWT 已使能，无需额外配置 */
+#define portGET_RUN_TIME_COUNTER_VALUE()           ( DWT->CYCCNT )
+
+/*-----------------------------------------------------------
  * 中断优先级（计划 §4，GD32F303 __NVIC_PRIO_BITS = 4）
  *----------------------------------------------------------*/
 #define configPRIO_BITS                            4

@@ -17,6 +17,7 @@
 #include "motor_state_machine.h"
 #include "Safety_Module.h"
 #include "foc.h"   /* foc_abc_current_i */
+#include "app_tasks.h"   /* AppTasks_Diag */
 #include "main.h"   /* HAL_GetTick */
 #include <stdio.h>
 #include <stdlib.h>
@@ -99,6 +100,7 @@ static void handle_line(char *line)
     else if (strncmp(p, "safethr overcurrent ", 20U) == 0) { Safety_Config.current_over_A = (float)atof(p + 20); printf("overcurrent thr=%.2fA\r\n", (double)Safety_Config.current_over_A); }
     else if (strncmp(p, "safethr short ", 14U) == 0)      { Safety_Config.shortcircuit_A = (float)atof(p + 14);    printf("short thr=%.2fA\r\n", (double)Safety_Config.shortcircuit_A); }
     else if (strcmp(p, "cur") == 0)                      { printf("ia=%.3f ib=%.3f ic=%.3f\r\n", (double)foc_abc_current_i.ia, (double)foc_abc_current_i.ib, (double)foc_abc_current_i.ic); }
+    else if (strcmp(p, "diag") == 0)                     { AppTasks_Diag(); }
     else if (strcmp(p, "get") == 0)        { print_status(); }
     else if (strcmp(p, "help") == 0)       { print_help(); }
     else if (p[0] != '\0')                 { printf("unknown cmd: '%s' (type help)\r\n", p); }

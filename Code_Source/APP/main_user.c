@@ -147,28 +147,6 @@ void main_user(void)
 }
 
 
-/* LegacyMainTask：Phase 1 过渡任务，承载原 main_user() 的 while(1) 轮询循环。
- * 用 vTaskDelayUntil 以 1ms tick 阻塞执行（与裸机 HAL_GetTick 轮询等效），
- * 让出 CPU 给低优先级任务。Phase 2 由 CommTask 接管 CAN 后移除。 */
-void LegacyMainTask(void *pvParam)
-{
-	TickType_t xLastWake = xTaskGetTickCount();
-
-	(void) pvParam;
-
-	for (;;)
-	{
-		vTaskDelayUntil(&xLastWake, pdMS_TO_TICKS(1));
-
-		/* CAN 协议解析已由 CommTask（任务通知驱动）承担（Phase 2），此处不再调用 */
-		MotorCtrl_Process();    // start/stop 请求
-		RTT_Cmd_Process();      // RTT 命令 → MotorCtrl
-
-		/* 原 while(1) 的 10ms 间隔块仅含注释掉的调试代码，已省略 */
-	}
-}
-
-
 void Param_init(void)
 {
 		// 注：Simulink 生成代码内部自带电流/速度/位置 PID，旧 MID_foc PID 结构已移除

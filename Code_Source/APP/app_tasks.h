@@ -6,18 +6,18 @@
 #ifndef APP_TASKS_H
 #define APP_TASKS_H
 
+#include "FreeRTOS.h"
 #include "task.h"   /* TaskHandle_t */
 
 /* CommTask 句柄：CAN RX ISR（stm32f1xx_it.c）用 vTaskNotifyGiveFromISR 通知。
  * 调度器启动前为 NULL，ISR 需判空保护。 */
 extern TaskHandle_t xCommTaskHandle;
 
-/* 创建 Phase 1 的静态任务（BringUpTask + LegacyMainTask + CommTask）。
+/* 创建全部静态任务（BringUpTask + CommTask + MotorStateTask + SafetyTask + DiagTask）。
  * 在 vTaskStartScheduler() 之前调用；所有任务均为 xTaskCreateStatic。 */
 void AppTasks_Init(void);
 
-/* LegacyMainTask：Phase 1 过渡任务，承载原 main_user() 的 while(1) 轮询循环。
- * 实现在 main_user.c；此处仅声明供 app_tasks.c 创建任务使用。 */
-void LegacyMainTask(void *pvParam);
+/* 打印系统诊断（栈高水位 / FOC WCET / CAN 统计 / 状态机统计），供 RTT `diag` 命令调用 */
+void AppTasks_Diag(void);
 
 #endif /* APP_TASKS_H */

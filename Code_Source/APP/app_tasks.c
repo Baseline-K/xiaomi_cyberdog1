@@ -16,13 +16,15 @@
 #include "SEGGER_RTT.h"
 #include "CANopen_OD.h"
 #include "CAN_bsp.h"
+#include "RTT_Cmd.h"
 #include "motor_state_machine.h"
 #include "motor_command_snapshot.h"
 #include "Safety_Module.h"
 #include "FOC_generated.h"
 #include "foc.h"   /* foc_abc_current_i */
 
-extern float Vbus;   /* FOC_run.c */
+extern float Vbus;                 /* FOC_run.c */
+extern volatile uint32_t g_foc_wcet_us;   /* FOC_run.c */
 
 /*-----------------------------------------------------------
  * 任务栈/TCB 静态内存与句柄
@@ -31,9 +33,9 @@ static StackType_t   BringUpTaskStack[configMINIMAL_STACK_SIZE];
 static StaticTask_t  BringUpTaskTCB;
 static TaskHandle_t  BringUpTaskHandle;
 
-static StackType_t   LegacyMainTaskStack[configMINIMAL_STACK_SIZE * 4];  /* 2 KB，含 printf/RTT 调用链 */
-static StaticTask_t  LegacyMainTaskTCB;
-static TaskHandle_t  LegacyMainTaskHandle;
+static StackType_t   DiagTaskStack[configMINIMAL_STACK_SIZE * 4];   /* 2 KB，RTT 命令+printf 调用链 */
+static StaticTask_t  DiagTaskTCB;
+static TaskHandle_t  DiagTaskHandle;
 
 static StackType_t   CommTaskStack[configMINIMAL_STACK_SIZE * 3];   /* 1.5 KB，CAN 解析+应答调用链 */
 static StaticTask_t  CommTaskTCB;
@@ -102,6 +104,71 @@ static void SafetyTask_Entry(void *pvParam)
             MotorStateMachine_PostFault(new_faults);
         }
     }
+}
+
+/*-----------------------------------------------------------
+ * DiagTask：RTT 命令解释（计划 §3.2 优先级 1）。
+ * RTT_Cmd_Process 从 LegacyMainTask 移入；诊断输出改为交互 `diag` 命令触发，
+ * 不再周期刷屏（系统存活由 BringUpTask 心跳确认）。
+ *----------------------------------------------------------*/
+static void DiagTask_Entry(void *pvParam)
+{
+    TickType_t xLastWake = xTaskGetTickCount();
+
+    (void) pvParam;
+
+    for (;;)
+    {
+        vTaskDelayUntil(&xLastWake, pdMS_TO_TICKS(10));
+
+        RTT_Cmd_Process();   /* 非阻塞逐字符解析 RTT 下行命令 */
+    }
+}
+
+/* 诊断输出：各任务 CPU%/栈高水位 / FOC WCET / CAN 统计 / 状态机统计（供 RTT `diag` 命令调用） */
+void AppTasks_Diag(void)
+{
+    uint32_t rx_total, rx_overrun, rx_drop;
+    uint32_t posted, dropped, illegal, fault_forced;
+
+    CAN_bsp_GetStats(&rx_total, &rx_overrun, &rx_drop);
+    MotorState_GetStats(&posted, &dropped, &illegal, &fault_forced);
+
+    printf("\r\n==== Diag ====\r\n");
+    printf("  FOC ISR WCET: %lu us (预算100us)\r\n", (unsigned long) g_foc_wcet_us);
+    {
+        /* 各任务 CPU%（uxTaskGetSystemState，纯静态可用） */
+        TaskStatus_t tstat[10];
+        configRUN_TIME_COUNTER_TYPE ulTotalRun = 0;
+        UBaseType_t n = uxTaskGetSystemState(tstat, 10U, &ulTotalRun);
+        printf("  Task CPU%% (run=%lu):\r\n", (unsigned long) ulTotalRun);
+        for (UBaseType_t i = 0; i < n; i++) {
+            unsigned long pct = (ulTotalRun > 0U) ?
+                (unsigned long)((tstat[i].ulRunTimeCounter * 100UL) / (unsigned long)ulTotalRun) : 0UL;
+            printf("    %-10s %lu%%\r\n", tstat[i].pcTaskName, pct);
+        }
+    }
+    printf("  CAN: rx=%lu overrun=%lu drop=%lu\r\n",
+           (unsigned long) rx_total, (unsigned long) rx_overrun, (unsigned long) rx_drop);
+    printf("  FSM: posted=%lu dropped=%lu illegal=%lu fault=%lu\r\n",
+           (unsigned long) posted, (unsigned long) dropped,
+           (unsigned long) illegal, (unsigned long) fault_forced);
+    printf("  Stacks HW/alloc:\r\n");
+    printf("    BringUp %lu/%lu\r\n",
+           (unsigned long) uxTaskGetStackHighWaterMark(BringUpTaskHandle),
+           (unsigned long) (sizeof(BringUpTaskStack) / sizeof(StackType_t)));
+    printf("    Comm    %lu/%lu\r\n",
+           (unsigned long) uxTaskGetStackHighWaterMark(xCommTaskHandle),
+           (unsigned long) (sizeof(CommTaskStack) / sizeof(StackType_t)));
+    printf("    MotorSt %lu/%lu\r\n",
+           (unsigned long) uxTaskGetStackHighWaterMark(MotorStateTaskHandle),
+           (unsigned long) (sizeof(MotorStateTaskStack) / sizeof(StackType_t)));
+    printf("    Safety  %lu/%lu\r\n",
+           (unsigned long) uxTaskGetStackHighWaterMark(SafetyTaskHandle),
+           (unsigned long) (sizeof(SafetyTaskStack) / sizeof(StackType_t)));
+    printf("    Diag    %lu/%lu\r\n",
+           (unsigned long) uxTaskGetStackHighWaterMark(DiagTaskHandle),
+           (unsigned long) (sizeof(DiagTaskStack) / sizeof(StackType_t)));
 }
 
 /*-----------------------------------------------------------
@@ -197,15 +264,15 @@ void AppTasks_Init(void)
                                           &BringUpTaskTCB);
     configASSERT(BringUpTaskHandle != NULL);
 
-    /* LegacyMainTask：优先级 2，承载原 while(1) 轮询（MotorCtrl/RTT） */
-    LegacyMainTaskHandle = xTaskCreateStatic(LegacyMainTask,
-                                             "LegacyMain",
-                                             sizeof(LegacyMainTaskStack) / sizeof(StackType_t),
-                                             (void *) NULL,
-                                             2,
-                                             LegacyMainTaskStack,
-                                             &LegacyMainTaskTCB);
-    configASSERT(LegacyMainTaskHandle != NULL);
+    /* DiagTask：优先级 1，RTT 命令 + 周期诊断 */
+    DiagTaskHandle = xTaskCreateStatic(DiagTask_Entry,
+                                       "Diag",
+                                       sizeof(DiagTaskStack) / sizeof(StackType_t),
+                                       (void *) NULL,
+                                       1,
+                                       DiagTaskStack,
+                                       &DiagTaskTCB);
+    configASSERT(DiagTaskHandle != NULL);
 
     /* CommTask：优先级 3，CAN 协议解析（任务通知驱动） */
     xCommTaskHandle = xTaskCreateStatic(CommTask_Entry,
