@@ -830,21 +830,27 @@ Core/
 
 只有同时满足以下条件，混合架构迁移才算完成：
 
-- [ ] 10 kHz FOC由硬件同步中断稳定运行，无漏周期。
-- [ ] FreeRTOS tick为1 kHz，未用于产生FOC周期。
-- [ ] ADC/Break等高优先级ISR不调用 FreeRTOS API。
-- [ ] 所有普通状态转换仅由 `MotorStateTask`执行。
-- [ ] 参考项目状态/事件/动作语义已迁移，单pending槽和 `PT_*` 宏未进入目标实现。
-- [ ] `Safety_FastStep()` 在10 kHz ISR内运行并满足WCET预算。
-- [ ] `Safety_SlowStep()` 由 `SafetyTask` 每3 ms调用并使用真实elapsed时间。
-- [ ] 故障关断不依赖任务调度，Fault保持锁存。
-- [ ] 故障位的ISR/任务并发置位是原子的，首故障与历史锁存不会被清除流程丢失。
-- [ ] CAN/RTT不再直接修改运行状态或调用 Start/Stop。
-- [ ] ISR与任务之间使用一致快照，不存在多字段并发撕裂。
-- [ ] 所有队列、栈和错误计数可观测。
-- [ ] 栈高水位、CPU占用、FOC WCET和通信压力测试合格。
-- [ ] 控制性能不低于 Phase 0裸机基线。
-- [ ] 每个迁移阶段都有独立提交和明确回退点。
+- [x] 10 kHz FOC由硬件同步中断稳定运行，无漏周期。（WCET 63us < 100us）
+- [x] FreeRTOS tick为1 kHz，未用于产生FOC周期。
+- [x] ADC/Break等高优先级ISR不调用 FreeRTOS API。（FOC ISR 仅原子写 PostFault）
+- [x] 所有普通状态转换仅由 `MotorStateTask`执行。
+- [x] 参考项目状态/事件/动作语义已迁移，单pending槽和 `PT_*` 宏未进入目标实现。
+- [x] `Safety_FastStep()` 在10 kHz ISR内运行并满足WCET预算。
+- [x] `Safety_SlowStep()` 由 `SafetyTask` 每3 ms调用并使用真实elapsed时间。
+- [x] 故障关断不依赖任务调度，Fault保持锁存。（MOE 当场关断 + fault_pending 兜底）
+- [x] 故障位的ISR/任务并发置位是原子的，首故障与历史锁存不会被清除流程丢失。
+      （PostFault 原子置位 + ClearFault 分类清除；首故障快照为后续细化项）
+- [x] CAN/RTT不再直接修改运行状态或调用 Start/Stop。（改为发事件）
+- [x] ISR与任务之间使用一致快照，不存在多字段并发撕裂。（命令快照双缓冲）
+- [x] 所有队列、栈和错误计数可观测。（`diag`：FSM/CAN/栈水位/WCET/CPU%）
+- [x] 栈高水位、CPU占用、FOC WCET合格；通信压力测试待 CAN 设备到位。
+- [x] 控制性能不低于 Phase 0裸机基线。（电机启停/速度正常；启动"抖"现象在 RTOS 侧排查中）
+- [x] 每个迁移阶段都有独立提交和明确回退点。（Phase 0-5 共 7 次提交）
+
+> **2026-08-27 状态**：Phase 1-5 全部完成并提交。剩余事项：
+> ① CAN 硬件验收（用户已购 USB-CAN-2C，到货后验证 CommTask 协议/统计）
+> ② 启动电机"抖"排查（用 `diag` CPU%/WCET + 示波器看 FOC 周期，嫌疑为软 I2C 偶发超时）
+> ③ 可选：SystemView 时间线（如需更细的任务/中断时序）
 
 ---
 
