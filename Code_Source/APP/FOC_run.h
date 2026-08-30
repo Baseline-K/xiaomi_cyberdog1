@@ -20,14 +20,17 @@
 
 
 
+/* 工作模式（mt_ 风格，用户定；辨识时用 MT_IDENTIFY） */
 typedef enum {
-    CTRL_MODE_OPENLOOP = 0,
-    CTRL_MODE_VOLTAGE,
-    CTRL_MODE_TORQUE,
-    CTRL_MODE_SPEED,
-    CTRL_MODE_POSITION,
-    // future: CTRL_MODE_CURRENT, etc.
-} control_mode_t;
+    MT_STOP = 0,
+    MT_OPENLOOP_CURRENT,
+    MT_OPENLOOP_VOLTAGE,
+    MT_VOLTAGE,
+    MT_TORQUE,
+    MT_SPEED,
+    MT_POSITION,
+    MT_IDENTIFY,
+} motor_work_mode_t;
 
 typedef enum {
     RUNSTATE_STOPPED = 0,
@@ -36,6 +39,7 @@ typedef enum {
     RUNSTATE_BRAKING,     // ramp down
     RUNSTATE_STALLED,     // detected stall
     RUNSTATE_CALIBRATING, // e.g. voltage calibration
+    RUNSTATE_IDENTIFYING, // 离线参数辨识（复用 S_CALIB）
     RUNSTATE_LOCKED,      // locked state
 } run_state_t;
 
@@ -66,7 +70,7 @@ typedef struct {
 
 /* 主状态结构体 */
 typedef struct {
-    control_mode_t ctrl_mode;   // 控制模式：速度/扭矩/位置/电压...
+    motor_work_mode_t ctrl_mode;   // 工作模式：MT_TORQUE/SPEED/POSITION/IDENTIFY...
     volatile run_state_t run_state; // ISR/foreground shared run state
     direction_t    direction;   // 方向
     run_flags_t    flags;       // 小标志位
@@ -76,6 +80,8 @@ typedef struct {
 //    float          actual;      // 实时量
 } MotorState_t;
 extern MotorState_t MotorState;
+
+extern float g_mech_pos_rad;   /* 连续机械角(rad, 多圈)，10kHz ISR 累加 */
 
 
 

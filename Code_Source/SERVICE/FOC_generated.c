@@ -53,18 +53,39 @@ void FOC_Generated_Init(void)
     Speed_MaxOut = 5.0f;
     Speed_MinOut = -5.0f;
 
-    /* ---- 死区补偿 LUT（占位标定数据；真实标定后写入） ---- */
+    /* ---- 位置环增益（PD 结构，先只给 P 项；D 预留，仿真整定后直接写值即可） ---- */
+    Pos_Kp     = 10.0f;    /* 位置环比例增益 RPS/rad */
+    Pos_Kd     = 0.0f;     /* 微分预留 */
+    Pos_MaxOut = 5.0f;     /* 位置环输出上限(RPS, 作速度环参考) */
+    Pos_MinOut = -5.0f;
+
+    /* ---- 死区补偿 LUT（离线辨识标定，2026-08；高电流段平台限幅 0.15V）
+     * 注：辨识时母线电压 13V、最大电流 1.5A，与 MOS 管正常工作电压/电流范围不完全一致，
+     *     辨识结果仅供参考。
+     * 电流断点（A）0~1.5 密低疏高；Vcomp：过零区先升后稳、高电流段限幅 0.15V（只补死区+少量余量）。 */
+    static const float DEAD_LUT_I[20] = {
+        0.00f, 0.05f, 0.10f, 0.15f, 0.20f,
+        0.25f, 0.30f, 0.35f, 0.40f, 0.50f,
+        0.60f, 0.70f, 0.80f, 0.90f, 1.00f,
+        1.10f, 1.20f, 1.30f, 1.40f, 1.50f
+    };
+    static const float DEAD_LUT_V[20] = {
+        0.0000f, 0.0797f, 0.0970f, 0.1100f, 0.1190f,
+        0.1233f, 0.1254f, 0.1257f, 0.1226f, 0.1152f,
+        0.1107f, 0.1045f, 0.1062f, 0.1139f, 0.1304f,
+        0.1500f, 0.1500f, 0.1500f, 0.1500f, 0.1500f
+    };
     DeadComp_En = GEN_DEAD_COMP;
-    for (int i = 0; i < 16; i++) {
-        DeadComp_Lut_I[i] = i * 3.0f / 15.0f;
-        DeadComp_Lut_V[i] = i * 0.6f / 15.0f;
+    for (int i = 0; i < 20; i++) {
+        DeadComp_Lut_I[i] = DEAD_LUT_I[i];
+        DeadComp_Lut_V[i] = DEAD_LUT_V[i];
     }
 
-    /* ---- 齿槽前馈 LUT（默认关，占位数据） ---- */
+    /* ---- 齿槽前馈 LUT（默认关，占位数据，360 点电角度每度） ---- */
     CoggingFF_En = GEN_COGGING_FF;
-    for (int i = 0; i < 32; i++) {
-        Cogging_Lut_Angle[i] = i * TWO_PI_F / 31.0f;
-        Cogging_Lut_V[i] = 0.15f * sinf(2.0f * Cogging_Lut_Angle[i]);
+    for (int i = 0; i < 360; i++) {
+        Cogging_Lut_Angle[i] = i * TWO_PI_F / 359.0f;
+        Cogging_Lut_V[i] = 0.0f;    /* 占位；齿槽辨识后写入 */
     }
 
     /* ---- PLL 速度换算：电角速度 rad/s -> 机械 RPS (1/(2π·极对数)) ---- */
@@ -74,13 +95,16 @@ void FOC_Generated_Init(void)
     CyberDog_Motor_FOC_initialize();
 }
 
-/* 启动时清零模型积分器与饱和输出（防上次运行残留导致的瞬间过冲） */
+/* 启动时清零控制环积分器与饱和输出（防上次运行残留导致的瞬间过冲）
+ * 注：只清控制环状态；PLL 角度积分器(Integrator_DSTATE)保持跟踪，不清。 */
 void FOC_Generated_Reset(void)
 {
-    CyberDog_Motor_FOC_DW.Integrator_DSTATE   = 0.0f;   /* d 电流积分 */
-    CyberDog_Motor_FOC_DW.Integrator_DSTATE_b = 0.0f;   /* 速度环积分 */
+    CyberDog_Motor_FOC_DW.Integrator_DSTATE_l = 0.0f;   /* d 电流积分 */
+    CyberDog_Motor_FOC_DW.Integrator_DSTATE_m = 0.0f;   /* 速度环积分 */
     CyberDog_Motor_FOC_DW.Integrator_DSTATE_k = 0.0f;   /* q 电流积分 */
-    CyberDog_Motor_FOC_B.Saturation           = 0.0f;
+    CyberDog_Motor_FOC_DW.Filter_DSTATE      = 0.0f;    /* 位置环 D 滤波(预留) */
+    CyberDog_Motor_FOC_B.Saturation          = 0.0f;    /* 位置环输出(饱和后) */
+    CyberDog_Motor_FOC_B.Saturation_f        = 0.0f;    /* 速度环输出(饱和后) */
 }
 
 void FOC_Generated_Step(void)
@@ -95,8 +119,14 @@ void FOC_Generated_Step(void)
     CyberDog_Motor_FOC_U.id_ref     = 0.0f;
     CyberDog_Motor_FOC_U.iq_ref     = cmd->iq_ref_A;     /* 转矩模式目标 */
     CyberDog_Motor_FOC_U.ref_speed  = cmd->speed_rps;    /* 速度模式目标 */
-    CyberDog_Motor_FOC_U.ctrl_mode  = (cmd->mode == MC_MODE_SPEED) ? 1.0f : 0.0f;
-    CyberDog_Motor_FOC_U.coast      = cmd->coast ? 1.0f : 0.0f;  /* 模型内 duty 强制 0.5（coast） */
+    if (MotorState.run_state != RUNSTATE_IDENTIFYING) {
+        /* 正常运行时由命令映射 ctrl_mode/coast；辨识时已由 Identify_FocIsrStep 填好（电压模式） */
+        CyberDog_Motor_FOC_U.ctrl_mode  = (cmd->mode == MC_MODE_POSITION) ? 2.0f :
+                                          (cmd->mode == MC_MODE_SPEED)    ? 1.0f : 0.0f;
+        CyberDog_Motor_FOC_U.pos_ref    = cmd->pos_ref;   /* rad, 连续，位置模式目标 */
+        CyberDog_Motor_FOC_U.pos_fbk    = g_mech_pos_rad; /* rad, 连续，10kHz ISR 累加 */
+        CyberDog_Motor_FOC_U.coast      = cmd->coast ? 1.0f : 0.0f;  /* 模型内 duty 强制 0.5（coast） */
+    }
 
     /* ---- 始终 step：PLL 实时给 speed_meas_rps；coast 时模型输出 duty=0.5 ---- */
     CyberDog_Motor_FOC_step();

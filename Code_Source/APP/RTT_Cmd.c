@@ -18,6 +18,7 @@
 #include "Safety_Module.h"
 #include "foc.h"   /* foc_abc_current_i */
 #include "app_tasks.h"   /* AppTasks_Diag */
+#include "identify.h"   /* 离线辨识命令 */
 #include "main.h"   /* HAL_GetTick */
 #include <stdio.h>
 #include <stdlib.h>
@@ -32,10 +33,15 @@ static void print_help(void)
 {
     printf("\r\n==== Motor Control Commands ====\r\n");
     printf("  spd <rps>   set target speed   e.g. spd 5\r\n");
-    printf("  mode <0|1>  mode 0=torque 1=speed\r\n");
+    printf("  mode <0|1|2> 0=torque 1=speed 2=position\r\n");
     printf("  iq <A>      set target current (torque)\r\n");
+    printf("  pos <rad>   set target position (rad, multi-turn)\r\n");
     printf("  start       start motor (commit+enable)\r\n");
     printf("  stop        stop motor\r\n");
+    printf("  identify r    offline R identification\r\n");
+    printf("  identify dead offline dead-time LUT identification (needs R first)\r\n");
+    printf("  identify abort\r\n");
+    printf("  showparams  print motor params + identify results\r\n");
     printf("  get         print status\r\n");
     printf("  help        show this\r\n");
     printf("===============================\r\n");
@@ -57,10 +63,10 @@ static void print_status(void)
     default:           break;
     }
     MotorState_GetStats(&posted, &dropped, &illegal, &fault_forced);
-    printf("enable=%u mode=%u speed_rps=%.3f iq_ref_A=%.3f state=%u | FSM=%s posted=%lu dropped=%lu illegal=%lu fault=%lu\r\n",
+    printf("enable=%u mode=%u speed_rps=%.3f iq_ref_A=%.3f pos_ref=%.3f state=%u | FSM=%s posted=%lu dropped=%lu illegal=%lu fault=%lu\r\n",
            (unsigned)MotorCtrl.enable, (unsigned)MotorCtrl.mode,
            (double)MotorCtrl.speed_rps, (double)MotorCtrl.iq_ref_A,
-           (unsigned)MotorCtrl.state, sn,
+           (double)MotorCtrl.pos_ref, (unsigned)MotorCtrl.state, sn,
            (unsigned long)posted, (unsigned long)dropped,
            (unsigned long)illegal, (unsigned long)fault_forced);
 }
@@ -86,6 +92,7 @@ static void handle_line(char *line)
     if      (strncmp(p, "spd ", 4U) == 0)  { MotorCtrl_SetSpeedRPS((float)atof(p + 4)); printf("speed set to %.3f RPS\r\n", (double)MotorCtrl.speed_rps_temp); }
     else if (strncmp(p, "mode ", 5U) == 0) { MotorCtrl_SetMode((uint8_t)atoi(p + 5));   printf("mode set to %u\r\n", (unsigned)MotorCtrl.mode_temp); }
     else if (strncmp(p, "iq ", 3U) == 0)   { MotorCtrl_SetTorqueA((float)atof(p + 3));  printf("iq set to %.3f A\r\n", (double)MotorCtrl.iq_ref_A_temp); }
+    else if (strncmp(p, "pos ", 4U) == 0)  { MotorCtrl_SetPosition((float)atof(p + 4)); printf("pos set to %.3f rad\r\n", (double)MotorCtrl.pos_ref_temp); }
     else if (strcmp(p, "start") == 0)      { post_cmd_event(EVENT_toRUN);  printf("start event posted\r\n"); }
     else if (strcmp(p, "stop") == 0)       { post_cmd_event(EVENT_RUNtoSTOP); printf("stop event posted\r\n"); }
     else if (strcmp(p, "fault") == 0)      { MotorStateMachine_PostFault(0x1U); printf("fault injected (bit0)\r\n"); }
@@ -102,6 +109,34 @@ static void handle_line(char *line)
     else if (strcmp(p, "cur") == 0)                      { printf("ia=%.3f ib=%.3f ic=%.3f\r\n", (double)foc_abc_current_i.ia, (double)foc_abc_current_i.ib, (double)foc_abc_current_i.ic); }
     else if (strcmp(p, "diag") == 0)                     { AppTasks_Diag(); }
     else if (strcmp(p, "get") == 0)        { print_status(); }
+    /* 离线参数辨识：identify r 等；复用 S_CALIB（先 stop 再 identify） */
+    else if (strncmp(p, "identify", 8U) == 0) {
+        char *arg = p + 8;
+        while ((*arg == ' ') || (*arg == '\t')) arg++;
+        if (strcmp(arg, "r") == 0) {
+            Identify_Task_Set(1u << TASK_R);
+            post_cmd_event(EVENT_IDLEtoCALIB);
+            printf("identify: R task set, entering CALIB\r\n");
+        } else if (strcmp(arg, "dead") == 0) {
+            Identify_Task_Set(1u << TASK_DEAD);
+            post_cmd_event(EVENT_IDLEtoCALIB);
+            printf("identify: DEAD task set, entering CALIB\r\n");
+        } else if (strcmp(arg, "abort") == 0) {
+            Identify_Abort();
+            printf("identify: abort requested\r\n");
+        } else {
+            printf("identify <r|l|flux|j|dead|cog|abort>  (先 stop 再辨识)\r\n");
+        }
+    }
+    else if (strcmp(p, "showparams") == 0) {
+        printf("VBUS=%.1f R=%.4f L=%.5f Flux=%.6f P=%.0f J=%.8f\r\n",
+               (double)Motor_Params.VBUS, (double)Motor_Params.Phase_R,
+               (double)Motor_Params.Phase_L, (double)Motor_Params.Flux,
+               (double)Motor_Params.Pole_Pairs, (double)Motor_Params.Rotor_inertia);
+        printf("ident: state=%d Rs=%.4f Vdead=%.4f\r\n",
+               (int)Identify_GetStatus(), (double)g_identify.res.Rs,
+               (double)g_identify.res.Vdead_est);
+    }
     else if (strcmp(p, "help") == 0)       { print_help(); }
     else if (p[0] != '\0')                 { printf("unknown cmd: '%s' (type help)\r\n", p); }
 }

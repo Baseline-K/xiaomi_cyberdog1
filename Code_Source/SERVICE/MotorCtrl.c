@@ -79,7 +79,7 @@ void MotorCtrl_Init(void)
     MotorCtrl.state  = MC_STATE_STOPPED;
     MotorCtrl.faults = 0U;
 
-    MotorState.ctrl_mode = CTRL_MODE_SPEED;
+    MotorState.ctrl_mode = MT_SPEED;
     MotorState.run_state = RUNSTATE_STOPPED;
 }
 
@@ -110,7 +110,8 @@ void MotorCtrl_Start(void)
         PowerStage_Enable();
     }
     MotorCtrl.state  = MC_STATE_RUNNING;
-    MotorState.ctrl_mode = (mode == MC_MODE_SPEED) ? CTRL_MODE_SPEED : CTRL_MODE_TORQUE;
+    MotorState.ctrl_mode = (mode == MC_MODE_POSITION) ? MT_POSITION :
+                           (mode == MC_MODE_SPEED)    ? MT_SPEED : MT_TORQUE;
     MotorState.run_state = RUNSTATE_RUNNING;
 }
 

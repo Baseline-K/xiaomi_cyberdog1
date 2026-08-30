@@ -3,9 +3,9 @@
  *
  * Code generated for Simulink model 'CyberDog_Motor_FOC'.
  *
- * Model version                  : 1.30
+ * Model version                  : 1.35
  * Simulink Coder version         : 25.2 (R2025b) 28-Jul-2025
- * C/C++ source code generated on : Tue Aug 25 01:00:16 2026
+ * C/C++ source code generated on : Sun Aug 30 17:31:05 2026
  *
  * Target selection: ert.tlc
  * Embedded hardware selection: Intel->x86-64 (Windows64)
@@ -36,7 +36,8 @@
 
 /* Block signals (default storage) */
 typedef struct {
-  real32_T Saturation;                 /* '<S288>/Saturation' */
+  real32_T Saturation;                 /* '<S290>/Saturation' */
+  real32_T Saturation_f;               /* '<S343>/Saturation' */
 } B_CyberDog_Motor_FOC_T;
 
 /* Block states (default storage) for system '<Root>' */
@@ -46,8 +47,9 @@ typedef struct {
   real32_T Integrator_DSTATE;          /* '<S47>/Integrator' */
   real32_T Delay_DSTATE_d;             /* '<S103>/Delay' */
   real32_T Integrator_DSTATE_l;        /* '<S171>/Integrator' */
+  real32_T Filter_DSTATE;              /* '<S278>/Filter' */
   real32_T Delay_DSTATE_k;             /* '<S12>/Delay' */
-  real32_T Integrator_DSTATE_b;        /* '<S281>/Integrator' */
+  real32_T Integrator_DSTATE_m;        /* '<S336>/Integrator' */
   real32_T Integrator_DSTATE_k;        /* '<S223>/Integrator' */
   real32_T Delay_DSTATE_o;             /* '<S95>/Delay' */
   real32_T Delay2_DSTATE;              /* '<S90>/Delay2' */
@@ -87,7 +89,7 @@ typedef struct {
   /* Pooled Parameter (Expression: )
    * Referenced by:
    *   '<S113>/sine_table_values'
-   *   '<S304>/sine_table_values'
+   *   '<S359>/sine_table_values'
    *   '<S105>/sine_table_values'
    */
   real32_T pooled5[1002];
@@ -104,15 +106,25 @@ typedef struct {
   real32_T ref_speed;                  /* '<Root>/ref_speed' */
   real32_T ctrl_mode;                  /* '<Root>/ctrl_mode' */
   real32_T coast;                      /* '<Root>/coast' */
+  real32_T pos_ref;                    /* '<Root>/pos_ref' */
+  real32_T pos_fbk;                    /* '<Root>/pos_fbk' */
+  real32_T vd_ref;                     /* '<Root>/vd_ref' */
+  real32_T vq_ref;                     /* '<Root>/vq_ref' */
+  real32_T v_alpha_ref;                /* '<Root>/v_alpha_ref' */
+  real32_T v_beta_ref;                 /* '<Root>/v_beta_ref' */
 } ExtU_CyberDog_Motor_FOC_T;
 
 /* External outputs (root outports fed by signals with default storage) */
 typedef struct {
-  real_T duty_u;                       /* '<Root>/duty_u' */
-  real_T duty_v;                       /* '<Root>/duty_v' */
-  real_T duty_w;                       /* '<Root>/duty_w' */
+  real32_T duty_u;                     /* '<Root>/duty_u' */
+  real32_T duty_v;                     /* '<Root>/duty_v' */
+  real32_T duty_w;                     /* '<Root>/duty_w' */
   real32_T theta_elec_filt;            /* '<Root>/theta_elec_filt' */
   real32_T speed_meas_rps;             /* '<Root>/speed_meas_rps' */
+  real32_T i_alpha_meas;               /* '<Root>/i_alpha_meas' */
+  real32_T i_beta_meas;                /* '<Root>/i_beta_meas' */
+  real32_T id_meas;                    /* '<Root>/id_meas' */
+  real32_T iq_meas;                    /* '<Root>/iq_meas' */
 } ExtY_CyberDog_Motor_FOC_T;
 
 /* Real-time Model Data Structure */
@@ -161,11 +173,11 @@ extern real32_T CoggingFF_En;          /* Variable: CoggingFF_En
                                         * Referenced by: '<S125>/Const_CogEn'
                                         * 齿槽转矩前馈使能(0/1)
                                         */
-extern real32_T Cogging_Lut_Angle[32]; /* Variable: Cogging_Lut_Angle
+extern real32_T Cogging_Lut_Angle[360];/* Variable: Cogging_Lut_Angle
                                         * Referenced by: '<S125>/LUT_cog'
                                         * 齿槽前馈LUT 电角度断点(rad)
                                         */
-extern real32_T Cogging_Lut_V[32];     /* Variable: Cogging_Lut_V
+extern real32_T Cogging_Lut_V[360];    /* Variable: Cogging_Lut_V
                                         * Referenced by: '<S125>/LUT_cog'
                                         * 齿槽前馈LUT iq补偿(A)
                                         */
@@ -213,11 +225,11 @@ extern real32_T DeadComp_En;           /* Variable: DeadComp_En
                                         * Referenced by: '<S123>/Const_DeadEn'
                                         * 死区补偿使能(0/1)
                                         */
-extern real32_T DeadComp_Lut_I[16];    /* Variable: DeadComp_Lut_I
+extern real32_T DeadComp_Lut_I[20];    /* Variable: DeadComp_Lut_I
                                         * Referenced by: '<S123>/LUT_dead'
                                         * 死区补偿LUT 电流断点(A)
                                         */
-extern real32_T DeadComp_Lut_V[16];    /* Variable: DeadComp_Lut_V
+extern real32_T DeadComp_Lut_V[20];    /* Variable: DeadComp_Lut_V
                                         * Referenced by: '<S123>/LUT_dead'
                                         * 死区补偿LUT 补偿电压(V)
                                         */
@@ -231,24 +243,36 @@ extern real32_T InvVbus;               /* Variable: InvVbus
                                         *   '<S127>/G_ubeta'
                                         * 母线电压倒数 1/Vbus
                                         */
+extern real32_T Pos_Kd;                /* Variable: Pos_Kd
+                                        * Referenced by: '<S276>/Derivative Gain'
+                                        * 位置环微分增益(预留, 先0)
+                                        */
+extern real32_T Pos_Kp;                /* Variable: Pos_Kp
+                                        * Referenced by: '<S288>/Proportional Gain'
+                                        * 位置环比例增益(RPS/rad)
+                                        */
+extern real32_T Pos_MaxOut;            /* Variable: Pos_MaxOut
+                                        * Referenced by: '<S290>/Saturation'
+                                        * 位置环输出上限(RPS, 作速度环参考)
+                                        */
+extern real32_T Pos_MinOut;            /* Variable: Pos_MinOut
+                                        * Referenced by: '<S290>/Saturation'
+                                        * 位置环输出下限(RPS)
+                                        */
 extern real32_T Speed_Ki;              /* Variable: Speed_Ki
-                                        * Referenced by: '<S278>/Integral Gain'
+                                        * Referenced by: '<S333>/Integral Gain'
                                         * 速度环积分增益(1kHz+UseI*Ts 每周期增量)
                                         */
 extern real32_T Speed_Kp;              /* Variable: Speed_Kp
-                                        * Referenced by: '<S286>/Proportional Gain'
+                                        * Referenced by: '<S341>/Proportional Gain'
                                         * 速度环比例增益
                                         */
 extern real32_T Speed_MaxOut;          /* Variable: Speed_MaxOut
-                                        * Referenced by:
-                                        *   '<S281>/Integrator'
-                                        *   '<S288>/Saturation'
+                                        * Referenced by: '<S343>/Saturation'
                                         * 速度环输出上限(A, iq_ref)
                                         */
 extern real32_T Speed_MinOut;          /* Variable: Speed_MinOut
-                                        * Referenced by:
-                                        *   '<S281>/Integrator'
-                                        *   '<S288>/Saturation'
+                                        * Referenced by: '<S343>/Saturation'
                                         * 速度环输出下限(A, iq_ref)
                                         */
 extern real32_T VmaxCoeff;             /* Variable: VmaxCoeff
@@ -363,12 +387,12 @@ extern RT_MODEL_CyberDog_Motor_FOC_T *const CyberDog_Motor_FOC_M;
  * Block '<S134>/Data Type Duplicate' : Unused code path elimination
  * Block '<S244>/Data Type Duplicate' : Unused code path elimination
  * Block '<S244>/Data Type Duplicate1' : Unused code path elimination
- * Block '<S302>/Data Type Duplicate' : Unused code path elimination
- * Block '<S302>/Data Type Duplicate1' : Unused code path elimination
- * Block '<S304>/Data Type Duplicate' : Unused code path elimination
- * Block '<S304>/Data Type Propagation' : Unused code path elimination
- * Block '<S309>/Data Type Duplicate' : Unused code path elimination
- * Block '<S310>/Data Type Duplicate' : Unused code path elimination
+ * Block '<S357>/Data Type Duplicate' : Unused code path elimination
+ * Block '<S357>/Data Type Duplicate1' : Unused code path elimination
+ * Block '<S359>/Data Type Duplicate' : Unused code path elimination
+ * Block '<S359>/Data Type Propagation' : Unused code path elimination
+ * Block '<S364>/Data Type Duplicate' : Unused code path elimination
+ * Block '<S365>/Data Type Duplicate' : Unused code path elimination
  * Block '<S3>/FreqGain' : Eliminated nontunable gain of 1
  * Block '<S5>/Cast To Boolean' : Eliminate redundant data type conversion
  * Block '<S7>/Cast To Boolean' : Eliminate redundant data type conversion
@@ -389,9 +413,9 @@ extern RT_MODEL_CyberDog_Motor_FOC_T *const CyberDog_Motor_FOC_M;
  * Block '<S133>/Kbeta' : Eliminated nontunable gain of 1
  * Block '<S163>/Kb' : Eliminated nontunable gain of 1
  * Block '<S215>/Kb' : Eliminated nontunable gain of 1
- * Block '<S273>/Kb' : Eliminated nontunable gain of 1
- * Block '<S304>/Get_FractionVal' : Eliminate redundant data type conversion
- * Block '<S311>/Data Type Conversion' : Eliminate redundant data type conversion
+ * Block '<S328>/Kb' : Eliminated nontunable gain of 1
+ * Block '<S359>/Get_FractionVal' : Eliminate redundant data type conversion
+ * Block '<S366>/Data Type Conversion' : Eliminate redundant data type conversion
  * Block '<S5>/One' : Unused code path elimination
  * Block '<S5>/Reset' : Unused code path elimination
  * Block '<S5>/Sum' : Unused code path elimination
@@ -403,8 +427,8 @@ extern RT_MODEL_CyberDog_Motor_FOC_T *const CyberDog_Motor_FOC_M;
  * Block '<S66>/UseInputPort' : Unused code path elimination
  * Block '<S245>/Offset' : Unused code path elimination
  * Block '<S245>/Unary_Minus' : Unused code path elimination
- * Block '<S303>/Offset' : Unused code path elimination
- * Block '<S303>/Unary_Minus' : Unused code path elimination
+ * Block '<S358>/Offset' : Unused code path elimination
+ * Block '<S358>/Unary_Minus' : Unused code path elimination
  */
 
 /*-
@@ -667,72 +691,127 @@ extern RT_MODEL_CyberDog_Motor_FOC_T *const CyberDog_Motor_FOC_M;
  * '<S243>' : 'CyberDog_Motor_FOC/FOC_Algorithm/InvPark/Variant/mcb/Inverse Park Transform'
  * '<S244>' : 'CyberDog_Motor_FOC/FOC_Algorithm/InvPark/Variant/mcb/Inverse Park Transform/Two inputs CRL'
  * '<S245>' : 'CyberDog_Motor_FOC/FOC_Algorithm/InvPark/Variant/mcb/Inverse Park Transform/Two inputs CRL/Switch_Axis'
- * '<S246>' : 'CyberDog_Motor_FOC/FOC_Algorithm/OuterLoop/PID_speed'
- * '<S247>' : 'CyberDog_Motor_FOC/FOC_Algorithm/OuterLoop/PID_speed/Anti-windup'
- * '<S248>' : 'CyberDog_Motor_FOC/FOC_Algorithm/OuterLoop/PID_speed/D Gain'
- * '<S249>' : 'CyberDog_Motor_FOC/FOC_Algorithm/OuterLoop/PID_speed/External Derivative'
- * '<S250>' : 'CyberDog_Motor_FOC/FOC_Algorithm/OuterLoop/PID_speed/Filter'
- * '<S251>' : 'CyberDog_Motor_FOC/FOC_Algorithm/OuterLoop/PID_speed/Filter ICs'
- * '<S252>' : 'CyberDog_Motor_FOC/FOC_Algorithm/OuterLoop/PID_speed/I Gain'
- * '<S253>' : 'CyberDog_Motor_FOC/FOC_Algorithm/OuterLoop/PID_speed/Ideal P Gain'
- * '<S254>' : 'CyberDog_Motor_FOC/FOC_Algorithm/OuterLoop/PID_speed/Ideal P Gain Fdbk'
- * '<S255>' : 'CyberDog_Motor_FOC/FOC_Algorithm/OuterLoop/PID_speed/Integrator'
- * '<S256>' : 'CyberDog_Motor_FOC/FOC_Algorithm/OuterLoop/PID_speed/Integrator ICs'
- * '<S257>' : 'CyberDog_Motor_FOC/FOC_Algorithm/OuterLoop/PID_speed/N Copy'
- * '<S258>' : 'CyberDog_Motor_FOC/FOC_Algorithm/OuterLoop/PID_speed/N Gain'
- * '<S259>' : 'CyberDog_Motor_FOC/FOC_Algorithm/OuterLoop/PID_speed/P Copy'
- * '<S260>' : 'CyberDog_Motor_FOC/FOC_Algorithm/OuterLoop/PID_speed/Parallel P Gain'
- * '<S261>' : 'CyberDog_Motor_FOC/FOC_Algorithm/OuterLoop/PID_speed/Reset Signal'
- * '<S262>' : 'CyberDog_Motor_FOC/FOC_Algorithm/OuterLoop/PID_speed/Saturation'
- * '<S263>' : 'CyberDog_Motor_FOC/FOC_Algorithm/OuterLoop/PID_speed/Saturation Fdbk'
- * '<S264>' : 'CyberDog_Motor_FOC/FOC_Algorithm/OuterLoop/PID_speed/Sum'
- * '<S265>' : 'CyberDog_Motor_FOC/FOC_Algorithm/OuterLoop/PID_speed/Sum Fdbk'
- * '<S266>' : 'CyberDog_Motor_FOC/FOC_Algorithm/OuterLoop/PID_speed/Tracking Mode'
- * '<S267>' : 'CyberDog_Motor_FOC/FOC_Algorithm/OuterLoop/PID_speed/Tracking Mode Sum'
- * '<S268>' : 'CyberDog_Motor_FOC/FOC_Algorithm/OuterLoop/PID_speed/Tsamp - Integral'
- * '<S269>' : 'CyberDog_Motor_FOC/FOC_Algorithm/OuterLoop/PID_speed/Tsamp - Ngain'
- * '<S270>' : 'CyberDog_Motor_FOC/FOC_Algorithm/OuterLoop/PID_speed/postSat Signal'
- * '<S271>' : 'CyberDog_Motor_FOC/FOC_Algorithm/OuterLoop/PID_speed/preInt Signal'
- * '<S272>' : 'CyberDog_Motor_FOC/FOC_Algorithm/OuterLoop/PID_speed/preSat Signal'
- * '<S273>' : 'CyberDog_Motor_FOC/FOC_Algorithm/OuterLoop/PID_speed/Anti-windup/Back Calculation'
- * '<S274>' : 'CyberDog_Motor_FOC/FOC_Algorithm/OuterLoop/PID_speed/D Gain/Disabled'
- * '<S275>' : 'CyberDog_Motor_FOC/FOC_Algorithm/OuterLoop/PID_speed/External Derivative/Disabled'
- * '<S276>' : 'CyberDog_Motor_FOC/FOC_Algorithm/OuterLoop/PID_speed/Filter/Disabled'
- * '<S277>' : 'CyberDog_Motor_FOC/FOC_Algorithm/OuterLoop/PID_speed/Filter ICs/Disabled'
- * '<S278>' : 'CyberDog_Motor_FOC/FOC_Algorithm/OuterLoop/PID_speed/I Gain/Internal Parameters'
- * '<S279>' : 'CyberDog_Motor_FOC/FOC_Algorithm/OuterLoop/PID_speed/Ideal P Gain/Passthrough'
- * '<S280>' : 'CyberDog_Motor_FOC/FOC_Algorithm/OuterLoop/PID_speed/Ideal P Gain Fdbk/Disabled'
- * '<S281>' : 'CyberDog_Motor_FOC/FOC_Algorithm/OuterLoop/PID_speed/Integrator/Discrete'
- * '<S282>' : 'CyberDog_Motor_FOC/FOC_Algorithm/OuterLoop/PID_speed/Integrator ICs/Internal IC'
- * '<S283>' : 'CyberDog_Motor_FOC/FOC_Algorithm/OuterLoop/PID_speed/N Copy/Disabled wSignal Specification'
- * '<S284>' : 'CyberDog_Motor_FOC/FOC_Algorithm/OuterLoop/PID_speed/N Gain/Disabled'
- * '<S285>' : 'CyberDog_Motor_FOC/FOC_Algorithm/OuterLoop/PID_speed/P Copy/Disabled'
- * '<S286>' : 'CyberDog_Motor_FOC/FOC_Algorithm/OuterLoop/PID_speed/Parallel P Gain/Internal Parameters'
- * '<S287>' : 'CyberDog_Motor_FOC/FOC_Algorithm/OuterLoop/PID_speed/Reset Signal/Disabled'
- * '<S288>' : 'CyberDog_Motor_FOC/FOC_Algorithm/OuterLoop/PID_speed/Saturation/Enabled'
- * '<S289>' : 'CyberDog_Motor_FOC/FOC_Algorithm/OuterLoop/PID_speed/Saturation Fdbk/Disabled'
- * '<S290>' : 'CyberDog_Motor_FOC/FOC_Algorithm/OuterLoop/PID_speed/Sum/Sum_PI'
- * '<S291>' : 'CyberDog_Motor_FOC/FOC_Algorithm/OuterLoop/PID_speed/Sum Fdbk/Disabled'
- * '<S292>' : 'CyberDog_Motor_FOC/FOC_Algorithm/OuterLoop/PID_speed/Tracking Mode/Disabled'
- * '<S293>' : 'CyberDog_Motor_FOC/FOC_Algorithm/OuterLoop/PID_speed/Tracking Mode Sum/Passthrough'
- * '<S294>' : 'CyberDog_Motor_FOC/FOC_Algorithm/OuterLoop/PID_speed/Tsamp - Integral/TsSignalSpecification'
- * '<S295>' : 'CyberDog_Motor_FOC/FOC_Algorithm/OuterLoop/PID_speed/Tsamp - Ngain/Passthrough'
- * '<S296>' : 'CyberDog_Motor_FOC/FOC_Algorithm/OuterLoop/PID_speed/postSat Signal/Forward_Path'
- * '<S297>' : 'CyberDog_Motor_FOC/FOC_Algorithm/OuterLoop/PID_speed/preInt Signal/Internal PreInt'
- * '<S298>' : 'CyberDog_Motor_FOC/FOC_Algorithm/OuterLoop/PID_speed/preSat Signal/Forward_Path'
- * '<S299>' : 'CyberDog_Motor_FOC/FOC_Algorithm/Park/Variant'
- * '<S300>' : 'CyberDog_Motor_FOC/FOC_Algorithm/Park/Variant/mcb'
- * '<S301>' : 'CyberDog_Motor_FOC/FOC_Algorithm/Park/Variant/mcb/Park Transform'
- * '<S302>' : 'CyberDog_Motor_FOC/FOC_Algorithm/Park/Variant/mcb/Park Transform/Two inputs CRL'
- * '<S303>' : 'CyberDog_Motor_FOC/FOC_Algorithm/Park/Variant/mcb/Park Transform/Two inputs CRL/Switch_Axis'
- * '<S304>' : 'CyberDog_Motor_FOC/FOC_Algorithm/SinCos_th/Sine-Cosine Lookup'
- * '<S305>' : 'CyberDog_Motor_FOC/FOC_Algorithm/SinCos_th/Sine-Cosine Lookup/Interpolation'
- * '<S306>' : 'CyberDog_Motor_FOC/FOC_Algorithm/SinCos_th/Sine-Cosine Lookup/WrapUp'
- * '<S307>' : 'CyberDog_Motor_FOC/FOC_Algorithm/SinCos_th/Sine-Cosine Lookup/datatype'
- * '<S308>' : 'CyberDog_Motor_FOC/FOC_Algorithm/SinCos_th/Sine-Cosine Lookup/WrapUp/Compare To Zero'
- * '<S309>' : 'CyberDog_Motor_FOC/FOC_Algorithm/SinCos_th/Sine-Cosine Lookup/WrapUp/If Action Subsystem'
- * '<S310>' : 'CyberDog_Motor_FOC/FOC_Algorithm/SinCos_th/Sine-Cosine Lookup/WrapUp/If Action Subsystem1'
- * '<S311>' : 'CyberDog_Motor_FOC/FOC_Algorithm/SinCos_th/Sine-Cosine Lookup/datatype/datatype backpropogation'
+ * '<S246>' : 'CyberDog_Motor_FOC/FOC_Algorithm/OuterLoop/PositionController'
+ * '<S247>' : 'CyberDog_Motor_FOC/FOC_Algorithm/OuterLoop/SpeedController'
+ * '<S248>' : 'CyberDog_Motor_FOC/FOC_Algorithm/OuterLoop/PositionController/PID_pos'
+ * '<S249>' : 'CyberDog_Motor_FOC/FOC_Algorithm/OuterLoop/PositionController/PID_pos/Anti-windup'
+ * '<S250>' : 'CyberDog_Motor_FOC/FOC_Algorithm/OuterLoop/PositionController/PID_pos/D Gain'
+ * '<S251>' : 'CyberDog_Motor_FOC/FOC_Algorithm/OuterLoop/PositionController/PID_pos/External Derivative'
+ * '<S252>' : 'CyberDog_Motor_FOC/FOC_Algorithm/OuterLoop/PositionController/PID_pos/Filter'
+ * '<S253>' : 'CyberDog_Motor_FOC/FOC_Algorithm/OuterLoop/PositionController/PID_pos/Filter ICs'
+ * '<S254>' : 'CyberDog_Motor_FOC/FOC_Algorithm/OuterLoop/PositionController/PID_pos/I Gain'
+ * '<S255>' : 'CyberDog_Motor_FOC/FOC_Algorithm/OuterLoop/PositionController/PID_pos/Ideal P Gain'
+ * '<S256>' : 'CyberDog_Motor_FOC/FOC_Algorithm/OuterLoop/PositionController/PID_pos/Ideal P Gain Fdbk'
+ * '<S257>' : 'CyberDog_Motor_FOC/FOC_Algorithm/OuterLoop/PositionController/PID_pos/Integrator'
+ * '<S258>' : 'CyberDog_Motor_FOC/FOC_Algorithm/OuterLoop/PositionController/PID_pos/Integrator ICs'
+ * '<S259>' : 'CyberDog_Motor_FOC/FOC_Algorithm/OuterLoop/PositionController/PID_pos/N Copy'
+ * '<S260>' : 'CyberDog_Motor_FOC/FOC_Algorithm/OuterLoop/PositionController/PID_pos/N Gain'
+ * '<S261>' : 'CyberDog_Motor_FOC/FOC_Algorithm/OuterLoop/PositionController/PID_pos/P Copy'
+ * '<S262>' : 'CyberDog_Motor_FOC/FOC_Algorithm/OuterLoop/PositionController/PID_pos/Parallel P Gain'
+ * '<S263>' : 'CyberDog_Motor_FOC/FOC_Algorithm/OuterLoop/PositionController/PID_pos/Reset Signal'
+ * '<S264>' : 'CyberDog_Motor_FOC/FOC_Algorithm/OuterLoop/PositionController/PID_pos/Saturation'
+ * '<S265>' : 'CyberDog_Motor_FOC/FOC_Algorithm/OuterLoop/PositionController/PID_pos/Saturation Fdbk'
+ * '<S266>' : 'CyberDog_Motor_FOC/FOC_Algorithm/OuterLoop/PositionController/PID_pos/Sum'
+ * '<S267>' : 'CyberDog_Motor_FOC/FOC_Algorithm/OuterLoop/PositionController/PID_pos/Sum Fdbk'
+ * '<S268>' : 'CyberDog_Motor_FOC/FOC_Algorithm/OuterLoop/PositionController/PID_pos/Tracking Mode'
+ * '<S269>' : 'CyberDog_Motor_FOC/FOC_Algorithm/OuterLoop/PositionController/PID_pos/Tracking Mode Sum'
+ * '<S270>' : 'CyberDog_Motor_FOC/FOC_Algorithm/OuterLoop/PositionController/PID_pos/Tsamp - Integral'
+ * '<S271>' : 'CyberDog_Motor_FOC/FOC_Algorithm/OuterLoop/PositionController/PID_pos/Tsamp - Ngain'
+ * '<S272>' : 'CyberDog_Motor_FOC/FOC_Algorithm/OuterLoop/PositionController/PID_pos/postSat Signal'
+ * '<S273>' : 'CyberDog_Motor_FOC/FOC_Algorithm/OuterLoop/PositionController/PID_pos/preInt Signal'
+ * '<S274>' : 'CyberDog_Motor_FOC/FOC_Algorithm/OuterLoop/PositionController/PID_pos/preSat Signal'
+ * '<S275>' : 'CyberDog_Motor_FOC/FOC_Algorithm/OuterLoop/PositionController/PID_pos/Anti-windup/Disabled'
+ * '<S276>' : 'CyberDog_Motor_FOC/FOC_Algorithm/OuterLoop/PositionController/PID_pos/D Gain/Internal Parameters'
+ * '<S277>' : 'CyberDog_Motor_FOC/FOC_Algorithm/OuterLoop/PositionController/PID_pos/External Derivative/Error'
+ * '<S278>' : 'CyberDog_Motor_FOC/FOC_Algorithm/OuterLoop/PositionController/PID_pos/Filter/Disc. Forward Euler Filter'
+ * '<S279>' : 'CyberDog_Motor_FOC/FOC_Algorithm/OuterLoop/PositionController/PID_pos/Filter ICs/Internal IC - Filter'
+ * '<S280>' : 'CyberDog_Motor_FOC/FOC_Algorithm/OuterLoop/PositionController/PID_pos/I Gain/Disabled'
+ * '<S281>' : 'CyberDog_Motor_FOC/FOC_Algorithm/OuterLoop/PositionController/PID_pos/Ideal P Gain/Passthrough'
+ * '<S282>' : 'CyberDog_Motor_FOC/FOC_Algorithm/OuterLoop/PositionController/PID_pos/Ideal P Gain Fdbk/Disabled'
+ * '<S283>' : 'CyberDog_Motor_FOC/FOC_Algorithm/OuterLoop/PositionController/PID_pos/Integrator/Disabled'
+ * '<S284>' : 'CyberDog_Motor_FOC/FOC_Algorithm/OuterLoop/PositionController/PID_pos/Integrator ICs/Disabled'
+ * '<S285>' : 'CyberDog_Motor_FOC/FOC_Algorithm/OuterLoop/PositionController/PID_pos/N Copy/Disabled'
+ * '<S286>' : 'CyberDog_Motor_FOC/FOC_Algorithm/OuterLoop/PositionController/PID_pos/N Gain/Internal Parameters'
+ * '<S287>' : 'CyberDog_Motor_FOC/FOC_Algorithm/OuterLoop/PositionController/PID_pos/P Copy/Disabled'
+ * '<S288>' : 'CyberDog_Motor_FOC/FOC_Algorithm/OuterLoop/PositionController/PID_pos/Parallel P Gain/Internal Parameters'
+ * '<S289>' : 'CyberDog_Motor_FOC/FOC_Algorithm/OuterLoop/PositionController/PID_pos/Reset Signal/Disabled'
+ * '<S290>' : 'CyberDog_Motor_FOC/FOC_Algorithm/OuterLoop/PositionController/PID_pos/Saturation/Enabled'
+ * '<S291>' : 'CyberDog_Motor_FOC/FOC_Algorithm/OuterLoop/PositionController/PID_pos/Saturation Fdbk/Disabled'
+ * '<S292>' : 'CyberDog_Motor_FOC/FOC_Algorithm/OuterLoop/PositionController/PID_pos/Sum/Sum_PD'
+ * '<S293>' : 'CyberDog_Motor_FOC/FOC_Algorithm/OuterLoop/PositionController/PID_pos/Sum Fdbk/Disabled'
+ * '<S294>' : 'CyberDog_Motor_FOC/FOC_Algorithm/OuterLoop/PositionController/PID_pos/Tracking Mode/Disabled'
+ * '<S295>' : 'CyberDog_Motor_FOC/FOC_Algorithm/OuterLoop/PositionController/PID_pos/Tracking Mode Sum/Passthrough'
+ * '<S296>' : 'CyberDog_Motor_FOC/FOC_Algorithm/OuterLoop/PositionController/PID_pos/Tsamp - Integral/TsSignalSpecification'
+ * '<S297>' : 'CyberDog_Motor_FOC/FOC_Algorithm/OuterLoop/PositionController/PID_pos/Tsamp - Ngain/Passthrough'
+ * '<S298>' : 'CyberDog_Motor_FOC/FOC_Algorithm/OuterLoop/PositionController/PID_pos/postSat Signal/Forward_Path'
+ * '<S299>' : 'CyberDog_Motor_FOC/FOC_Algorithm/OuterLoop/PositionController/PID_pos/preInt Signal/Internal PreInt'
+ * '<S300>' : 'CyberDog_Motor_FOC/FOC_Algorithm/OuterLoop/PositionController/PID_pos/preSat Signal/Forward_Path'
+ * '<S301>' : 'CyberDog_Motor_FOC/FOC_Algorithm/OuterLoop/SpeedController/PID_speed'
+ * '<S302>' : 'CyberDog_Motor_FOC/FOC_Algorithm/OuterLoop/SpeedController/PID_speed/Anti-windup'
+ * '<S303>' : 'CyberDog_Motor_FOC/FOC_Algorithm/OuterLoop/SpeedController/PID_speed/D Gain'
+ * '<S304>' : 'CyberDog_Motor_FOC/FOC_Algorithm/OuterLoop/SpeedController/PID_speed/External Derivative'
+ * '<S305>' : 'CyberDog_Motor_FOC/FOC_Algorithm/OuterLoop/SpeedController/PID_speed/Filter'
+ * '<S306>' : 'CyberDog_Motor_FOC/FOC_Algorithm/OuterLoop/SpeedController/PID_speed/Filter ICs'
+ * '<S307>' : 'CyberDog_Motor_FOC/FOC_Algorithm/OuterLoop/SpeedController/PID_speed/I Gain'
+ * '<S308>' : 'CyberDog_Motor_FOC/FOC_Algorithm/OuterLoop/SpeedController/PID_speed/Ideal P Gain'
+ * '<S309>' : 'CyberDog_Motor_FOC/FOC_Algorithm/OuterLoop/SpeedController/PID_speed/Ideal P Gain Fdbk'
+ * '<S310>' : 'CyberDog_Motor_FOC/FOC_Algorithm/OuterLoop/SpeedController/PID_speed/Integrator'
+ * '<S311>' : 'CyberDog_Motor_FOC/FOC_Algorithm/OuterLoop/SpeedController/PID_speed/Integrator ICs'
+ * '<S312>' : 'CyberDog_Motor_FOC/FOC_Algorithm/OuterLoop/SpeedController/PID_speed/N Copy'
+ * '<S313>' : 'CyberDog_Motor_FOC/FOC_Algorithm/OuterLoop/SpeedController/PID_speed/N Gain'
+ * '<S314>' : 'CyberDog_Motor_FOC/FOC_Algorithm/OuterLoop/SpeedController/PID_speed/P Copy'
+ * '<S315>' : 'CyberDog_Motor_FOC/FOC_Algorithm/OuterLoop/SpeedController/PID_speed/Parallel P Gain'
+ * '<S316>' : 'CyberDog_Motor_FOC/FOC_Algorithm/OuterLoop/SpeedController/PID_speed/Reset Signal'
+ * '<S317>' : 'CyberDog_Motor_FOC/FOC_Algorithm/OuterLoop/SpeedController/PID_speed/Saturation'
+ * '<S318>' : 'CyberDog_Motor_FOC/FOC_Algorithm/OuterLoop/SpeedController/PID_speed/Saturation Fdbk'
+ * '<S319>' : 'CyberDog_Motor_FOC/FOC_Algorithm/OuterLoop/SpeedController/PID_speed/Sum'
+ * '<S320>' : 'CyberDog_Motor_FOC/FOC_Algorithm/OuterLoop/SpeedController/PID_speed/Sum Fdbk'
+ * '<S321>' : 'CyberDog_Motor_FOC/FOC_Algorithm/OuterLoop/SpeedController/PID_speed/Tracking Mode'
+ * '<S322>' : 'CyberDog_Motor_FOC/FOC_Algorithm/OuterLoop/SpeedController/PID_speed/Tracking Mode Sum'
+ * '<S323>' : 'CyberDog_Motor_FOC/FOC_Algorithm/OuterLoop/SpeedController/PID_speed/Tsamp - Integral'
+ * '<S324>' : 'CyberDog_Motor_FOC/FOC_Algorithm/OuterLoop/SpeedController/PID_speed/Tsamp - Ngain'
+ * '<S325>' : 'CyberDog_Motor_FOC/FOC_Algorithm/OuterLoop/SpeedController/PID_speed/postSat Signal'
+ * '<S326>' : 'CyberDog_Motor_FOC/FOC_Algorithm/OuterLoop/SpeedController/PID_speed/preInt Signal'
+ * '<S327>' : 'CyberDog_Motor_FOC/FOC_Algorithm/OuterLoop/SpeedController/PID_speed/preSat Signal'
+ * '<S328>' : 'CyberDog_Motor_FOC/FOC_Algorithm/OuterLoop/SpeedController/PID_speed/Anti-windup/Back Calculation'
+ * '<S329>' : 'CyberDog_Motor_FOC/FOC_Algorithm/OuterLoop/SpeedController/PID_speed/D Gain/Disabled'
+ * '<S330>' : 'CyberDog_Motor_FOC/FOC_Algorithm/OuterLoop/SpeedController/PID_speed/External Derivative/Disabled'
+ * '<S331>' : 'CyberDog_Motor_FOC/FOC_Algorithm/OuterLoop/SpeedController/PID_speed/Filter/Disabled'
+ * '<S332>' : 'CyberDog_Motor_FOC/FOC_Algorithm/OuterLoop/SpeedController/PID_speed/Filter ICs/Disabled'
+ * '<S333>' : 'CyberDog_Motor_FOC/FOC_Algorithm/OuterLoop/SpeedController/PID_speed/I Gain/Internal Parameters'
+ * '<S334>' : 'CyberDog_Motor_FOC/FOC_Algorithm/OuterLoop/SpeedController/PID_speed/Ideal P Gain/Passthrough'
+ * '<S335>' : 'CyberDog_Motor_FOC/FOC_Algorithm/OuterLoop/SpeedController/PID_speed/Ideal P Gain Fdbk/Disabled'
+ * '<S336>' : 'CyberDog_Motor_FOC/FOC_Algorithm/OuterLoop/SpeedController/PID_speed/Integrator/Discrete'
+ * '<S337>' : 'CyberDog_Motor_FOC/FOC_Algorithm/OuterLoop/SpeedController/PID_speed/Integrator ICs/Internal IC'
+ * '<S338>' : 'CyberDog_Motor_FOC/FOC_Algorithm/OuterLoop/SpeedController/PID_speed/N Copy/Disabled wSignal Specification'
+ * '<S339>' : 'CyberDog_Motor_FOC/FOC_Algorithm/OuterLoop/SpeedController/PID_speed/N Gain/Disabled'
+ * '<S340>' : 'CyberDog_Motor_FOC/FOC_Algorithm/OuterLoop/SpeedController/PID_speed/P Copy/Disabled'
+ * '<S341>' : 'CyberDog_Motor_FOC/FOC_Algorithm/OuterLoop/SpeedController/PID_speed/Parallel P Gain/Internal Parameters'
+ * '<S342>' : 'CyberDog_Motor_FOC/FOC_Algorithm/OuterLoop/SpeedController/PID_speed/Reset Signal/Disabled'
+ * '<S343>' : 'CyberDog_Motor_FOC/FOC_Algorithm/OuterLoop/SpeedController/PID_speed/Saturation/Enabled'
+ * '<S344>' : 'CyberDog_Motor_FOC/FOC_Algorithm/OuterLoop/SpeedController/PID_speed/Saturation Fdbk/Disabled'
+ * '<S345>' : 'CyberDog_Motor_FOC/FOC_Algorithm/OuterLoop/SpeedController/PID_speed/Sum/Sum_PI'
+ * '<S346>' : 'CyberDog_Motor_FOC/FOC_Algorithm/OuterLoop/SpeedController/PID_speed/Sum Fdbk/Disabled'
+ * '<S347>' : 'CyberDog_Motor_FOC/FOC_Algorithm/OuterLoop/SpeedController/PID_speed/Tracking Mode/Disabled'
+ * '<S348>' : 'CyberDog_Motor_FOC/FOC_Algorithm/OuterLoop/SpeedController/PID_speed/Tracking Mode Sum/Passthrough'
+ * '<S349>' : 'CyberDog_Motor_FOC/FOC_Algorithm/OuterLoop/SpeedController/PID_speed/Tsamp - Integral/TsSignalSpecification'
+ * '<S350>' : 'CyberDog_Motor_FOC/FOC_Algorithm/OuterLoop/SpeedController/PID_speed/Tsamp - Ngain/Passthrough'
+ * '<S351>' : 'CyberDog_Motor_FOC/FOC_Algorithm/OuterLoop/SpeedController/PID_speed/postSat Signal/Forward_Path'
+ * '<S352>' : 'CyberDog_Motor_FOC/FOC_Algorithm/OuterLoop/SpeedController/PID_speed/preInt Signal/Internal PreInt'
+ * '<S353>' : 'CyberDog_Motor_FOC/FOC_Algorithm/OuterLoop/SpeedController/PID_speed/preSat Signal/Forward_Path'
+ * '<S354>' : 'CyberDog_Motor_FOC/FOC_Algorithm/Park/Variant'
+ * '<S355>' : 'CyberDog_Motor_FOC/FOC_Algorithm/Park/Variant/mcb'
+ * '<S356>' : 'CyberDog_Motor_FOC/FOC_Algorithm/Park/Variant/mcb/Park Transform'
+ * '<S357>' : 'CyberDog_Motor_FOC/FOC_Algorithm/Park/Variant/mcb/Park Transform/Two inputs CRL'
+ * '<S358>' : 'CyberDog_Motor_FOC/FOC_Algorithm/Park/Variant/mcb/Park Transform/Two inputs CRL/Switch_Axis'
+ * '<S359>' : 'CyberDog_Motor_FOC/FOC_Algorithm/SinCos_th/Sine-Cosine Lookup'
+ * '<S360>' : 'CyberDog_Motor_FOC/FOC_Algorithm/SinCos_th/Sine-Cosine Lookup/Interpolation'
+ * '<S361>' : 'CyberDog_Motor_FOC/FOC_Algorithm/SinCos_th/Sine-Cosine Lookup/WrapUp'
+ * '<S362>' : 'CyberDog_Motor_FOC/FOC_Algorithm/SinCos_th/Sine-Cosine Lookup/datatype'
+ * '<S363>' : 'CyberDog_Motor_FOC/FOC_Algorithm/SinCos_th/Sine-Cosine Lookup/WrapUp/Compare To Zero'
+ * '<S364>' : 'CyberDog_Motor_FOC/FOC_Algorithm/SinCos_th/Sine-Cosine Lookup/WrapUp/If Action Subsystem'
+ * '<S365>' : 'CyberDog_Motor_FOC/FOC_Algorithm/SinCos_th/Sine-Cosine Lookup/WrapUp/If Action Subsystem1'
+ * '<S366>' : 'CyberDog_Motor_FOC/FOC_Algorithm/SinCos_th/Sine-Cosine Lookup/datatype/datatype backpropogation'
  */
 #endif                                 /* CyberDog_Motor_FOC_h_ */
 

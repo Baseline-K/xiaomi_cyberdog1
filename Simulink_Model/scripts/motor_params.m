@@ -25,6 +25,13 @@ ensureParam('Speed_MaxOut',  5.0,  '速度环输出上限(A, iq_ref)');
 ensureParam('Speed_MinOut', -5.0,  '速度环输出下限(A, iq_ref)');
 ensureParam('Speed_Loop_N',  10,   '速度环分频(每N个电流环周期更新一次)');
 
+% ---- 位置环（M5：位置→速度级联，独立第三模式；PD 结构先只给 P）----
+ensureParam('Pos_Kp',      10.0, '位置环比例增益(RPS/rad)');
+ensureParam('Pos_Kd',      0.0,  '位置环微分增益(预留, 先0)');
+ensureParam('Pos_Ki',      0.0,  '位置环积分增益(预留, 未接线)');
+ensureParam('Pos_MaxOut',  5.0,  '位置环输出上限(RPS, 作速度环参考)');
+ensureParam('Pos_MinOut', -5.0,  '位置环输出下限(RPS)');
+
 % ---- 电机参数 ----
 ensureParam('Pole_Pairs', 7, '极对数');
 
@@ -43,15 +50,15 @@ ensureParam('InvTwoPiPolePairs', 1/(2*pi*7), '电角速度->机械RPS 1/(2*pi*Po
 assignin('base','PLL_SpeedCutoffFreq', 200);
 evalin('base','InvTwoPiPolePairs.Value = 1/(2*pi*Pole_Pairs.Value);');
 
-% ---- 死区补偿（矢量对齐 LUT）----
-ensureParam('DeadComp_En',    1,                    '死区补偿使能(0/1)');
-ensureParam('DeadComp_Lut_I', linspace(0,3,16),     '死区补偿LUT 电流断点(A)');
-ensureParam('DeadComp_Lut_V', linspace(0,0.6,16)',  '死区补偿LUT 补偿电压(V)');
+% ---- 死区补偿（矢量对齐 LUT，20 点最大 1.5A：0.05~0.5A 密、0.5~1.5A 疏）----
+ensureParam('DeadComp_En',    1, '死区补偿使能(0/1)');
+ensureParam('DeadComp_Lut_I', [0.05 0.10 0.15 0.20 0.25 0.30 0.35 0.40 0.45 0.50 0.60 0.70 0.80 0.90 1.00 1.10 1.20 1.30 1.40 1.50], '死区补偿LUT 电流断点(A)');
+ensureParam('DeadComp_Lut_V', zeros(20,1), '死区补偿LUT 补偿电压(V)');
 
-% ---- 齿槽转矩前馈（角度→iq LUT）----
-ensureParam('CoggingFF_En',      0,                            '齿槽转矩前馈使能(0/1)');
-ensureParam('Cogging_Lut_Angle', linspace(0,2*pi,32),          '齿槽前馈LUT 电角度断点(rad)');
-ensureParam('Cogging_Lut_V',     0.15*sin(2*linspace(0,2*pi,32))', '齿槽前馈LUT iq补偿(A)');
+% ---- 齿槽转矩前馈（角度→iq LUT，360 点电角度每度）----
+ensureParam('CoggingFF_En',      0, '齿槽转矩前馈使能(0/1)');
+ensureParam('Cogging_Lut_Angle', linspace(0,2*pi,360), '齿槽前馈LUT 电角度断点(rad)');
+ensureParam('Cogging_Lut_V',     zeros(360,1), '齿槽前馈LUT iq补偿(A)');
 
 % ---- 电机参数（按固件 Motor_Params_t 关键项，用于电流环增益推导）----
 ensureParam('Motor_Phase_L', 0.0002, '相电感(H)');

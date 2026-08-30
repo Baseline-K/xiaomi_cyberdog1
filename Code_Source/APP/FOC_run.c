@@ -7,6 +7,7 @@
 #include "AS5600.h"
 #include "Safety_Module.h"        /* Safety_FastStep */
 #include "motor_state_machine.h"  /* MotorStateMachine_PostFault */
+#include "identify.h"             /* 离线辨识：RUNSTATE_IDENTIFYING 时填电压输入 */
 
 #define DEBUG 1
 #if DEBUG
@@ -34,6 +35,10 @@ void (* func_ptr)(ADC_HandleTypeDef *hadc) = NULL;
 uint32_t Predict_ThreeHallangle;
 float Predict_eleangle;
 
+/* 连续机械角(rad, 多圈)：10kHz ISR 累加，位置模式反馈（FOC_Generated_Step 读取） */
+float g_mech_pos_rad = 0.0f;
+static float g_last_angle_rad = -1.0f;   /* <0 = 首样本哨兵 */
+
 float Phase_Ra,Phase_Rb,Phase_Rc, Vbus;
 float Phase_La,Phase_Lb,Phase_Lc, Vbus;
 void HAL_ADCEx_InjectedConvCpltCallback( ADC_HandleTypeDef *hadc)
@@ -47,13 +52,11 @@ void HAL_ADCEx_InjectedConvCpltCallback( ADC_HandleTypeDef *hadc)
 			Offset_CurrentReading();
 			  return;
 		}
-
-
 		
 		
 #if DEBUG	
 		
-		start = DWT->CYCCNT; // 记录起始时间
+		
 #else
 										
 #endif
@@ -71,6 +74,19 @@ void HAL_ADCEx_InjectedConvCpltCallback( ADC_HandleTypeDef *hadc)
 		//Predict_eleangle = VF_IF_RUN_Float(-600.0f, 6000.0f);  	//强拖判断同步电角度
 		
 		bsp_as5600GetAngle(&Encoder_AS5600.angle);
+		{   /* 连续机械位置：角度增量 + ±π 绕回检测（首样本定零点 = 电气零点对齐位置） */
+			float ang = Encoder_AS5600.angle;
+			float d = ang - g_last_angle_rad;
+			if (g_last_angle_rad < 0.0f) {
+				g_last_angle_rad = ang;
+				g_mech_pos_rad   = ang;
+			} else {
+				if      (d >  PI)  d -= Two_PI;
+				else if (d < -PI)  d += Two_PI;
+				g_mech_pos_rad += d;
+				g_last_angle_rad = ang;
+			}
+		}
 		Encoder_AS5600.eleangle	= fmodf(Encoder_AS5600.angle * Motor_Params.Pole_Pairs, Two_PI);
 #if !USE_GENERATED_FOC
 		/* 手写 PLL（仅 legacy 路径；USE_GENERATED_FOC=1 时由 Simulink 模型内的官方 MCB PLL 提供） */
@@ -105,6 +121,9 @@ void HAL_ADCEx_InjectedConvCpltCallback( ADC_HandleTypeDef *hadc)
 		/* Phase 3b：始终调用 FOC_Generated_Step——模型 PLL 常跑给实时转速；
 		 * coast/停机由模型 coast 输入处理（duty 强制 0.5），不再按 run_state 门控。 */
 #if USE_GENERATED_FOC
+		if (MotorState.run_state == RUNSTATE_IDENTIFYING) {
+			Identify_FocIsrStep();   /* 填模型电压输入（ctrl_mode=3/4），模型 step 再应用电压 */
+		}
 		FOC_Generated_Step();
 #else
        //Position_Loop_Handle(position_ref_Test,	Encoder_AS5600.CCW_angle_total - Encoder_AS5600.CW_angle_total);
@@ -151,21 +170,9 @@ void HAL_ADCEx_InjectedConvCpltCallback( ADC_HandleTypeDef *hadc)
 			 
 #endif
 #if DEBUG	
-		//SEGGER_RTT_Port_Write();
-		JS_RTT_PLUS_SendData(); 
 		
-    end = DWT->CYCCNT;   // 记录结束时间	
-		
-    cycles  = end - start; // 计算运行的 CPU 周期数
-		// 处理溢出情况（如果测量过程中发生了溢出）
-    if (end < start) {
-				cycles = (0x100000000ULL - start) + end;  // 处理溢出
-		} else {
-			cycles = end - start;
-		}
-		time_us  = (float)cycles / (SystemCoreClock / 1e6); // 转换为微秒
-		{ uint32_t w = (uint32_t)time_us; if (w > g_foc_wcet_us) g_foc_wcet_us = w; }  /* WCET 最大值 */
-		func_ptr = HAL_ADCEx_InjectedConvCpltCallback;
+		//JS_RTT_PLUS_SendData();
+
 #else
 									
 #endif		
@@ -223,4 +230,3 @@ float VF_IF_RUN_Float(float RPM_ref, float Time_ms)
 
 	 return  Angular_Angle;  //返回电角度
 }
-

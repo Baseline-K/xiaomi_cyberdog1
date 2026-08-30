@@ -37,6 +37,10 @@ Revision: $Rev: 24316 $
 #ifndef SEGGER_RTT_CONF_H
 #define SEGGER_RTT_CONF_H
 
+// GD32_NOTE: 关闭 RTT 汇编优化写（SEGGER_RTT_ASM_WriteSkipNoLock），
+// 使用 C 版（不链接 SEGGER_RTT_ASM_ARMv7M.S），性能对本项目足够。
+#define RTT_USE_ASM                              (0)
+
 #ifdef __IAR_SYSTEMS_ICC__
   #include <intrinsics.h>
 #endif
@@ -59,7 +63,7 @@ Revision: $Rev: 24316 $
 // Up-channel 1: SystemView
 //
 #ifndef   SEGGER_RTT_MAX_NUM_UP_BUFFERS
-  #define SEGGER_RTT_MAX_NUM_UP_BUFFERS             (3)     // Max. number of up-buffers (T->H) available on this target    (Default: 3)
+  #define SEGGER_RTT_MAX_NUM_UP_BUFFERS             (4)     // Channels 0..3; channel 3 is reserved for SystemView.
 #endif
 //
 // Most common case:
@@ -67,11 +71,12 @@ Revision: $Rev: 24316 $
 // Down-channel 1: SystemView
 //
 #ifndef   SEGGER_RTT_MAX_NUM_DOWN_BUFFERS
-  #define SEGGER_RTT_MAX_NUM_DOWN_BUFFERS           (3)     // Max. number of down-buffers (H->T) available on this target  (Default: 3)
+  #define SEGGER_RTT_MAX_NUM_DOWN_BUFFERS           (4)     // Channels 0..3; channel 3 is reserved for SystemView.
 #endif
 
 #ifndef   BUFFER_SIZE_UP
-  #define BUFFER_SIZE_UP                            (1024)  // Size of the buffer for terminal output of target, up to host (Default: 1k)
+  #define BUFFER_SIZE_UP                            (8192)  // Size of the buffer for terminal output of target, up to host (Default: 1k)
+                                                          // 终端通道 0；SystemView 使用独立的 8 KiB 通道 3 缓冲区。
 #endif
 
 #ifndef   BUFFER_SIZE_DOWN
@@ -123,7 +128,9 @@ Revision: $Rev: 24316 $
 // or define SEGGER_RTT_LOCK() to completely disable interrupts.
 //
 #ifndef   SEGGER_RTT_MAX_INTERRUPT_PRIORITY
-  #define SEGGER_RTT_MAX_INTERRUPT_PRIORITY         (0x20)   // Interrupt priority to lock on SEGGER_RTT_LOCK on Cortex-M3/4 (Default: 0x20)
+  /* ADC1_2/FOC records SystemView events at NVIC priority 1.  Use BASEPRI
+   * 0x10 so an ISR writer cannot preempt a task-side SystemView packet. */
+  #define SEGGER_RTT_MAX_INTERRUPT_PRIORITY         (0x10)
 #endif
 
 /*********************************************************************

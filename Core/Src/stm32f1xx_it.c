@@ -25,6 +25,7 @@
 #include "FreeRTOS.h"
 #include "task.h"
 #include "app_tasks.h"   /* xCommTaskHandle */
+#include "SEGGER_SYSVIEW.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -35,6 +36,9 @@
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
 
+/* Record one out of every 10 FOC interrupts to limit SystemView traffic. */
+#define SYSVIEW_FOC_ISR_DECIMATION    (10U)
+
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -44,6 +48,8 @@
 
 /* Private variables ---------------------------------------------------------*/
 /* USER CODE BEGIN PV */
+
+static uint32_t s_sysview_foc_isr_divider;
 
 /* USER CODE END PV */
 
@@ -224,10 +230,23 @@ void ADC1_2_IRQHandler(void)
 {
   /* USER CODE BEGIN ADC1_2_IRQn 0 */
 
+  uint32_t trace_foc_isr = 0U;
+
+  s_sysview_foc_isr_divider++;
+  if (s_sysview_foc_isr_divider >= SYSVIEW_FOC_ISR_DECIMATION) {
+    s_sysview_foc_isr_divider = 0U;
+    trace_foc_isr = 1U;
+    SEGGER_SYSVIEW_RecordEnterISR();
+  }
+
   /* USER CODE END ADC1_2_IRQn 0 */
   HAL_ADC_IRQHandler(&hadc1);
   HAL_ADC_IRQHandler(&hadc2);
   /* USER CODE BEGIN ADC1_2_IRQn 1 */
+
+  if (trace_foc_isr != 0U) {
+    SEGGER_SYSVIEW_RecordExitISR();
+  }
 
   /* USER CODE END ADC1_2_IRQn 1 */
 }

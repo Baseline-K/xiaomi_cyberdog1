@@ -16,6 +16,7 @@
 
 #include "FOC_run.h"
 #include "Timer.h"
+#include "identify.h"          /* 离线辨识框架注册 */
 #include "CANopen_OD.h"
 #include "MotorCtrl.h"
 #include "CAN_bsp.h"
@@ -27,6 +28,7 @@
 #include "Safety_Module.h"   /* Safety_Config_Init */
 
 #include "SEGGER_RTT_Port.h"
+#include "SEGGER_SYSVIEW.h"   /* SystemView：SEGGER_SYSVIEW_Conf */
 #include "cm_backtrace.h"
 
 #include "FreeRTOS.h"
@@ -80,8 +82,9 @@ void main_user(void)
 	SysTick->VAL  = 0UL;
 	SEGGER_RTT_Init();             //RTT Viewer打印数据（先初始化RTT，避免PLUS通道配置被重置）
 	SEGGER_RTT_PLUS_Port_Init();   //J-Scope调试变量曲线
+	SEGGER_SYSVIEW_Conf();         // SystemView：初始化 recorder，等待主机在 RTT 通道 3 发出 Start
 	printf("Segger RTT Init Success!\r\n");
-	
+
   cm_backtrace_init("Xiaomi_CyberDog1", "V0.0", "V0.0");  //栈回溯
 	// fault_test_by_div0();	
 	
@@ -89,12 +92,18 @@ void main_user(void)
 	Offset_Current_Start();  //校准作用,电流传感器的理论偏移值为1.65V
 	
   bsp_as5600Init();
-	//校准传感器与电机零点偏移角度
+	/* ===== 上电强拖 + 编码器零电角度校准 =====
+	 * 原理：d 轴强拖锁转子到 A 相电气零位，读编码器角度记为零点偏移（angle_zero_offset）。
+	 * 要求：强拖电流不能太小——需保证给电机施加"强拖电流"和"电机最大电流"时，
+	 *      编码器角度都几乎不变（转子被磁力锁死、不随电流偏转），
+	 *      才能说明此时校准的零电角度（零位）是准确的。
+	 *      若强拖电流不足，施加更大电流时转子会被拉偏，导致零电角度误差。
+	 * 当前：duty_u=1.0 → vα=4V → 强拖电流 ≈ 1.37A（R=2.92Ω），足以锁住转子。 */
     HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_1);
 		HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_2);
 		HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_3);
 
-		TIM1->CCR1 = PWM_HalfPerMax * 13/10;  //  A  U   // d轴强拖，形成SVPWM模型中的基础矢量1，即对应转子零度位置
+		TIM1->CCR1 = PWM_PERIOD;  //  A  U   // d轴强拖：duty 1.0，vα=4V，强拖电流≈1.37A（R=2.92Ω），锁转子到零位
 		TIM1->CCR2 = PWM_HalfPerMax;  //  B  V
 		TIM1->CCR3 = PWM_HalfPerMax;  //  C  W
 		HAL_Delay(200);     
@@ -109,9 +118,10 @@ void main_user(void)
    
 	 
 	 Motor_Params.Current_Rating = 1.0f;
+	 Motor_Params.Current_Max = 3.0f;   // 最大电流（辨识安全上界 / 过流参考）
 	 Motor_Params.Flux = 0.00499f;
 	 Motor_Params.Phase_L = 0.0018f;
-	 Motor_Params.Phase_R =  3.2f;
+	 Motor_Params.Phase_R =  2.92f;   // 离线辨识实测（identify r）2.92f
 	 Motor_Params.Pole_Pairs = 7.0f;
 	 Motor_Params.Rotor_inertia = 0.000004f;
 	 Motor_Params.VBUS = 12.0f;
@@ -124,9 +134,10 @@ void main_user(void)
 	                                               2.0f * (Motor_Params.RPM_Rating/60) * 2*PI * Motor_Params.Pole_Pairs);
 	 
 	 FOC_Generated_Init();    // Simulink 生成 FOC 算法参数初始化
-	 MotorState.ctrl_mode = CTRL_MODE_SPEED;
+	 MotorState.ctrl_mode = MT_SPEED;
 	 CAN_bsp_Init();          // CAN 控制接口（过滤器/接收/回调）
 	 MotorCtrl_Init();        // 电机控制层（默认停止）
+	 Identify_Init();         // 离线辨识框架（注册任务 handler）
 	 Safety_Config_Init(&Safety_Config);   // 安全阈值从 Motor_Params 推算（运行期只读）
 	 FOC_Interrupt_Start();   // 上电后持续运行 10 kHz FOC/采样中断
 

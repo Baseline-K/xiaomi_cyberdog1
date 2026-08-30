@@ -3,11 +3,11 @@
 
 #include <stdint.h>
 
-/* 工作模式（映射到生成模型的 ctrl_mode：0=转矩,1=速度） */
+/* 工作模式（映射到生成模型的 ctrl_mode：0=转矩,1=速度,2=位置） */
 typedef enum {
     MC_MODE_TORQUE = 0,
     MC_MODE_SPEED = 1,
-    MC_MODE_POSITION = 2      /* v1 保留（模型无位置环） */
+    MC_MODE_POSITION = 2      /* 位置环（模型内级联：位置→速度→电流） */
 } MotorCtrl_Mode_t;
 
 typedef enum {

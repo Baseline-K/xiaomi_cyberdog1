@@ -226,23 +226,14 @@ static void CommTask_Entry(void *pvParam)
 static void BringUpTask_Entry(void *pvParam)
 {
     TickType_t xLastWake = xTaskGetTickCount();
-    uint32_t   ulCount = 0U;
 
     (void) pvParam;
 
     for (;;)
     {
         vTaskDelayUntil(&xLastWake, pdMS_TO_TICKS(500));
-
-        ulCount++;
         HAL_GPIO_TogglePin(LED_GPIO_Port, LED_Pin);   /* 板载 LED 500ms 翻转，验证调度器存活 */
-
-        if ((ulCount & 1U) == 0U)   /* 每 1s 输出一次心跳 */
-        {
-            SEGGER_RTT_printf(0, "BringUp alive, cnt=%lu, tick=%lu\r\n",
-                              (unsigned long) ulCount,
-                              (unsigned long) xTaskGetTickCount());
-        }
+        /* RTT 心跳已关闭（保留 CAN 心跳，见 CommTask_Entry CAN_SendHeartbeat） */
     }
 }
 

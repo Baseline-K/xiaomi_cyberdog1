@@ -41,6 +41,7 @@
 #define configUSE_TASK_NOTIFICATIONS              1
 #define configUSE_PORT_OPTIMISED_TASK_SELECTION   1
 #define configUSE_TICKLESS_IDLE                   0
+#define configUSE_TRACE_HOOKS                     1   /* SystemView 任务切换跟踪 */
 
 /*-----------------------------------------------------------
  * 内存管理（计划 §8：静态分配，运行期零动态分配）
@@ -125,5 +126,10 @@ extern void vAssertCalled(const char *pcFile, unsigned long ulLine);
 #define INCLUDE_vTaskDelay                 1
 #define INCLUDE_xTaskGetSchedulerState     1
 #define INCLUDE_uxTaskGetStackHighWaterMark 1
+
+/*-----------------------------------------------------------
+ * SystemView 集成：在文件末尾引入 FreeRTOS 桥（桥头定义 trace 钩子映射）
+ *----------------------------------------------------------*/
+#include "SEGGER_SYSVIEW_FreeRTOS.h"
 
 #endif /* FREERTOS_CONFIG_H */

@@ -115,6 +115,8 @@ target_include_directories(${CMAKE_PROJECT_NAME} BEFORE PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/Code_Source/MID/MID_SoftIIC/SoftIIC_General
     ${CMAKE_CURRENT_SOURCE_DIR}/Code_Source/MID/MID_cm_backtrace
     ${CMAKE_CURRENT_SOURCE_DIR}/Code_Source/MID/MID_segger_rtt
+    ${CMAKE_CURRENT_SOURCE_DIR}/Code_Source/MID/MID_segger_sysview
+    ${CMAKE_CURRENT_SOURCE_DIR}/Code_Source/MID/MID_identify
     # Simulink 生成的 FOC 算法头文件
     ${CMAKE_CURRENT_SOURCE_DIR}/Simulink_Model/generated
     # FreeRTOS Kernel 头文件与端口

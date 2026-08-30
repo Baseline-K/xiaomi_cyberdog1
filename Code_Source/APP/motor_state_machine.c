@@ -17,6 +17,7 @@
 #include "MotorCtrl.h"
 #include "FOC_run.h"       /* MotorState */
 #include "main_user.h"     /* Param_init / Param_deinit */
+#include "identify.h"      /* 离线辨识：S_CALIB 复用 */
 
 #include <stdio.h>
 #include <math.h>
@@ -107,17 +108,34 @@ static void state_IDLE_do(void) { }
 
 static void state_CALIB_entry(void)
 {
-    /* 真实校准流程预留；当前角度零点校准已在 main_user 完成，直接通过 */
-    publish_coast();
+    publish_coast();                 /* 先 coast 撤力，再启动辨识 */
+    MotorState.run_state = RUNSTATE_IDENTIFYING;
+    MotorState.ctrl_mode = MT_IDENTIFY;
+    Identify_Start();                /* 启动离线辨识任务链（任务掩码由 identify 命令预设） */
+    PowerStage_Enable();             /* 辨识需 PWM 输出驱动电流（RUN entry 才有，这里补上） */
 }
 static void state_CALIB_do(void)
 {
-    MotorEvent_t evt = { 0 };
-    evt.id = EVENT_toIDLE;
-    evt.timestamp_ms = HAL_GetTick();
-    MotorStateMachine_PostEvent(&evt);
+    Identify_Process();              /* 主循环推进辨识任务 */
+    Identify_Status_e st = Identify_GetStatus();
+    if (st == IDENTIFY_DONE || st == IDENTIFY_FAILED || st == IDENTIFY_ABORTED) {
+        if (st == IDENTIFY_DONE) {
+            Identify_Params_Update();   /* RAM 提交结果 + 重算增益 */
+        }
+        MotorEvent_t evt = { 0 };
+        evt.id = EVENT_toIDLE;
+        evt.timestamp_ms = HAL_GetTick();
+        MotorStateMachine_PostEvent(&evt);
+    }
 }
-static void state_CALIB_exit(void) { }
+static void state_CALIB_exit(void)
+{
+    PowerStage_Disable();            /* 离开辨识立即断功率（安全） */
+    Identify_End();                  /* 统一收尾：恢复堵转检测使能 + state=IDLE */
+    MotorState.run_state = RUNSTATE_STOPPED;
+    MotorState.ctrl_mode = MT_STOP;
+    publish_coast();
+}
 
 static void state_RUN_entry(void)
 {
