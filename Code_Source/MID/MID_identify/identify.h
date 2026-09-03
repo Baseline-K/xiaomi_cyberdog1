@@ -31,6 +31,7 @@ typedef enum {
     TASK_FLUX,     /* 磁链（空载反电动势 LS） */
     TASK_INERTIA,  /* 转动惯量（加减速对称） */
     TASK_COG,      /* 齿槽 LUT（扰动观测器 360 点） */
+    TASK_POLE,     /* 极对数/方向（电压强拖正反扫一整圈机械角） */
     TASK_MAX
 } Identify_Task_e;
 
@@ -56,6 +57,11 @@ typedef struct {
     /* 死区补偿 LUT（20 点，辨识后经 Params_Update 提交到 DeadComp_Lut_I/V） */
     float dead_lut_I[20];
     float dead_lut_V[20];
+    /* 极对数/方向（电压强拖正反扫；不自动写回 Motor_Params，用户手动确认） */
+    uint16_t pole_pairs_identified;   /* 极对数（取整候选） */
+    uint8_t  pole_pairs_valid;
+    int8_t   control_to_encoder_dir;  /* +1 控制电角正方向=编码器机械角增；-1 减；0 无效 */
+    uint8_t  direction_valid;
     int error;
 } Identify_Result_t;
 
@@ -108,5 +114,14 @@ void Identify_Params_Update(void);                 /* 辨识完成提交结果�
  *----------------------------------------------------------*/
 void identify_apply_voltage(float vd, float vq);       /* 填 U.vd/vq_ref + ctrl_mode=3（dq 电压模式） */
 void identify_apply_alpha_beta(float v_alpha, float v_beta); /* 填 U.v_alpha/v_beta_ref + ctrl_mode=4（αβ 电压模式） */
+void identify_apply_torque(float iq);                   /* 填 U.iq_ref + ctrl_mode=0（模型转矩模式，J 辨识用） */
+
+/* 开环电角度覆盖（极对数辨识：反 Park 用受控电角代替编码器角）。
+ * g_ident_eleangle_ovr=1 时 FOC_Generated_Step 用 g_ident_eleangle 填 U.eleangle；
+ * 辨识任务设置/清除（INIT 置、DONE/FAIL 清）。PLL 会跟踪开环角，但极对数辨识用编码器机械角，不受影响。 */
+extern float g_ident_eleangle;          /* 受控电角度 [0,2π) */
+extern uint8_t g_ident_eleangle_ovr;    /* 1=覆盖生效 */
+void identify_set_eleangle_override(float theta);
+void identify_clear_eleangle_override(void);
 
 #endif /* IDENTIFY_H */

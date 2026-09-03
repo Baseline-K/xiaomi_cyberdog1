@@ -8,6 +8,10 @@
 #include "identify.h"
 #include "identify_r.h"           /* R 任务 */
 #include "identify_dead.h"        /* 死区 LUT 任务 */
+#include "identify_l.h"           /* 电感 HFI 任务 */
+#include "identify_flux.h"        /* 磁链任务 */
+#include "identify_pole.h"        /* 极对数/方向任务 */
+#include "identify_j.h"           /* 转动惯量任务 */
 #include "CyberDog_Motor_FOC.h"   /* 生成模型：U/Y 全局 */
 #include "FOC_run.h"              /* MotorState / run_state */
 #include "FOC_generated.h"        /* FOC_Generated_Init 重算增益 */
@@ -28,7 +32,15 @@ static void Identify_Register_All(void)
     g_task_handlers[TASK_R].step_handler    = identify_r_Step;
     g_task_handlers[TASK_DEAD].init_handler = identify_dead_Init;
     g_task_handlers[TASK_DEAD].step_handler = identify_dead_Step;
-    /* 后续 TASK_L/FLUX/INERTIA/COG 在此追加 */
+    g_task_handlers[TASK_L].init_handler    = identify_l_Init;
+    g_task_handlers[TASK_L].step_handler    = identify_l_Step;
+    g_task_handlers[TASK_FLUX].init_handler = identify_flux_Init;
+    g_task_handlers[TASK_FLUX].step_handler = identify_flux_Step;
+    g_task_handlers[TASK_POLE].init_handler = identify_pole_Init;
+    g_task_handlers[TASK_POLE].step_handler = identify_pole_Step;
+    g_task_handlers[TASK_INERTIA].init_handler = identify_j_Init;
+    g_task_handlers[TASK_INERTIA].step_handler = identify_j_Step;
+    /* 后续 TASK_COG 在此追加 */
 }
 
 void Identify_Init(void)
@@ -58,6 +70,7 @@ static int build_task_list(uint32_t mask, Identify_Task_e *list)
     if (mask & (1u << TASK_FLUX))     list[idx++] = TASK_FLUX;
     if (mask & (1u << TASK_INERTIA))  list[idx++] = TASK_INERTIA;
     if (mask & (1u << TASK_COG))      list[idx++] = TASK_COG;
+    if (mask & (1u << TASK_POLE))     list[idx++] = TASK_POLE;
     return idx;
 }
 
@@ -107,7 +120,8 @@ void Identify_Process(void)
     if (g_identify.task_index >= g_identify.task_total) {
         g_identify.state = IDENTIFY_DONE;
         g_identify.current_task = TASK_NONE;
-        printf("IDENTIFY: DONE (Rs=%.4f)\r\n", (double)g_identify.res.Rs);
+        /* The selected task may not be resistance identification. */
+        printf("IDENTIFY: DONE\r\n");
     } else {
         g_identify.current_task = g_identify.task_list[g_identify.task_index];
         if (g_task_handlers[g_identify.current_task].init_handler) {
@@ -130,14 +144,16 @@ void Identify_Abort(void)
 {
     g_identify.state = IDENTIFY_ABORTED;
     g_identify.current_task = TASK_NONE;
+    identify_clear_eleangle_override();   /* 释放开环电角覆盖，恢复编码器角 */
     /* 释放电压注入：下次正常 step 前由 FOC_Generated_Step 恢复正常 ctrl_mode */
     printf("IDENTIFY: ABORTED\r\n");
 }
 
-/* 离开 CALIB 统一调用：恢复辨识期间禁用的堵转检测 */
+/* 离开 CALIB 统一调用：恢复辨识期间禁用的堵转检测 + 释放开环电角覆盖 */
 void Identify_End(void)
 {
     Safety_Config.enable_stall = s_saved_enable_stall;
+    identify_clear_eleangle_override();   /* 保险：任何离开 CALIB 都恢复编码器角 */
     g_identify.state = IDENTIFY_IDLE;
     g_identify.current_task = TASK_NONE;
 }
@@ -160,6 +176,33 @@ void Identify_Params_Update(void)
             gains_changed = 1;
         }
     }
+    if (mask & (1u << TASK_L)) {
+        if (g_identify.res.Ld > 0.0f && g_identify.res.Lq > 0.0f) {
+            Motor_Params.Ld = g_identify.res.Ld;
+            Motor_Params.Lq = g_identify.res.Lq;
+            printf("IDENTIFY: Ld=%.6f H, Lq=%.6f H\r\n",
+                   (double)Motor_Params.Ld, (double)Motor_Params.Lq);
+            gains_changed = 1;
+        }
+    }
+    if (mask & (1u << TASK_FLUX)) {
+        if (g_identify.res.Flux_linkage > 0.0f) {
+            Motor_Params.Flux = g_identify.res.Flux_linkage;
+            printf("IDENTIFY: Flux=%.6f Wb, Ke=%.6f, Kt=%.6f, B=%.6f, fc=%.6f\r\n",
+                   (double)Motor_Params.Flux, (double)g_identify.res.Ke,
+                   (double)g_identify.res.Kt, (double)g_identify.res.B,
+                   (double)g_identify.res.friction_Coulomb);
+            gains_changed = 1;
+        }
+    }
+    if (mask & (1u << TASK_INERTIA)) {
+        if (g_identify.res.J > 0.0f) {
+            Motor_Params.Rotor_inertia = g_identify.res.J;
+            printf("IDENTIFY: J -> %.7f kg.m^2 (err=%.3f)\r\n",
+                   (double)Motor_Params.Rotor_inertia, (double)g_identify.res.J_error);
+            gains_changed = 1;
+        }
+    }
     /* 先重算增益（FOC_Generated_Init 会重置死区/齿槽使能与占位 LUT，须在其后再提交） */
     if (gains_changed) FOC_Generated_Init();
 
@@ -172,6 +215,18 @@ void Identify_Params_Update(void)
         DeadComp_En = 1.0f;
         printf("IDENTIFY: DeadComp LUT committed (Vdead@max=%.3f), DeadComp_En=1\r\n",
                (double)DeadComp_Lut_V[DEAD_LUT_N - 1]);
+    }
+    /* 极对数/方向：只报告，不写回 Motor_Params（设计第一版；用户手动确认后改 main_user.c） */
+    if (mask & (1u << TASK_POLE)) {
+        if (g_identify.res.pole_pairs_valid) {
+            printf("IDENTIFY: PolePairs=%u dir=%d (vs Motor_Params.Pole_Pairs=%.0f)\r\n",
+                   (unsigned)g_identify.res.pole_pairs_identified,
+                   (int)g_identify.res.control_to_encoder_dir,
+                   (double)Motor_Params.Pole_Pairs);
+        } else {
+            printf("IDENTIFY: PolePairs INVALID (P=%u)\r\n",
+                   (unsigned)g_identify.res.pole_pairs_identified);
+        }
     }
     /* 后续 TASK_L/FLUX/INERTIA/COG 在此追加 */
 }

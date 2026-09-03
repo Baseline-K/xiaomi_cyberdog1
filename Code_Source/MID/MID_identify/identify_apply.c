@@ -24,3 +24,26 @@ void identify_apply_alpha_beta(float v_alpha, float v_beta)
     CyberDog_Motor_FOC_U.ctrl_mode   = 4.0f;
     CyberDog_Motor_FOC_U.coast       = 0.0f;
 }
+
+/* ---- 开环电角度覆盖（极对数/方向辨识用） ---- */
+float   g_ident_eleangle    = 0.0f;
+uint8_t g_ident_eleangle_ovr = 0U;
+
+void identify_set_eleangle_override(float theta)
+{
+    g_ident_eleangle = theta;
+    g_ident_eleangle_ovr = 1U;
+}
+
+void identify_clear_eleangle_override(void)
+{
+    g_ident_eleangle_ovr = 0U;
+}
+
+/* 转矩模式：填 iq_ref + ctrl_mode=0（模型电流环闭环保持 iq，J 辨识用） */
+void identify_apply_torque(float iq)
+{
+    CyberDog_Motor_FOC_U.ctrl_mode = 0.0f;
+    CyberDog_Motor_FOC_U.iq_ref    = iq;
+    CyberDog_Motor_FOC_U.coast     = 0.0f;
+}

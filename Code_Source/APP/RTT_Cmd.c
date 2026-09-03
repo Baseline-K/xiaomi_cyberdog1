@@ -40,6 +40,10 @@ static void print_help(void)
     printf("  stop        stop motor\r\n");
     printf("  identify r    offline R identification\r\n");
     printf("  identify dead offline dead-time LUT identification (needs R first)\r\n");
+    printf("  identify l    offline inductance (HFI) identification\r\n");
+    printf("  identify flux offline flux linkage identification (motor spins no-load)\r\n");
+    printf("  identify pole  offline pole-pairs/direction (voltage drag fwd+rev)\r\n");
+    printf("  identify j     offline rotor inertia (accel/decel, needs flux first)\r\n");
     printf("  identify abort\r\n");
     printf("  showparams  print motor params + identify results\r\n");
     printf("  get         print status\r\n");
@@ -121,17 +125,34 @@ static void handle_line(char *line)
             Identify_Task_Set(1u << TASK_DEAD);
             post_cmd_event(EVENT_IDLEtoCALIB);
             printf("identify: DEAD task set, entering CALIB\r\n");
+        } else if (strcmp(arg, "l") == 0) {
+            Identify_Task_Set(1u << TASK_L);
+            post_cmd_event(EVENT_IDLEtoCALIB);
+            printf("identify: L (HFI) task set, entering CALIB\r\n");
+        } else if (strcmp(arg, "flux") == 0) {
+            Identify_Task_Set(1u << TASK_FLUX);
+            post_cmd_event(EVENT_IDLEtoCALIB);
+            printf("identify: FLUX task set, entering CALIB\r\n");
+        } else if (strcmp(arg, "pole") == 0) {
+            Identify_Task_Set(1u << TASK_POLE);
+            post_cmd_event(EVENT_IDLEtoCALIB);
+            printf("identify: POLE task set, entering CALIB\r\n");
+        } else if (strcmp(arg, "j") == 0) {
+            Identify_Task_Set(1u << TASK_INERTIA);
+            post_cmd_event(EVENT_IDLEtoCALIB);
+            printf("identify: J (inertia) task set, entering CALIB\r\n");
         } else if (strcmp(arg, "abort") == 0) {
             Identify_Abort();
             printf("identify: abort requested\r\n");
         } else {
-            printf("identify <r|l|flux|j|dead|cog|abort>  (先 stop 再辨识)\r\n");
+            printf("identify <r|l|flux|pole|j|dead|cog|abort>  (先 stop 再辨识)\r\n");
         }
     }
     else if (strcmp(p, "showparams") == 0) {
-        printf("VBUS=%.1f R=%.4f L=%.5f Flux=%.6f P=%.0f J=%.8f\r\n",
+        printf("VBUS=%.1f R=%.4f Ld=%.5f Lq=%.5f Flux=%.6f P=%.0f J=%.8f\r\n",
                (double)Motor_Params.VBUS, (double)Motor_Params.Phase_R,
-               (double)Motor_Params.Phase_L, (double)Motor_Params.Flux,
+               (double)Motor_Params.Ld, (double)Motor_Params.Lq,
+               (double)Motor_Params.Flux,
                (double)Motor_Params.Pole_Pairs, (double)Motor_Params.Rotor_inertia);
         printf("ident: state=%d Rs=%.4f Vdead=%.4f\r\n",
                (int)Identify_GetStatus(), (double)g_identify.res.Rs,

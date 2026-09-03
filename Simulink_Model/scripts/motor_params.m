@@ -69,9 +69,9 @@ ensureParam('Motor_VBUS',    24.0,   '母线电压(V)');
 %   固件: kp = L·BW·6.18;  ki = R·BW·6.18·timFactor
 %   模型 PID 块离散积分自带 ×Ts(=timFactor)，故模型 I 增益 = R·BW·6.18
 %   改调参：改 Motor_Phase_L/R 或 CUR_BW 即可，增益自动跟随
-evalin('base','CurrQ_Kp.Value = Motor_Phase_L.Value * 500.0 * 6.18;');
+evalin('base','CurrQ_Kp.Value = Motor_Phase_L.Value * 400.0 * 6.18;');
 % PID 块已勾选 UseI*Ts → I 参数直接用固件 ki = Ki*Ts（无需再除 Ts）
-evalin('base','CurrQ_Ki.Value = Motor_Phase_R.Value * 500.0 * 6.18 * 1e-4;');
+evalin('base','CurrQ_Ki.Value = Motor_Phase_R.Value * 400.0 * 6.18 * 1e-4;');
 evalin('base','CurrD_Kp.Value = CurrQ_Kp.Value;');
 evalin('base','CurrD_Ki.Value = CurrQ_Ki.Value;');
 evalin('base','Curr_MaxOut.Value = Motor_VBUS.Value * 0.5773502691896257;');  % q 轴 ±VBUS/√3

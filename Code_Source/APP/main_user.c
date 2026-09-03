@@ -49,6 +49,7 @@ void fault_test_by_div0(void) {
 
 void DWT_Init(void);
 void Uart_485_Init(void);
+static void AS5600_LogStartupDiagnostics(void);
 
 extern uint32_t start,end,cycles;
 extern float time_us;
@@ -91,7 +92,13 @@ void main_user(void)
 	DRV83XX_Init();
 	Offset_Current_Start();  //校准作用,电流传感器的理论偏移值为1.65V
 	
-  bsp_as5600Init();
+  {
+	int as5600_init_ret = bsp_as5600HwInit();
+	if (as5600_init_ret != SOFTI2C_OK) {
+		printf("AS5600 hardware init failed: %d\r\n", as5600_init_ret);
+	}
+  }
+  AS5600_LogStartupDiagnostics();
 	/* ===== 上电强拖 + 编码器零电角度校准 =====
 	 * 原理：d 轴强拖锁转子到 A 相电气零位，读编码器角度记为零点偏移（angle_zero_offset）。
 	 * 要求：强拖电流不能太小——需保证给电机施加"强拖电流"和"电机最大电流"时，
@@ -119,11 +126,14 @@ void main_user(void)
 	 
 	 Motor_Params.Current_Rating = 1.0f;
 	 Motor_Params.Current_Max = 3.0f;   // 最大电流（辨识安全上界 / 过流参考）
-	 Motor_Params.Flux = 0.00499f;
-	 Motor_Params.Phase_L = 0.0018f;
+	 Motor_Params.Flux = 0.002896f; /* 15/20/25/30 RPS flux ID, four-point LS R^2 ~= 0.9993 */
+	 Motor_Params.Kt = 0.0304f;   // 1.5*Ke
+	 Motor_Params.Ke = 0.0203f;   // Ke = P*
+	 Motor_Params.Ld = 0.0018f;   // d轴电感
+	 Motor_Params.Lq = 0.0021f;   // q轴电感
 	 Motor_Params.Phase_R =  2.92f;   // 离线辨识实测（identify r）2.92f
 	 Motor_Params.Pole_Pairs = 7.0f;
-	 Motor_Params.Rotor_inertia = 0.000004f;
+	 Motor_Params.Rotor_inertia = 0.0000025f;   // 惯量辨识实测（identify j）2.5e-6
 	 Motor_Params.VBUS = 12.0f;
 	 Motor_Params.Reduction_ratio = 1.0f;
    Motor_Params.Torque_Rating = 0.02f;
@@ -157,11 +167,55 @@ void main_user(void)
   /* USER CODE END WHILE */
 }
 
+/*
+ * Read AS5600 configuration once before the 10 kHz FOC interrupt starts.
+ * Register reads temporarily change the sensor's internal address pointer;
+ * the driver restores it to RAW_ANGLE before these calls return.
+ */
+static void AS5600_LogStartupDiagnostics(void)
+{
+	const uint16_t config_raw = AS5600_StartupDiagnostics.config_raw;
+	const uint8_t status = AS5600_StartupDiagnostics.status;
+
+	if (AS5600_StartupDiagnostics.filter_config_result == SOFTI2C_OK) {
+		printf("AS5600 filter configured: SF=3 (2x), FTH=0 (slow-only)\r\n");
+	} else {
+		printf("AS5600 filter configuration failed: %d\r\n",
+		       AS5600_StartupDiagnostics.filter_config_result);
+	}
+
+	if (AS5600_StartupDiagnostics.config_read_result == SOFTI2C_OK) {
+		printf("AS5600 CONF=0x%04X PM=%u HYST=%u OUTS=%u PWMF=%u SF=%u FTH=%u WD=%u\r\n",
+		       (unsigned int)config_raw,
+		       (unsigned int)(config_raw & 0x3U),
+		       (unsigned int)((config_raw >> 2U) & 0x3U),
+		       (unsigned int)((config_raw >> 4U) & 0x3U),
+		       (unsigned int)((config_raw >> 6U) & 0x3U),
+		       (unsigned int)((config_raw >> 8U) & 0x3U),
+		       (unsigned int)((config_raw >> 10U) & 0x7U),
+		       (unsigned int)((config_raw >> 13U) & 0x1U));
+	} else {
+		printf("AS5600 CONF read failed: %d\r\n",
+		       AS5600_StartupDiagnostics.config_read_result);
+	}
+
+	if (AS5600_StartupDiagnostics.status_read_result == SOFTI2C_OK) {
+		printf("AS5600 STATUS=0x%02X MD=%u ML=%u MH=%u\r\n",
+		       (unsigned int)status,
+		       (unsigned int)((status & AS5600_STATUS_MD_MASK) != 0U),
+		       (unsigned int)((status & AS5600_STATUS_ML_MASK) != 0U),
+		       (unsigned int)((status & AS5600_STATUS_MH_MASK) != 0U));
+	} else {
+		printf("AS5600 STATUS read failed: %d\r\n",
+		       AS5600_StartupDiagnostics.status_read_result);
+	}
+}
+
 
 void Param_init(void)
 {
 		// 注：Simulink 生成代码内部自带电流/速度/位置 PID，旧 MID_foc PID 结构已移除
-		bsp_as5600Init();
+		bsp_as5600ResetTracking();
 		SEGGER_RTT_TimeStamp_reset();
 }
 

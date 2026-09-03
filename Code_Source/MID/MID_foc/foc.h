@@ -26,7 +26,7 @@
 //#define mec_deta_speed_Max   2.0f * Speed_Max * 2*PI *timFactor * N   //
 //#define mec_deta_speed_Min   1.0f/Encoder_Pulse * 2 *PI * 0.1f  
 
-#define CurrentLoop_Bandwitch    500.0f    //HZ
+#define CurrentLoop_Bandwitch    400.0f    //HZ
 #define SpeedLoop_Bandwitch      50.0f
 
 
@@ -37,9 +37,12 @@ typedef struct{
 	 float  Current_Max;	      //电机最大电流
      float  Torque_Rating;  //电机额定转矩
      float  Torque_Max;     //电机最大转矩
-	 float  Phase_L;    //相电感
+	 float  Ld;         //d轴电感
+	 float  Lq;         //q轴电感
 	 float  Phase_R;    //相电阻
 	 float  Flux;       //磁链
+	 float  Ke;         //反电势常数 V·s/rad_mech（=P·ψf，磁链辨识）
+	 float  Kt;         //转矩常数 N·m/A（=1.5·Ke，磁链辨识）
 	 float  Pole_Pairs;  //极对数
 	 float  Rotor_inertia;  //转动惯量
 

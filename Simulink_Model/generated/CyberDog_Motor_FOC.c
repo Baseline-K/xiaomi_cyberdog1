@@ -3,9 +3,9 @@
  *
  * Code generated for Simulink model 'CyberDog_Motor_FOC'.
  *
- * Model version                  : 1.35
+ * Model version                  : 1.36
  * Simulink Coder version         : 25.2 (R2025b) 28-Jul-2025
- * C/C++ source code generated on : Sun Aug 30 17:31:05 2026
+ * C/C++ source code generated on : Mon Aug 31 00:45:23 2026
  *
  * Target selection: ert.tlc
  * Embedded hardware selection: Intel->x86-64 (Windows64)
@@ -395,7 +395,6 @@ void CyberDog_Motor_FOC_step(void)
   real32_T rtb_Integrator_l;
   real32_T rtb_LUT_dead;
   real32_T rtb_MM_max;
-  real32_T rtb_Max_mag_floor;
   real32_T rtb_Merge_idx_0;
   real32_T rtb_Merge_idx_1;
   real32_T rtb_Saturation_h;
@@ -950,7 +949,7 @@ void CyberDog_Motor_FOC_step(void)
    *  Sqrt: '<S123>/Sqrt_mag'
    *  Sum: '<S123>/S_mag2'
    */
-  rtb_Max_mag_floor = fmaxf(sqrtf(rtb_Switch1_c_idx_0 * rtb_Switch1_c_idx_0 +
+  rtb_MM_max = fmaxf(sqrtf(rtb_Switch1_c_idx_0 * rtb_Switch1_c_idx_0 +
     rtb_Switch1_c_idx_1 * rtb_Switch1_c_idx_1), 1.0E-6F);
 
   /* End of Outputs for SubSystem: '<S356>/Two inputs CRL' */
@@ -958,8 +957,8 @@ void CyberDog_Motor_FOC_step(void)
   /* Lookup_n-D: '<S123>/LUT_dead' incorporates:
    *  MinMax: '<S123>/Max_mag_floor'
    */
-  rtb_LUT_dead = look1_iflf_binlxpw(rtb_Max_mag_floor, DeadComp_Lut_I,
-    DeadComp_Lut_V, 19U);
+  rtb_LUT_dead = look1_iflf_binlxpw(rtb_MM_max, DeadComp_Lut_I, DeadComp_Lut_V,
+    19U);
 
   /* RelationalOperator: '<S123>/Rel_dead' incorporates:
    *  Constant: '<S123>/Const_0d'
@@ -968,12 +967,13 @@ void CyberDog_Motor_FOC_step(void)
   rtb_Rel_dead = (DeadComp_En > 0.0F);
 
   /* Switch: '<S2>/Sw_dq_vd' incorporates:
-   *  Inport: '<Root>/vd_ref'
-   *  Sum: '<S123>/S_vd'
    *  Switch: '<S123>/Sw_dVd'
    */
   if (rtb_Rel_dqvol) {
-    rtb_MM_max = CyberDog_Motor_FOC_U.vd_ref;
+    /* Switch: '<S2>/Sw_dq_vd' incorporates:
+     *  Inport: '<Root>/vd_ref'
+     */
+    CyberDog_Motor_FOC_Y.vd_meas = CyberDog_Motor_FOC_U.vd_ref;
   } else {
     if (rtb_Rel_dead) {
       /* Outputs for Atomic SubSystem: '<S356>/Two inputs CRL' */
@@ -982,7 +982,7 @@ void CyberDog_Motor_FOC_step(void)
        *  Product: '<S123>/D_id'
        *  Product: '<S123>/P_dVd'
        */
-      rtb_Sw_dVd = rtb_Switch1_c_idx_0 / rtb_Max_mag_floor * rtb_LUT_dead;
+      rtb_Sw_dVd = rtb_Switch1_c_idx_0 / rtb_MM_max * rtb_LUT_dead;
 
       /* End of Outputs for SubSystem: '<S356>/Two inputs CRL' */
     } else {
@@ -992,7 +992,10 @@ void CyberDog_Motor_FOC_step(void)
       rtb_Sw_dVd = 0.0F;
     }
 
-    rtb_MM_max = rtb_Merge_idx_1 + rtb_Sw_dVd;
+    /* Switch: '<S2>/Sw_dq_vd' incorporates:
+     *  Sum: '<S123>/S_vd'
+     */
+    CyberDog_Motor_FOC_Y.vd_meas = rtb_Merge_idx_1 + rtb_Sw_dVd;
   }
 
   /* End of Switch: '<S2>/Sw_dq_vd' */
@@ -1164,12 +1167,13 @@ void CyberDog_Motor_FOC_step(void)
   /* End of Saturate: '<S230>/Saturation' */
 
   /* Switch: '<S2>/Sw_dq_vq' incorporates:
-   *  Inport: '<Root>/vq_ref'
-   *  Sum: '<S123>/S_vq'
    *  Switch: '<S123>/Sw_dVq'
    */
   if (rtb_Rel_dqvol) {
-    rtb_Switch1_c_idx_1 = CyberDog_Motor_FOC_U.vq_ref;
+    /* Switch: '<S2>/Sw_dq_vq' incorporates:
+     *  Inport: '<Root>/vq_ref'
+     */
+    CyberDog_Motor_FOC_Y.vq_meas = CyberDog_Motor_FOC_U.vq_ref;
   } else {
     if (rtb_Rel_dead) {
       /* Outputs for Atomic SubSystem: '<S356>/Two inputs CRL' */
@@ -1178,18 +1182,20 @@ void CyberDog_Motor_FOC_step(void)
        *  Product: '<S123>/D_iq'
        *  Product: '<S123>/P_dVq'
        */
-      rtb_Switch1_c_idx_1 = rtb_Switch1_c_idx_1 / rtb_Max_mag_floor *
-        rtb_LUT_dead;
+      rtb_MM_max = rtb_Switch1_c_idx_1 / rtb_MM_max * rtb_LUT_dead;
 
       /* End of Outputs for SubSystem: '<S356>/Two inputs CRL' */
     } else {
       /* Switch: '<S123>/Sw_dVq' incorporates:
        *  Constant: '<S123>/Const_0d'
        */
-      rtb_Switch1_c_idx_1 = 0.0F;
+      rtb_MM_max = 0.0F;
     }
 
-    rtb_Switch1_c_idx_1 += rtb_Saturation_h;
+    /* Switch: '<S2>/Sw_dq_vq' incorporates:
+     *  Sum: '<S123>/S_vq'
+     */
+    CyberDog_Motor_FOC_Y.vq_meas = rtb_Saturation_h + rtb_MM_max;
   }
 
   /* End of Switch: '<S2>/Sw_dq_vq' */
@@ -1203,10 +1209,10 @@ void CyberDog_Motor_FOC_step(void)
    *  Sum: '<S244>/sum_alpha'
    *  Sum: '<S244>/sum_beta'
    */
-  rtb_Switch1_c_idx_0 = rtb_MM_max * rtb_Sum6_f - rtb_Switch1_c_idx_1 *
-    rtb_Sum4_m;
-  rtb_Switch1_c_idx_1 = rtb_Switch1_c_idx_1 * rtb_Sum6_f + rtb_MM_max *
-    rtb_Sum4_m;
+  rtb_Switch1_c_idx_0 = CyberDog_Motor_FOC_Y.vd_meas * rtb_Sum6_f -
+    CyberDog_Motor_FOC_Y.vq_meas * rtb_Sum4_m;
+  rtb_Switch1_c_idx_1 = CyberDog_Motor_FOC_Y.vq_meas * rtb_Sum6_f +
+    CyberDog_Motor_FOC_Y.vd_meas * rtb_Sum4_m;
 
   /* Sum: '<S129>/Sum_mag2' incorporates:
    *  AlgorithmDescriptorDelegate generated from: '<S244>/a16'
@@ -1224,7 +1230,7 @@ void CyberDog_Motor_FOC_step(void)
    *  MinMax: '<S129>/Max_mag_floor'
    *  Sqrt: '<S129>/Sqrt_mag'
    */
-  rtb_Max_mag_floor = VmaxCoeff / fmaxf(sqrtf(rtb_Sum6_f), 1.0E-6F);
+  rtb_LUT_dead = VmaxCoeff / fmaxf(sqrtf(rtb_Sum6_f), 1.0E-6F);
 
   /* Switch: '<S2>/Sw_ab_valpha' incorporates:
    *  Constant: '<S2>/Const_4'
@@ -1248,13 +1254,13 @@ void CyberDog_Motor_FOC_step(void)
      *  AlgorithmDescriptorDelegate generated from: '<S244>/a16'
      *  Product: '<S129>/P_vaf'
      */
-    rtb_Switch1_c_idx_0 *= rtb_Max_mag_floor;
+    rtb_Switch1_c_idx_0 *= rtb_LUT_dead;
 
     /* Switch: '<S129>/Sw_vb' incorporates:
      *  AlgorithmDescriptorDelegate generated from: '<S244>/a16'
      *  Product: '<S129>/P_vbf'
      */
-    rtb_Switch1_c_idx_1 *= rtb_Max_mag_floor;
+    rtb_Switch1_c_idx_1 *= rtb_LUT_dead;
 
     /* End of Outputs for SubSystem: '<S243>/Two inputs CRL' */
   }

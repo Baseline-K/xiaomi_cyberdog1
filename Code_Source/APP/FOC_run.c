@@ -61,10 +61,6 @@ void HAL_ADCEx_InjectedConvCpltCallback( ADC_HandleTypeDef *hadc)
 										
 #endif
 		HAL_GPIO_TogglePin(GPIOB,GPIO_PIN_5);
-		
-
-		
-
 		/***********************   1、Processing Eleangle  ***************************/
 		//Predict_ThreeHallangle = ThreeHallanglecale();  
 //		Predict_eleangle = (float)Predict_ThreeHallangle* 0.0000958752f;
@@ -88,11 +84,6 @@ void HAL_ADCEx_InjectedConvCpltCallback( ADC_HandleTypeDef *hadc)
 			}
 		}
 		Encoder_AS5600.eleangle	= fmodf(Encoder_AS5600.angle * Motor_Params.Pole_Pairs, Two_PI);
-#if !USE_GENERATED_FOC
-		/* 手写 PLL（仅 legacy 路径；USE_GENERATED_FOC=1 时由 Simulink 模型内的官方 MCB PLL 提供） */
-		Predict_eleangle = Angle_PLL_filter(Encoder_PLL_eleFilter, Encoder_AS5600.eleangle);
-		Encoder_PLL_eleFilter->PLL_Omega_filtered = Lpf(Encoder_PLL_eleFilter->PLL_Omega, Encoder_PLL_eleFilter->PLL_Omega_filtered, 0.7f);
-#endif
 		
 		/***********************   2、Processing ADC  ***************************/
 		
@@ -105,6 +96,7 @@ void HAL_ADCEx_InjectedConvCpltCallback( ADC_HandleTypeDef *hadc)
 		foc_abc_current_i.ia = - foc_abc_current_i.ic - foc_abc_current_i.ib;
 
     Vbus = ADC_ConvertedValue[0]* V_SCALE; // ADC1->JDR2 * V_SCALE;
+    Motor_Params.VBUS = Vbus;   /* 母线电压实时化：模型 SVPWM/限幅/电流限随实测母线（FOC_Generated_Step 每步同步） */
 		/*********************  Safety 快检（Phase 4） *************************/
 		{
 			SafetyFastInput_t fast_in = { Vbus, { foc_abc_current_i.ia, foc_abc_current_i.ib, foc_abc_current_i.ic } };
@@ -117,58 +109,13 @@ void HAL_ADCEx_InjectedConvCpltCallback( ADC_HandleTypeDef *hadc)
 		}
 		/*********************  Processing EventTask   *************************/
 
-
 		/* Phase 3b：始终调用 FOC_Generated_Step——模型 PLL 常跑给实时转速；
 		 * coast/停机由模型 coast 输入处理（duty 强制 0.5），不再按 run_state 门控。 */
-#if USE_GENERATED_FOC
 		if (MotorState.run_state == RUNSTATE_IDENTIFYING) {
 			Identify_FocIsrStep();   /* 填模型电压输入（ctrl_mode=3/4），模型 step 再应用电压 */
 		}
 		FOC_Generated_Step();
-#else
-       //Position_Loop_Handle(position_ref_Test,	Encoder_AS5600.CCW_angle_total - Encoder_AS5600.CW_angle_total);
-		speed_Loop_Handle(3.0f, &speed_pid, 0.04f, 0.04f);	
-//    speed_Loop_Handle(speed_ref_Test, &speed_pid, 0.04f, 0.04f);  //
-   
-		/***********************   FOC Algorithm   ***************************/
-		Angle_Sin_Cos(Predict_eleangle, &foc_sin_cos);  //
-		Clark(foc_abc_current_i, &foc_alpha_beta_i);
-		Park(foc_alpha_beta_i, foc_sin_cos, &foc_dq_i);
-//				foc_dq_i.iq = -foc_dq_i.iq;
-//				foc_dq_i.id = -foc_dq_i.id;
-	
-		foc_dq_i.iq = Lpf(foc_dq_i.iq, foc_dq_i.iq_last,0.8f);
-		foc_dq_i.iq_last = foc_dq_i.iq;
-		
-		foc_dq_i.id = Lpf(foc_dq_i.id, foc_dq_i.id_last,0.8f);
-		foc_dq_i.id_last = foc_dq_i.id;
-		
-		
-		current_q_pid.ref = speed_pid.output; //;
-		current_d_pid.ref = 0.0f;
-		current_q_pid.fbk = foc_dq_i.iq;
-		current_d_pid.fbk = foc_dq_i.id;
-		current_pid_Control(&current_q_pid);
-		current_pid_Control(&current_d_pid);
-		foc_dq_v.vq = current_q_pid.output;
-    foc_dq_v.vd = current_d_pid.output;
-// 		foc_dq_v.vq = -5.0f;
-//    foc_dq_v.vd = 0.0f;
-		
-		Reverse_Park(foc_sin_cos, foc_dq_v, &foc_alpha_beta_v);
-	 /*Overmodulation prevention*/
-		RevPark_Circle_Limitation_cmsis(&foc_alpha_beta_v.v_alpha, &foc_alpha_beta_v.v_beta,
-																				Motor_Params.VBUS, 0.95f);
-		Foc_Svpwm(foc_alpha_beta_v, &foc_pwm, Motor_Params.VBUS, PWM_PERIOD);
-		
-		TIM1->CCR1 = foc_pwm.pwm_u;
-		TIM1->CCR2 = foc_pwm.pwm_v;
-		TIM1->CCR3 = foc_pwm.pwm_w;
 
-		
-		/*********************   FOC Algorithm END ***************************/
-			 
-#endif
 #if DEBUG	
 		
 		//JS_RTT_PLUS_SendData();

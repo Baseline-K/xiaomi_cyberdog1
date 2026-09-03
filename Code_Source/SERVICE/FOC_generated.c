@@ -17,6 +17,7 @@
 #include "foc.h"
 #include "FOC_run.h"
 #include "AS5600.h"               /* Encoder_AS5600.eleangle */
+#include "identify.h"             /* g_ident_eleangle_ovr（极对数辨识开环电角覆盖） */
 #include <math.h>
 
 /* FOC_run.c 的全局量（未在头文件声明，此处 extern） */
@@ -26,7 +27,7 @@ extern float Predict_eleangle;
 #define GEN_COGGING_FF  0   /* 齿槽前馈使能（默认关） */
 
 /* 电流环带宽 / 增益系数（与固件 current_q_pid_Init 一致） */
-#define GEN_CURR_BW     500.0f
+#define GEN_CURR_BW     400.0f
 #define GEN_CURR_KF     6.18f
 #define ONE_BY_SQRT3    0.57735027f
 #define TWO_PI_F        6.283185307f
@@ -34,22 +35,32 @@ extern float Predict_eleangle;
 void FOC_Generated_Init(void)
 {
     /* ---- 电流环增益：固件公式（UseI*Ts 约定，模型 I 增益直接=固件 ki） ---- */
-    CurrQ_Kp = Motor_Params.Phase_L * GEN_CURR_BW * GEN_CURR_KF;
+    CurrQ_Kp = Motor_Params.Lq * GEN_CURR_BW * GEN_CURR_KF;   /* q 轴用 Lq */
     CurrQ_Ki = Motor_Params.Phase_R * GEN_CURR_BW * GEN_CURR_KF * 1e-4f;
-    CurrD_Kp = CurrQ_Kp;
+    CurrD_Kp = Motor_Params.Ld * GEN_CURR_BW * GEN_CURR_KF;   /* d 轴用 Ld */
     CurrD_Ki = CurrQ_Ki;
     Curr_MaxOut = Motor_Params.VBUS * ONE_BY_SQRT3;   /* q 轴 ±VBUS/√3 */
     Curr_MinOut = -Curr_MaxOut;
-    CurrD_MaxOut = 3.0f;                               /* d 轴按固件 ±3V */
-    CurrD_MinOut = -3.0f;
+    CurrD_MaxOut = Motor_Params.VBUS * ONE_BY_SQRT3;  /* d 轴与 q 轴一致 ±VBUS/√3（原 ±3V 限死 d-PI 抵消耦合的能力） */
+    CurrD_MinOut = -CurrD_MaxOut;
 
     /* ---- 母线电压 / 调制度（模型用 VmaxCoeff/InvVbus 两个可调全局） ---- */
     VmaxCoeff = Motor_Params.VBUS * ONE_BY_SQRT3 * 0.95f;   /* = Vbus/√3·MaxMod */
     InvVbus   = 1.0f / Motor_Params.VBUS;
 
-    /* ---- 速度环增益（手动整定，占位；换真实电机后重新整定） ---- */
-    Speed_Kp = 0.3f;
-    Speed_Ki = 0.0006f;
+    /* ---- 速度环增益：频域整定（用户公式 + 2π，模型速度环工作在 RPS 域 A/RPS）
+     *   Kp = 2π·J·ωc·sinφm / Kt            （A/RPS）
+     *   Ki_block = 2π·J·ωc²·cosφm / Kt × 1e-3  （速度环 1kHz UseI*Ts）
+     *   ωc=2π·50Hz≈314.16 rad/s、φm=60°；J/Kt 来自惯量/磁链辨识（FOC_Generated_Init 每次调用重算） ---- */
+    {
+        float kt_spd = (Motor_Params.Kt > 1e-6f) ? Motor_Params.Kt
+                                                 : (1.5f * Motor_Params.Pole_Pairs * Motor_Params.Flux);
+        const float wc = 314.159265f;          /* 2π·50Hz */
+        const float sin_pm = 0.8660254f;       /* sin60° */
+        const float cos_pm = 0.5f;             /* cos60° */
+        Speed_Kp = TWO_PI_F * Motor_Params.Rotor_inertia * wc * sin_pm / kt_spd;
+        Speed_Ki = TWO_PI_F * Motor_Params.Rotor_inertia * wc * wc * cos_pm / kt_spd * 1e-3f;
+    }
     Speed_MaxOut = 5.0f;
     Speed_MinOut = -5.0f;
 
@@ -109,18 +120,31 @@ void FOC_Generated_Reset(void)
 
 void FOC_Generated_Step(void)
 {
+    /* ---- 母线电压实时化：模型 SVPWM/限幅/电流限随实测母线（Motor_Params.VBUS 每 ISR 由 FOC_run.c 更新） ---- */
+    VmaxCoeff   = Motor_Params.VBUS * ONE_BY_SQRT3 * 0.95f;
+    InvVbus     = 1.0f / Motor_Params.VBUS;
+    Curr_MaxOut  = Motor_Params.VBUS * ONE_BY_SQRT3;
+    Curr_MinOut  = -Curr_MaxOut;
+    CurrD_MaxOut = Curr_MaxOut;   /* d 轴与 q 轴一致（辨识 d-PI 抵消耦合需更大权限） */
+    CurrD_MinOut = -CurrD_MaxOut;
+
     /* ---- 填充模型输入（来自命令快照 + 编码器） ---- */
     const MotorCommand_t *cmd = MotorCommand_Get();
 
     CyberDog_Motor_FOC_U.ia         = foc_abc_current_i.ia;
     CyberDog_Motor_FOC_U.ib         = foc_abc_current_i.ib;
-    CyberDog_Motor_FOC_U.eleangle   = Encoder_AS5600.eleangle;   /* 原始电角度 rad, PLL 在模型内部 */
+    if (g_ident_eleangle_ovr) {
+        CyberDog_Motor_FOC_U.eleangle = g_ident_eleangle;   /* 极对数辨识：受控开环电角度（反 Park 用） */
+    } else {
+        CyberDog_Motor_FOC_U.eleangle = Encoder_AS5600.eleangle;   /* 原始电角度 rad, PLL 在模型内部 */
+    }
     CyberDog_Motor_FOC_U.pll_reset  = 0.0f;   /* PLL 常跟踪（coast 也跟踪，保证转速实时） */
-    CyberDog_Motor_FOC_U.id_ref     = 0.0f;
-    CyberDog_Motor_FOC_U.iq_ref     = cmd->iq_ref_A;     /* 转矩模式目标 */
-    CyberDog_Motor_FOC_U.ref_speed  = cmd->speed_rps;    /* 速度模式目标 */
+    CyberDog_Motor_FOC_U.id_ref     = 0.0f;   /* 辨识也要 id=0 */
     if (MotorState.run_state != RUNSTATE_IDENTIFYING) {
-        /* 正常运行时由命令映射 ctrl_mode/coast；辨识时已由 Identify_FocIsrStep 填好（电压模式） */
+        /* 正常运行时由命令映射；辨识时已由 Identify_FocIsrStep 填好
+         * （电压模式 ctrl_mode=3/4 填 vd/vq_ref；J 转矩模式 ctrl_mode=0 填 iq_ref——若这里覆盖会丢失） */
+        CyberDog_Motor_FOC_U.iq_ref     = cmd->iq_ref_A;     /* 转矩模式目标 */
+        CyberDog_Motor_FOC_U.ref_speed  = cmd->speed_rps;    /* 速度模式目标 */
         CyberDog_Motor_FOC_U.ctrl_mode  = (cmd->mode == MC_MODE_POSITION) ? 2.0f :
                                           (cmd->mode == MC_MODE_SPEED)    ? 1.0f : 0.0f;
         CyberDog_Motor_FOC_U.pos_ref    = cmd->pos_ref;   /* rad, 连续，位置模式目标 */
