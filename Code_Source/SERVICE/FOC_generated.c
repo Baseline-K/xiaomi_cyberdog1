@@ -44,6 +44,11 @@ void FOC_Generated_Init(void)
     CurrD_MaxOut = Motor_Params.VBUS * ONE_BY_SQRT3;  /* d 轴与 q 轴一致 ±VBUS/√3（原 ±3V 限死 d-PI 抵消耦合的能力） */
     CurrD_MinOut = -CurrD_MaxOut;
 
+    /* ---- dq 电流环前馈参数（模型全局，辨识值） ---- */
+    Motor_Ld   = Motor_Params.Ld;
+    Motor_Lq   = Motor_Params.Lq;
+    Motor_Flux = Motor_Params.Flux;
+
     /* ---- 母线电压 / 调制度（模型用 VmaxCoeff/InvVbus 两个可调全局） ---- */
     VmaxCoeff = Motor_Params.VBUS * ONE_BY_SQRT3 * 0.95f;   /* = Vbus/√3·MaxMod */
     InvVbus   = 1.0f / Motor_Params.VBUS;
@@ -140,6 +145,9 @@ void FOC_Generated_Step(void)
     }
     CyberDog_Motor_FOC_U.pll_reset  = 0.0f;   /* PLL 常跟踪（coast 也跟踪，保证转速实时） */
     CyberDog_Motor_FOC_U.id_ref     = 0.0f;   /* 辨识也要 id=0 */
+    /* ---- dq 电流环前馈输入：正常开(1)、辨识关(0)；we_elec 电角速度（用上一拍 PLL 转速，1 拍延迟可忽略） ---- */
+    CyberDog_Motor_FOC_U.ff_en   = (MotorState.run_state == RUNSTATE_IDENTIFYING) ? 0.0f : 1.0f;
+    CyberDog_Motor_FOC_U.we_elec = CyberDog_Motor_FOC_Y.speed_meas_rps * (TWO_PI_F * Motor_Params.Pole_Pairs);
     if (MotorState.run_state != RUNSTATE_IDENTIFYING) {
         /* 正常运行时由命令映射；辨识时已由 Identify_FocIsrStep 填好
          * （电压模式 ctrl_mode=3/4 填 vd/vq_ref；J 转矩模式 ctrl_mode=0 填 iq_ref——若这里覆盖会丢失） */

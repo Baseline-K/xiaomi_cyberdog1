@@ -3,9 +3,9 @@
  *
  * Code generated for Simulink model 'CyberDog_Motor_FOC'.
  *
- * Model version                  : 1.36
+ * Model version                  : 1.48
  * Simulink Coder version         : 25.2 (R2025b) 28-Jul-2025
- * C/C++ source code generated on : Mon Aug 31 00:45:23 2026
+ * C/C++ source code generated on : Fri Sep  4 02:44:18 2026
  *
  * Target selection: ert.tlc
  * Embedded hardware selection: Intel->x86-64 (Windows64)
@@ -112,6 +112,8 @@ typedef struct {
   real32_T vq_ref;                     /* '<Root>/vq_ref' */
   real32_T v_alpha_ref;                /* '<Root>/v_alpha_ref' */
   real32_T v_beta_ref;                 /* '<Root>/v_beta_ref' */
+  real32_T we_elec;                    /* '<Root>/we_elec' */
+  real32_T ff_en;                      /* '<Root>/ff_en' */
 } ExtU_CyberDog_Motor_FOC_T;
 
 /* External outputs (root outports fed by signals with default storage) */
@@ -244,6 +246,18 @@ extern real32_T InvVbus;               /* Variable: InvVbus
                                         *   '<S127>/G_1_vbus'
                                         *   '<S127>/G_ubeta'
                                         * 母线电压倒数 1/Vbus
+                                        */
+extern real32_T Motor_Flux;            /* Variable: Motor_Flux
+                                        * Referenced by: '<S2>/G_MFlux'
+                                        * 磁链(Wb, 电流环反电动势前馈用)
+                                        */
+extern real32_T Motor_Ld;              /* Variable: Motor_Ld
+                                        * Referenced by: '<S2>/G_MLd'
+                                        * d轴电感(H, 电流环前馈 &#x2212;we·Lq·iq / +we·(Ld·id+Flux) 用)
+                                        */
+extern real32_T Motor_Lq;              /* Variable: Motor_Lq
+                                        * Referenced by: '<S2>/G_MLq'
+                                        * q轴电感(H, 电流环前馈用)
                                         */
 extern real32_T Pos_Kd;                /* Variable: Pos_Kd
                                         * Referenced by: '<S276>/Derivative Gain'

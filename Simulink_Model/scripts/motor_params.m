@@ -34,6 +34,10 @@ ensureParam('Pos_MinOut', -5.0,  '位置环输出下限(RPS)');
 
 % ---- 电机参数 ----
 ensureParam('Pole_Pairs', 7, '极对数');
+% dq 电流环前馈参数（可调全局，固件 FOC_Generated_Init 从 Motor_Params 写入辨识值）
+ensureParam('Motor_Ld',   0.0018,  'd轴电感(H, 电流环前馈 −we·Lq·iq / +we·(Ld·id+Flux) 用)');
+ensureParam('Motor_Lq',   0.0021,  'q轴电感(H, 电流环前馈用)');
+ensureParam('Motor_Flux', 0.002896,'磁链(Wb, 电流环反电动势前馈用)');
 
 % ---- PLL 角度/速度滤波 (MCB PLL with Feed Forward, 带宽 1000Hz) ----
 % 掩码增益约定: Kp = 2*zeta*wn (wn=2*pi*1000, zeta=1);  Ki = wn^2 (连续)

@@ -29,7 +29,8 @@ extern TIM_HandleTypeDef htim1;
 	
 uint32_t start,end,cycles;
 float time_us;
-volatile uint32_t g_foc_wcet_us = 0U;   /* FOC ISR 最大耗时（us），DiagTask 只读 */
+volatile uint32_t g_foc_wcet_us = 0U;   /* FOC ISR 最大耗时（us），DiagTask/Ozone 只读 */
+volatile uint32_t g_foc_isr_us  = 0U;   /* FOC ISR 每周期耗时（us），Ozone 实时观察 */
 void (* func_ptr)(ADC_HandleTypeDef *hadc) = NULL;
 // 10khz  ADC注入组采样完成中断
 uint32_t Predict_ThreeHallangle;
@@ -43,13 +44,17 @@ float Phase_Ra,Phase_Rb,Phase_Rc, Vbus;
 float Phase_La,Phase_Lb,Phase_Lc, Vbus;
 void HAL_ADCEx_InjectedConvCpltCallback( ADC_HandleTypeDef *hadc)
 {
+	uint32_t _isr_t0 = DWT->CYCCNT;   /* FOC ISR 耗时测量（DWT 120MHz，SEGGER_RTT_Port 已使能） */
 
 	if( hadc->Instance == hadc1.Instance)
 	{
-		
+
 		if(MotorState.run_state == RUNSTATE_CALIBRATING)
 		{
 			Offset_CurrentReading();
+			{   uint32_t _el = (DWT->CYCCNT - _isr_t0) / 120U;   /* cycles → µs @120MHz */
+			    g_foc_isr_us = _el;
+			    if (_el > g_foc_wcet_us) g_foc_wcet_us = _el; }
 			  return;
 		}
 		
@@ -122,8 +127,13 @@ void HAL_ADCEx_InjectedConvCpltCallback( ADC_HandleTypeDef *hadc)
 
 #else
 									
-#endif		
-		
+#endif
+	}
+	/* FOC ISR 每周期耗时记录（µs @120MHz），Ozone 加 g_foc_isr_us / g_foc_wcet_us */
+	{
+		uint32_t _el = (DWT->CYCCNT - _isr_t0) / 120U;
+		g_foc_isr_us = _el;
+		if (_el > g_foc_wcet_us) g_foc_wcet_us = _el;
 	}
 }
 
