@@ -3,9 +3,9 @@
  *
  * Code generated for Simulink model 'CyberDog_Motor_FOC'.
  *
- * Model version                  : 1.48
+ * Model version                  : 1.50
  * Simulink Coder version         : 25.2 (R2025b) 28-Jul-2025
- * C/C++ source code generated on : Fri Sep  4 02:44:18 2026
+ * C/C++ source code generated on : Sun Sep  6 18:34:23 2026
  *
  * Target selection: ert.tlc
  * Embedded hardware selection: Intel->x86-64 (Windows64)
@@ -23,6 +23,7 @@
 #endif                                 /* CyberDog_Motor_FOC_COMMON_INCLUDES_ */
 
 #include "CyberDog_Motor_FOC_types.h"
+#include "rtGetNaN.h"
 #include "zero_crossing_types.h"
 
 /* Macros for accessing real-time model data structure */
@@ -114,6 +115,7 @@ typedef struct {
   real32_T v_beta_ref;                 /* '<Root>/v_beta_ref' */
   real32_T we_elec;                    /* '<Root>/we_elec' */
   real32_T ff_en;                      /* '<Root>/ff_en' */
+  real32_T ref_accel;                  /* '<Root>/ref_accel' */
 } ExtU_CyberDog_Motor_FOC_T;
 
 /* External outputs (root outports fed by signals with default storage) */
@@ -274,6 +276,18 @@ extern real32_T Pos_MaxOut;            /* Variable: Pos_MaxOut
 extern real32_T Pos_MinOut;            /* Variable: Pos_MinOut
                                         * Referenced by: '<S290>/Saturation'
                                         * 位置环输出下限(RPS)
+                                        */
+extern real32_T SpeedFF_B;             /* Variable: SpeedFF_B
+                                        * Referenced by: '<S125>/G_FFB'
+                                        * 粘性前馈系数 A/RPS=friction_B_nm_rps/Kt(固件 Init 写)
+                                        */
+extern real32_T SpeedFF_Fc;            /* Variable: SpeedFF_Fc
+                                        * Referenced by: '<S125>/G_FFFc'
+                                        * 库仑前馈系数 A=friction_Coulomb_nm/Kt(固件 Init 写)
+                                        */
+extern real32_T SpeedFF_J2piKt;        /* Variable: SpeedFF_J2piKt
+                                        * Referenced by: '<S125>/G_FFJ'
+                                        * 惯量前馈系数 A/(RPS/s)=2πJ/Kt(固件 Init 从 Motor_Params 写)
                                         */
 extern real32_T Speed_Ki;              /* Variable: Speed_Ki
                                         * Referenced by: '<S333>/Integral Gain'

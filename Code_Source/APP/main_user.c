@@ -134,6 +134,8 @@ void main_user(void)
 	 Motor_Params.Phase_R =  2.92f;   // 离线辨识实测（identify r）2.92f
 	 Motor_Params.Pole_Pairs = 7.0f;
 	 Motor_Params.Rotor_inertia = 0.0000025f;   // 惯量辨识实测（identify j）2.5e-6
+	 Motor_Params.friction_B_nm_rps   = 0.0f;   // 粘性 B（N·m/RPS）占位，由 identify flux 提交
+	 Motor_Params.friction_Coulomb_nm = 0.0f;   // 库仑 fc（N·m）占位，由 identify flux 提交
 	 Motor_Params.VBUS = 12.0f;
 	 Motor_Params.Reduction_ratio = 1.0f;
    Motor_Params.Torque_Rating = 0.02f;

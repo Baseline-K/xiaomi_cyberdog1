@@ -44,7 +44,11 @@ typedef struct{
 	 float  Ke;         //反电势常数 V·s/rad_mech（=P·ψf，磁链辨识）
 	 float  Kt;         //转矩常数 N·m/A（=1.5·Ke，磁链辨识）
 	 float  Pole_Pairs;  //极对数
-	 float  Rotor_inertia;  //转动惯量
+	 float  Rotor_inertia;  //转动惯量 kg·m²（rad 域）
+
+	 /* 磁链辨识附带拟合的摩擦（identify flux），供速度环粘性/库仑前馈 */
+	 float  friction_B_nm_rps;      //粘性摩擦 B = B_A·Kt（N·m 每 RPS，B_A=A/RPS）
+	 float  friction_Coulomb_nm;    //库仑摩擦 fc = f_A·Kt（N·m，f_A=A）
 
      float  Reduction_ratio;  //减速比
      float  RPM_Rating;      //额定转速

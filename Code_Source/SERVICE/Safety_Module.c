@@ -25,28 +25,39 @@ static uint32_t satadd(uint32_t a, uint32_t b)
     return (sum < a) ? 0xFFFFFFFFUL : sum;
 }
 
+/* 积分饱和：acc += d，夹到 [0, limit]（仿 AC_Control Vbus_IntegralUpdate）
+ * d<0（回到安全侧）→ 自然漏泄回 0。 */
+static float intsat(float acc, float d, float limit)
+{
+    acc += d;
+    if (acc < 0.0f)     return 0.0f;
+    if (acc > limit)    return limit;
+    return acc;
+}
+
 void Safety_Config_Init(SafetyConfig_t *cfg)
 {
     (void)0;
     *cfg = (SafetyConfig_t){
-        .v_bus_over_V          = 14.5f,                       /* 12V 母线过压 */
-        .v_bus_under_V         = 9.0f,
-        .vbus_under_hyst_V     = 1.0f,
-        .vbus_under_thr_ms     = 500U,
-        .current_over_A        = 3.0f,   /* 高于典型启动电流，低于堵转(12V/3.2Ω≈3.75A) */
-        .shortcircuit_A        = 5.0f,   /* 高于堵转，异常大电流视为短路 */
-        .locked_current_thr_A  = Motor_Params.Current_Rating * 0.8f,
-        .locked_speed_thr_rps  = 0.5f,
-        .locked_thr_ms         = 2000U,
-        .speederror_thr_rps    = 2.0f,
-        .speederror_thr_ms     = 2000U,
-        .comm_thr_ms           = 1000U,
-        .enable_overcurrent    = true,
-        .enable_overvolt       = true,
-        .enable_undervolt      = true,
-        .enable_stall          = true,
-        .enable_speed_err      = true,
-        .enable_comm           = true,
+        .v_bus_over_V           = 15.0f,   /* 过压瞬时硬闸（极端；原 14.5，需允许短暂再生过冲把软积分做主角） */
+        .vbus_over_soft_V       = 14.0f,   /* 过压软积分起点：14.0V 持续约 500ms / 14.5V~200ms / 14.8V~125ms 触发 */
+        .vbus_over_trip_Vms     = 100.0f,
+        .v_bus_under_V          = 9.0f,    /* 欠压软积分起点：8.2V~500ms / 7.5V~266ms / 6V~133ms 触发 */
+        .vbus_under_trip_Vms    = 400.0f,
+        .current_over_A         = 3.0f,    /* 高于典型启动电流，低于堵转(12V/3.2Ω≈3.75A) */
+        .shortcircuit_A         = 5.0f,    /* 高于堵转，异常大电流视为短路 */
+        .locked_current_thr_A   = Motor_Params.Current_Rating * 0.8f,
+        .locked_speed_thr_rps   = 0.5f,
+        .locked_thr_ms          = 2000U,
+        .speederror_db_rps      = 1.0f,    /* 死区：误差<1RPS 不积、反向漏泄；跟丢5RPS~1.25s / 反向10RPS~0.56s 触发 */
+        .speederror_trip_rps_ms = 5000.0f,
+        .comm_thr_ms            = 1000U,
+        .enable_overcurrent     = true,
+        .enable_overvolt        = true,
+        .enable_undervolt       = true,
+        .enable_stall           = true,
+        .enable_speed_err       = true,
+        .enable_comm            = true,
     };
 }
 
@@ -91,16 +102,18 @@ void Safety_SlowStep(const SafetySlowInput_t *in,
 {
     fault_mask_t f = 0;
     uint32_t dt = in->elapsed_ms;
+    float    dtf = (float)dt;
     float ia = in->measurement.phase_current_A[0];
     float ib = in->measurement.phase_current_A[1];
     float ic = in->measurement.phase_current_A[2];
     float vbus = in->measurement.vbus_V;
-    float speed = fabsf(in->measurement.motor_speed_rps);
+    float speed_signed = in->measurement.motor_speed_rps;
+    float speed = fabsf(speed_signed);
     float target = in->measurement.target_speed_rps;
 
     /* NaN/Inf 防护 */
     if (!isfinite(ia) || !isfinite(ib) || !isfinite(ic) || !isfinite(vbus) ||
-        !isfinite(speed) || !isfinite(target)) {
+        !isfinite(speed_signed) || !isfinite(target)) {
         f |= FAULT_UNDERVOLT_MASK;   /* 数值异常按常规故障处理 */
     }
 
@@ -120,17 +133,24 @@ void Safety_SlowStep(const SafetySlowInput_t *in,
     }
 
     if (in->is_run) {
-        /* 欠压（带滞回） */
-        if (cfg->enable_undervolt) {
-            if (vbus < cfg->v_bus_under_V) {
-                rt->vbus_under_accum_ms = satadd(rt->vbus_under_accum_ms, dt);
-            } else if (vbus > (cfg->v_bus_under_V + cfg->vbus_under_hyst_V)) {
-                rt->vbus_under_accum_ms = 0U;   /* 回到阈值+回差以上才清零 */
-            }
-            if (rt->vbus_under_accum_ms >= cfg->vbus_under_thr_ms) f |= FAULT_UNDERVOLT_MASK;
+        /* 过压软积分（V·ms）：acc += (vbus − soft_V)·dt，夹 [0, trip]，回到 soft 以下自然漏泄；
+         * 瞬时硬闸 v_bus_over_V 仍在 FastStep（极端档，本工程无 AWD 兜底）。 */
+        if (cfg->enable_overvolt) {
+            rt->vbus_over_integral_Vms = intsat(rt->vbus_over_integral_Vms,
+                                                (vbus - cfg->vbus_over_soft_V) * dtf,
+                                                cfg->vbus_over_trip_Vms);
+            if (rt->vbus_over_integral_Vms >= cfg->vbus_over_trip_Vms) f |= FAULT_OVERVOLT_MASK;
         }
 
-        /* 堵转：电流大 + 转速低 + 持续 */
+        /* 欠压积分（V·ms）：acc += (under_V − vbus)·dt，回到 under 以上自然漏泄（即回差）。 */
+        if (cfg->enable_undervolt) {
+            rt->vbus_under_integral_Vms = intsat(rt->vbus_under_integral_Vms,
+                                                 (cfg->v_bus_under_V - vbus) * dtf,
+                                                 cfg->vbus_under_trip_Vms);
+            if (rt->vbus_under_integral_Vms >= cfg->vbus_under_trip_Vms) f |= FAULT_UNDERVOLT_MASK;
+        }
+
+        /* 堵转：电流大 + 转速幅值低 + 持续（不变） */
         if (cfg->enable_stall) {
             float imax = fmaxf(fmaxf(fabsf(ia), fabsf(ib)), fabsf(ic));
             if ((imax > cfg->locked_current_thr_A) && (speed < cfg->locked_speed_thr_rps)) {
@@ -141,20 +161,21 @@ void Safety_SlowStep(const SafetySlowInput_t *in,
             if (rt->stall_accum_ms >= cfg->locked_thr_ms) f |= FAULT_STALL_MASK;
         }
 
-        /* 转速异常：目标/实际偏差 + 持续 */
+        /* 转速异常：死区 + 漏泄积分（RPS·ms）。带符号误差（方向反也报）。
+         * acc += (|err| − db)·dt；|err|<db 时负增量自然漏泄回 0；acc≥trip 触发。误差越大越快。 */
         if (cfg->enable_speed_err) {
-            if (fabsf(speed - target) > cfg->speederror_thr_rps) {
-                rt->speed_err_accum_ms = satadd(rt->speed_err_accum_ms, dt);
-            } else {
-                rt->speed_err_accum_ms = 0U;
-            }
-            if (rt->speed_err_accum_ms >= cfg->speederror_thr_ms) f |= FAULT_SPEED_ERR_MASK;
+            float err = fabsf(speed_signed - target);
+            rt->speed_err_integral_rps_ms = intsat(rt->speed_err_integral_rps_ms,
+                                                   (err - cfg->speederror_db_rps) * dtf,
+                                                   cfg->speederror_trip_rps_ms);
+            if (rt->speed_err_integral_rps_ms >= cfg->speederror_trip_rps_ms) f |= FAULT_SPEED_ERR_MASK;
         }
     } else {
-        /* 非运行态：常规累计清零（欠压/堵转/转速异常只在运行态判定） */
-        rt->vbus_under_accum_ms = 0U;
+        /* 非运行态：积分清零（过压/欠压/转速只在运行态积，避免跨次运行残留） */
+        rt->vbus_over_integral_Vms  = 0.0f;
+        rt->vbus_under_integral_Vms = 0.0f;
+        rt->speed_err_integral_rps_ms = 0.0f;
         rt->stall_accum_ms = 0U;
-        rt->speed_err_accum_ms = 0U;
     }
 
     /* 测试强制 */

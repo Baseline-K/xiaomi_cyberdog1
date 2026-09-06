@@ -3,6 +3,8 @@
 > 项目：小米 CyberDog 电机驱动（STM32F103 / GD32F103，DRV8353，AS5600）
 > 目标：用 Simulink 建模 FOC 算法核心，Simulink Coder 直接生成 C 代码，固件集成生成的算法代码运行。
 > 建模范围（v1）：电流环 + 速度环。位置环为后续迭代。
+>
+> 相关深化计划：[速度环增强计划（前馈 / LESO 自抗扰研究 + 轨迹规划可行性）](SpeedLoop_Enhancement_Plan.md)
 
 ---
 

@@ -3,9 +3,9 @@
  *
  * Code generated for Simulink model 'CyberDog_Motor_FOC'.
  *
- * Model version                  : 1.48
+ * Model version                  : 1.50
  * Simulink Coder version         : 25.2 (R2025b) 28-Jul-2025
- * C/C++ source code generated on : Fri Sep  4 02:44:18 2026
+ * C/C++ source code generated on : Sun Sep  6 18:34:23 2026
  *
  * Target selection: ert.tlc
  * Embedded hardware selection: Intel->x86-64 (Windows64)
@@ -220,6 +220,18 @@ real32_T Pos_MinOut = -5.0F;           /* Variable: Pos_MinOut
                                         * Referenced by: '<S290>/Saturation'
                                         * 位置环输出下限(RPS)
                                         */
+real32_T SpeedFF_B = 0.0F;             /* Variable: SpeedFF_B
+                                        * Referenced by: '<S125>/G_FFB'
+                                        * 粘性前馈系数 A/RPS=friction_B_nm_rps/Kt(固件 Init 写)
+                                        */
+real32_T SpeedFF_Fc = 0.0F;            /* Variable: SpeedFF_Fc
+                                        * Referenced by: '<S125>/G_FFFc'
+                                        * 库仑前馈系数 A=friction_Coulomb_nm/Kt(固件 Init 写)
+                                        */
+real32_T SpeedFF_J2piKt = 0.00051670929F;/* Variable: SpeedFF_J2piKt
+                                          * Referenced by: '<S125>/G_FFJ'
+                                          * 惯量前馈系数 A/(RPS/s)=2πJ/Kt(固件 Init 从 Motor_Params 写)
+                                          */
 real32_T Speed_Ki = 0.0006F;           /* Variable: Speed_Ki
                                         * Referenced by: '<S333>/Integral Gain'
                                         * 速度环积分增益(1kHz+UseI*Ts 每周期增量)
@@ -405,7 +417,6 @@ void CyberDog_Motor_FOC_step(void)
 {
   real32_T rtb_FilterCoefficient;
   real32_T rtb_G_1_vbus;
-  real32_T rtb_Integrator_l;
   real32_T rtb_LUT_dead;
   real32_T rtb_MM_max;
   real32_T rtb_Merge_idx_0;
@@ -415,7 +426,8 @@ void CyberDog_Motor_FOC_step(void)
   real32_T rtb_Sum6_f;
   real32_T rtb_SumI4_m;
   real32_T rtb_Sum_g;
-  real32_T rtb_Sum_gz;
+  real32_T rtb_Sum_k;
+  real32_T rtb_Sw_cog;
   real32_T rtb_Sw_dVd;
   real32_T rtb_Switch1_c_idx_0;
   real32_T rtb_Switch1_c_idx_1;
@@ -496,7 +508,7 @@ void CyberDog_Motor_FOC_step(void)
   /* Sum: '<S113>/Sum2' incorporates:
    *  DataTypeConversion: '<S113>/Data Type Conversion1'
    */
-  rtb_Integrator_l = rtb_convert_pu - (real32_T)rtb_Get_Integer;
+  rtb_Sum_g = rtb_convert_pu - (real32_T)rtb_Get_Integer;
 
   /* SwitchCase: '<S8>/Switch Case' incorporates:
    *  DataTypeConversion: '<S3>/Data Type Conversion2'
@@ -533,11 +545,11 @@ void CyberDog_Motor_FOC_step(void)
     rtb_Merge_idx_0 = (CyberDog_Motor_FOC_ConstP.pooled5[(int32_T)
                        (rtb_Get_Integer + 1U)] -
                        CyberDog_Motor_FOC_ConstP.pooled5[rtb_Get_Integer]) *
-      rtb_Integrator_l + CyberDog_Motor_FOC_ConstP.pooled5[rtb_Get_Integer];
+      rtb_Sum_g + CyberDog_Motor_FOC_ConstP.pooled5[rtb_Get_Integer];
     rtb_Merge_idx_1 = (CyberDog_Motor_FOC_ConstP.pooled5[(int32_T)
                        (rtb_Get_Integer + 201U)] -
                        CyberDog_Motor_FOC_ConstP.pooled5[(int32_T)
-                       (rtb_Get_Integer + 200U)]) * rtb_Integrator_l +
+                       (rtb_Get_Integer + 200U)]) * rtb_Sum_g +
       CyberDog_Motor_FOC_ConstP.pooled5[(int32_T)(rtb_Get_Integer + 200U)];
 
     /* End of Outputs for SubSystem: '<S8>/If Action Subsystem1' */
@@ -612,7 +624,7 @@ void CyberDog_Motor_FOC_step(void)
 
   CyberDog_Motor_FOC_PrevZCX.Delay2_Reset_ZCE_o = (ZCSigState)
     (CyberDog_Motor_FOC_U.pll_reset != 0.0F);
-  rtb_Integrator_l = CyberDog_Motor_FOC_DW.Delay2_DSTATE_i;
+  rtb_Sum_g = CyberDog_Motor_FOC_DW.Delay2_DSTATE_i;
   if ((((CyberDog_Motor_FOC_U.pll_reset == 0.0F) ==
         (CyberDog_Motor_FOC_PrevZCX.Delay3_Reset_ZCE_o == POS_ZCSIG)) &&
        (CyberDog_Motor_FOC_PrevZCX.Delay3_Reset_ZCE_o != UNINITIALIZED_ZCSIG)) ||
@@ -632,8 +644,7 @@ void CyberDog_Motor_FOC_step(void)
     2.3561945E+6F;
   CyberDog_Motor_FOC_DW.Delay3_DSTATE_h =
     ((CyberDog_Motor_FOC_DW.Delay3_DSTATE_h +
-      CyberDog_Motor_FOC_DW.Delay2_DSTATE_i) - rtb_Integrator_l) *
-    0.00422619516F;
+      CyberDog_Motor_FOC_DW.Delay2_DSTATE_i) - rtb_Sum_g) * 0.00422619516F;
   CyberDog_Motor_FOC_DW.icLoad_d0 = false;
   CyberDog_Motor_FOC_DW.Delay2_DSTATE = rtb_convert_pu;
   CyberDog_Motor_FOC_DW.icLoad_i = false;
@@ -692,7 +703,7 @@ void CyberDog_Motor_FOC_step(void)
     /* Outputs for IfAction SubSystem: '<S107>/If Action Subsystem' incorporates:
      *  ActionPort: '<S110>/Action Port'
      */
-    rtb_Integrator_l = CyberDog_Moto_IfActionSubsystem
+    rtb_Sum_g = CyberDog_Moto_IfActionSubsystem
       (CyberDog_Motor_FOC_DW.Delay_DSTATE_h);
 
     /* End of Outputs for SubSystem: '<S107>/If Action Subsystem' */
@@ -700,7 +711,7 @@ void CyberDog_Motor_FOC_step(void)
     /* Outputs for IfAction SubSystem: '<S107>/If Action Subsystem1' incorporates:
      *  ActionPort: '<S111>/Action Port'
      */
-    rtb_Integrator_l = CyberDog_Mot_IfActionSubsystem1
+    rtb_Sum_g = CyberDog_Mot_IfActionSubsystem1
       (CyberDog_Motor_FOC_DW.Delay_DSTATE_h);
 
     /* End of Outputs for SubSystem: '<S107>/If Action Subsystem1' */
@@ -709,10 +720,10 @@ void CyberDog_Motor_FOC_step(void)
   /* End of If: '<S107>/If' */
 
   /* Gain: '<S105>/indexing' */
-  rtb_Integrator_l *= 800.0F;
+  rtb_Sum_g *= 800.0F;
 
   /* DataTypeConversion: '<S105>/Get_Integer' */
-  rtb_G_1_vbus = truncf(rtb_Integrator_l);
+  rtb_G_1_vbus = truncf(rtb_Sum_g);
   if (rtIsNaNF(rtb_G_1_vbus) || rtIsInfF(rtb_G_1_vbus)) {
     rtb_G_1_vbus = 0.0F;
   } else {
@@ -730,7 +741,7 @@ void CyberDog_Motor_FOC_step(void)
   /* Sum: '<S105>/Sum2' incorporates:
    *  DataTypeConversion: '<S105>/Data Type Conversion1'
    */
-  rtb_convert_pu = rtb_Integrator_l - (real32_T)rtb_Get_Integer;
+  rtb_convert_pu = rtb_Sum_g - (real32_T)rtb_Get_Integer;
 
   /* Sum: '<S3>/Sum' incorporates:
    *  Constant: '<S105>/offset'
@@ -772,14 +783,14 @@ void CyberDog_Motor_FOC_step(void)
    *  Gain: '<S52>/Proportional Gain'
    *  Sum: '<S56>/Sum'
    */
-  rtb_Integrator_l = (12566.3711F * rtb_convert_pu +
-                      CyberDog_Motor_FOC_DW.Integrator_DSTATE) +
+  rtb_Sum_g = (12566.3711F * rtb_convert_pu +
+               CyberDog_Motor_FOC_DW.Integrator_DSTATE) +
     CyberDog_Motor_FOC_DW.Delay_DSTATE;
 
   /* Product: '<S103>/Product' incorporates:
    *  Gain: '<S102>/Gain'
    */
-  rtb_convert_pu = 1.59154952E-5F * rtb_Integrator_l;
+  rtb_convert_pu = 1.59154952E-5F * rtb_Sum_g;
 
   /* Delay: '<S103>/Delay' incorporates:
    *  Constant: '<S103>/InputGain'
@@ -1071,7 +1082,7 @@ void CyberDog_Motor_FOC_step(void)
   }
 
   /* Product: '<S12>/Product' */
-  rtb_Integrator_l *= 0.111635208F;
+  rtb_Sum_g *= 0.111635208F;
 
   /* Delay: '<S12>/Delay' */
   if (CyberDog_Motor_FOC_DW.icLoad_d) {
@@ -1086,7 +1097,7 @@ void CyberDog_Motor_FOC_step(void)
    *  Product: '<S12>/Product1'
    */
   CyberDog_Motor_FOC_DW.Delay_DSTATE_k = 0.888364792F *
-    CyberDog_Motor_FOC_DW.Delay_DSTATE_k + rtb_Integrator_l;
+    CyberDog_Motor_FOC_DW.Delay_DSTATE_k + rtb_Sum_g;
 
   /* Gain: '<S1>/G_mech_rps' */
   CyberDog_Motor_FOC_Y.speed_meas_rps = InvTwoPiPolePairs *
@@ -1107,55 +1118,88 @@ void CyberDog_Motor_FOC_step(void)
   /* Sum: '<S247>/Sum_errs' incorporates:
    *  Switch: '<S247>/Sw_speedref'
    */
-  rtb_Integrator_l = rtb_G_1_vbus - CyberDog_Motor_FOC_Y.speed_meas_rps;
+  rtb_Sw_dVd = rtb_G_1_vbus - CyberDog_Motor_FOC_Y.speed_meas_rps;
   if (tmp) {
     /* Sum: '<S345>/Sum' incorporates:
      *  DiscreteIntegrator: '<S336>/Integrator'
      *  Gain: '<S341>/Proportional Gain'
      */
-    rtb_Sum_g = Speed_Kp * rtb_Integrator_l +
+    rtb_Sum_k = Speed_Kp * rtb_Sw_dVd +
       CyberDog_Motor_FOC_DW.Integrator_DSTATE_m;
 
     /* Saturate: '<S343>/Saturation' */
-    if (rtb_Sum_g > Speed_MaxOut) {
+    if (rtb_Sum_k > Speed_MaxOut) {
       /* Saturate: '<S343>/Saturation' */
       CyberDog_Motor_FOC_B.Saturation_f = Speed_MaxOut;
-    } else if (rtb_Sum_g < Speed_MinOut) {
+    } else if (rtb_Sum_k < Speed_MinOut) {
       /* Saturate: '<S343>/Saturation' */
       CyberDog_Motor_FOC_B.Saturation_f = Speed_MinOut;
     } else {
       /* Saturate: '<S343>/Saturation' */
-      CyberDog_Motor_FOC_B.Saturation_f = rtb_Sum_g;
+      CyberDog_Motor_FOC_B.Saturation_f = rtb_Sum_k;
     }
 
     /* End of Saturate: '<S343>/Saturation' */
   }
 
   /* Switch: '<S125>/Sw_coast_iq' incorporates:
+   *  Constant: '<S125>/C_One'
    *  Constant: '<S125>/Const_0'
-   *  Constant: '<S125>/Const_CogEn'
    *  Inport: '<Root>/coast'
-   *  RelationalOperator: '<S125>/Rel_cog'
+   *  Inport: '<Root>/ctrl_mode'
+   *  RelationalOperator: '<S125>/Rel_FFmode'
    *  Sum: '<S125>/Sum_iqff'
-   *  Switch: '<S125>/Sw_cog'
+   *  Switch: '<S125>/Sw_FF'
    *  Switch: '<S125>/Sw_mode'
    */
   if (CyberDog_Motor_FOC_U.coast != 0.0F) {
-    rtb_Sw_dVd = 0.0F;
+    rtb_Sw_cog = 0.0F;
   } else {
-    if (CoggingFF_En > 0.0F) {
-      /* Switch: '<S125>/Sw_cog' incorporates:
-       *  Gain: '<S3>/PositionGain'
-       *  Lookup_n-D: '<S125>/LUT_cog'
+    if (CyberDog_Motor_FOC_U.ctrl_mode == 1.0F) {
+      /* Signum: '<S125>/Sign_FF' incorporates:
+       *  Switch: '<S125>/Sw_FF'
        */
-      rtb_Sw_dVd = look1_iflf_binlxpw(CyberDog_Motor_FOC_Y.theta_elec_filt,
+      if (rtIsNaNF(CyberDog_Motor_FOC_Y.speed_meas_rps)) {
+        rtb_G_1_vbus = (rtNaNF);
+      } else if (CyberDog_Motor_FOC_Y.speed_meas_rps < 0.0F) {
+        rtb_G_1_vbus = -1.0F;
+      } else {
+        rtb_G_1_vbus = (real32_T)(CyberDog_Motor_FOC_Y.speed_meas_rps > 0.0F);
+      }
+
+      /* Switch: '<S125>/Sw_FF' incorporates:
+       *  Gain: '<S125>/G_FFB'
+       *  Gain: '<S125>/G_FFFc'
+       *  Gain: '<S125>/G_FFJ'
+       *  Inport: '<Root>/ref_accel'
+       *  Signum: '<S125>/Sign_FF'
+       *  Sum: '<S125>/Sum_FFraw'
+       */
+      rtb_Sum_g = (SpeedFF_J2piKt * CyberDog_Motor_FOC_U.ref_accel + SpeedFF_B *
+                   CyberDog_Motor_FOC_Y.speed_meas_rps) + SpeedFF_Fc *
+        rtb_G_1_vbus;
+    } else {
+      /* Switch: '<S125>/Sw_FF' incorporates:
+       *  Constant: '<S125>/C_ZeroFF'
+       */
+      rtb_Sum_g = 0.0F;
+    }
+
+    /* Switch: '<S125>/Sw_cog' incorporates:
+     *  Constant: '<S125>/Const_0'
+     *  Constant: '<S125>/Const_CogEn'
+     *  Gain: '<S3>/PositionGain'
+     *  Lookup_n-D: '<S125>/LUT_cog'
+     *  RelationalOperator: '<S125>/Rel_cog'
+     */
+    if (CoggingFF_En > 0.0F) {
+      rtb_Sw_cog = look1_iflf_binlxpw(CyberDog_Motor_FOC_Y.theta_elec_filt,
         Cogging_Lut_Angle, Cogging_Lut_V, 359U);
     } else {
-      /* Switch: '<S125>/Sw_cog' incorporates:
-       *  Constant: '<S125>/Const_0'
-       */
-      rtb_Sw_dVd = 0.0F;
+      rtb_Sw_cog = 0.0F;
     }
+
+    /* End of Switch: '<S125>/Sw_cog' */
 
     /* Switch: '<S125>/Sw_mode' incorporates:
      *  Constant: '<S125>/Const_1'
@@ -1169,7 +1213,7 @@ void CyberDog_Motor_FOC_step(void)
       rtb_G_1_vbus = CyberDog_Motor_FOC_U.iq_ref;
     }
 
-    rtb_Sw_dVd += rtb_G_1_vbus;
+    rtb_Sw_cog = (rtb_G_1_vbus + rtb_Sw_cog) + rtb_Sum_g;
   }
 
   /* End of Switch: '<S125>/Sw_coast_iq' */
@@ -1178,7 +1222,7 @@ void CyberDog_Motor_FOC_step(void)
   /* Sum: '<S122>/Sum_errq' incorporates:
    *  AlgorithmDescriptorDelegate generated from: '<S357>/a16'
    */
-  rtb_Sw_dVd -= rtb_Switch1_c_idx_1;
+  rtb_Sw_cog -= rtb_Switch1_c_idx_1;
 
   /* End of Outputs for SubSystem: '<S356>/Two inputs CRL' */
 
@@ -1186,15 +1230,15 @@ void CyberDog_Motor_FOC_step(void)
    *  DiscreteIntegrator: '<S223>/Integrator'
    *  Gain: '<S228>/Proportional Gain'
    */
-  rtb_Sum_gz = CurrQ_Kp * rtb_Sw_dVd + CyberDog_Motor_FOC_DW.Integrator_DSTATE_k;
+  rtb_Sum_g = CurrQ_Kp * rtb_Sw_cog + CyberDog_Motor_FOC_DW.Integrator_DSTATE_k;
 
   /* Saturate: '<S230>/Saturation' */
-  if (rtb_Sum_gz > Curr_MaxOut) {
+  if (rtb_Sum_g > Curr_MaxOut) {
     rtb_Saturation_h = Curr_MaxOut;
-  } else if (rtb_Sum_gz < Curr_MinOut) {
+  } else if (rtb_Sum_g < Curr_MinOut) {
     rtb_Saturation_h = Curr_MinOut;
   } else {
-    rtb_Saturation_h = rtb_Sum_gz;
+    rtb_Saturation_h = rtb_Sum_g;
   }
 
   /* End of Saturate: '<S230>/Saturation' */
@@ -1408,8 +1452,8 @@ void CyberDog_Motor_FOC_step(void)
      *  Gain: '<S333>/Integral Gain'
      *  Sum: '<S328>/SumI2'
      */
-    rtb_SumI4_m = (CyberDog_Motor_FOC_B.Saturation_f - rtb_Sum_g) + Speed_Ki *
-      rtb_Integrator_l;
+    rtb_SumI4_m = (CyberDog_Motor_FOC_B.Saturation_f - rtb_Sum_k) + Speed_Ki *
+      rtb_Sw_dVd;
   }
 
   /* Update for Delay: '<S78>/Delay' */
@@ -1456,8 +1500,8 @@ void CyberDog_Motor_FOC_step(void)
    *  Sum: '<S215>/SumI2'
    *  Sum: '<S215>/SumI4'
    */
-  CyberDog_Motor_FOC_DW.Integrator_DSTATE_k += (rtb_Saturation_h - rtb_Sum_gz) +
-    CurrQ_Ki * rtb_Sw_dVd;
+  CyberDog_Motor_FOC_DW.Integrator_DSTATE_k += (rtb_Saturation_h - rtb_Sum_g) +
+    CurrQ_Ki * rtb_Sw_cog;
   if (CyberDog_Motor_FOC_DW.Integrator_DSTATE_k > Curr_MaxOut) {
     CyberDog_Motor_FOC_DW.Integrator_DSTATE_k = Curr_MaxOut;
   } else if (CyberDog_Motor_FOC_DW.Integrator_DSTATE_k < Curr_MinOut) {

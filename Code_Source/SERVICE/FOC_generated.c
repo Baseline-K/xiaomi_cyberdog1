@@ -18,6 +18,7 @@
 #include "FOC_run.h"
 #include "AS5600.h"               /* Encoder_AS5600.eleangle */
 #include "identify.h"             /* g_ident_eleangle_ovr（极对数辨识开环电角覆盖） */
+#include "speed_plan.h"           /* 速度 S 曲线规划（喂给生成速度环/前馈） */
 #include <math.h>
 
 /* FOC_run.c 的全局量（未在头文件声明，此处 extern） */
@@ -65,9 +66,19 @@ void FOC_Generated_Init(void)
         const float cos_pm = 0.5f;             /* cos60° */
         Speed_Kp = TWO_PI_F * Motor_Params.Rotor_inertia * wc * sin_pm / kt_spd;
         Speed_Ki = TWO_PI_F * Motor_Params.Rotor_inertia * wc * wc * cos_pm / kt_spd * 1e-3f;
+
+        /* 速度环三项前馈系数（A 域，模型 SpeedFF_* 全局）：
+         *   J2piKt = 2π·J/Kt [A/(RPS/s)]；B = friction_B_nm_rps/Kt [A/RPS]；Fc = friction_Coulomb_nm/Kt [A] */
+        SpeedFF_J2piKt = TWO_PI_F * Motor_Params.Rotor_inertia / kt_spd;
+        SpeedFF_B      = Motor_Params.friction_B_nm_rps / kt_spd;
+        SpeedFF_Fc     = Motor_Params.friction_Coulomb_nm / kt_spd;
     }
     Speed_MaxOut = 5.0f;
     Speed_MinOut = -5.0f;
+
+    /* ---- 速度 S 曲线规划：常开；机动时间默认 300ms（RTT `plT <ms>` 调） ---- */
+    SpeedPlan_SetTimeMs(300u, 300u);
+    SpeedPlan_Reset();
 
     /* ---- 位置环增益（PD 结构，先只给 P 项；D 预留，仿真整定后直接写值即可） ---- */
     Pos_Kp     = 10.0f;    /* 位置环比例增益 RPS/rad */
@@ -151,8 +162,16 @@ void FOC_Generated_Step(void)
     if (MotorState.run_state != RUNSTATE_IDENTIFYING) {
         /* 正常运行时由命令映射；辨识时已由 Identify_FocIsrStep 填好
          * （电压模式 ctrl_mode=3/4 填 vd/vq_ref；J 转矩模式 ctrl_mode=0 填 iq_ref——若这里覆盖会丢失） */
+        /* 速度 S 曲线规划：速度模式且未 coast 时输出平滑 ref_speed + α_ref（供前馈），否则直通原值 */
+        {
+            const int spd_active = (cmd->mode == MC_MODE_SPEED) && (cmd->coast == 0);
+            float ref_pl = cmd->speed_rps, acc_pl = 0.0f;
+            SpeedPlan_Step10k(spd_active, cmd->speed_rps,
+                              CyberDog_Motor_FOC_Y.speed_meas_rps, &ref_pl, &acc_pl);
+            CyberDog_Motor_FOC_U.ref_speed = ref_pl;
+            CyberDog_Motor_FOC_U.ref_accel = acc_pl;
+        }
         CyberDog_Motor_FOC_U.iq_ref     = cmd->iq_ref_A;     /* 转矩模式目标 */
-        CyberDog_Motor_FOC_U.ref_speed  = cmd->speed_rps;    /* 速度模式目标 */
         CyberDog_Motor_FOC_U.ctrl_mode  = (cmd->mode == MC_MODE_POSITION) ? 2.0f :
                                           (cmd->mode == MC_MODE_SPEED)    ? 1.0f : 0.0f;
         CyberDog_Motor_FOC_U.pos_ref    = cmd->pos_ref;   /* rad, 连续，位置模式目标 */
@@ -176,4 +195,10 @@ void FOC_Generated_Step(void)
 float FOC_Generated_GetSpeedRps(void)
 {
     return CyberDog_Motor_FOC_Y.speed_meas_rps;   /* 机械转速 RPS（模型 PLL 输出） */
+}
+
+/* ---- 速度 S 曲线规划：常开；机动时间可调（RTT plT） ---- */
+void FOC_SpeedPlan_SetTimeMs(uint32_t t_ms)
+{
+    SpeedPlan_SetTimeMs(t_ms, t_ms);
 }

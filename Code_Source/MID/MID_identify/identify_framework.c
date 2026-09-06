@@ -188,10 +188,13 @@ void Identify_Params_Update(void)
     if (mask & (1u << TASK_FLUX)) {
         if (g_identify.res.Flux_linkage > 0.0f) {
             Motor_Params.Flux = g_identify.res.Flux_linkage;
+            /* 摩擦一并提交（单位：B=N·m/RPS、fc=N·m；均由 flux 辨识的 B_A/f_A × Kt） */
+            Motor_Params.friction_B_nm_rps   = g_identify.res.B;
+            Motor_Params.friction_Coulomb_nm = g_identify.res.friction_Coulomb;
             printf("IDENTIFY: Flux=%.6f Wb, Ke=%.6f, Kt=%.6f, B=%.6f, fc=%.6f\r\n",
                    (double)Motor_Params.Flux, (double)g_identify.res.Ke,
-                   (double)g_identify.res.Kt, (double)g_identify.res.B,
-                   (double)g_identify.res.friction_Coulomb);
+                   (double)g_identify.res.Kt, (double)Motor_Params.friction_B_nm_rps,
+                   (double)Motor_Params.friction_Coulomb_nm);
             gains_changed = 1;
         }
     }

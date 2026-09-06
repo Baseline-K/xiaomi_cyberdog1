@@ -56,18 +56,22 @@ typedef struct {
 /*-----------------------------------------------------------
  * 配置（运行期只读）与运行期累计（Safety 独占）
  *----------------------------------------------------------*/
+/* 仿 AC_Control：过压/欠压/转速异常用「超量积分」——acc += (实测 − 阈值)×dt，饱和到
+ * [0, trip]，acc≥trip 触发；回到安全侧 delta<0 自然漏泄回 0（无独立回差）。
+ * 过压另留瞬时硬闸 v_bus_over_V 在 FastStep 兜底（本工程无 ADC AWD）。 */
 typedef struct {
-    float    v_bus_over_V;         /* 过压阈值 V */
-    float    v_bus_under_V;        /* 欠压阈值 V */
-    float    vbus_under_hyst_V;    /* 欠压回差 V（高于 阈值+回差 才清累计） */
-    uint32_t vbus_under_thr_ms;    /* 欠压持续时间 ms */
+    float    v_bus_over_V;         /* 过压瞬时硬闸 V（FastStep 立即，极端档） */
+    float    vbus_over_soft_V;     /* 过压软积分起点 V（>它开始积 V·ms） */
+    float    vbus_over_trip_Vms;   /* 过压积分门限 V·ms */
+    float    v_bus_under_V;        /* 欠压积分起点 V（<它开始积 V·ms） */
+    float    vbus_under_trip_Vms;  /* 欠压积分门限 V·ms */
     float    current_over_A;       /* 过流阈值 A */
     float    shortcircuit_A;       /* 短路阈值 A */
     float    locked_current_thr_A; /* 堵转电流阈值 A */
-    float    locked_speed_thr_rps; /* 堵转速度阈值 RPS */
+    float    locked_speed_thr_rps; /* 堵转速度阈值 RPS（幅值） */
     uint32_t locked_thr_ms;        /* 堵转持续时间 ms */
-    float    speederror_thr_rps;   /* 转速偏差阈值 RPS */
-    uint32_t speederror_thr_ms;    /* 转速异常持续 ms */
+    float    speederror_db_rps;     /* 转速误差死区 RPS：|err|<db 时漏泄回 0 */
+    float    speederror_trip_rps_ms;/* 转速误差积分门限 RPS·ms */
     uint32_t comm_thr_ms;          /* 通信超时阈值 ms */
     bool enable_overcurrent;
     bool enable_overvolt;
@@ -78,9 +82,10 @@ typedef struct {
 } SafetyConfig_t;
 
 typedef struct {
-    uint32_t vbus_under_accum_ms;
+    float    vbus_over_integral_Vms;     /* 过压软积分 V·ms（Safety 独占） */
+    float    vbus_under_integral_Vms;    /* 欠压积分 V·ms */
+    float    speed_err_integral_rps_ms;  /* 转速误差积分 RPS·ms */
     uint32_t stall_accum_ms;
-    uint32_t speed_err_accum_ms;
     uint32_t comm_accum_ms;
     uint32_t last_can_rx_seq;
 } SafetyRuntime_t;

@@ -19,6 +19,7 @@
 #include "foc.h"   /* foc_abc_current_i */
 #include "app_tasks.h"   /* AppTasks_Diag */
 #include "identify.h"   /* 离线辨识命令 */
+#include "FOC_generated.h"   /* 速度 S 曲线规划 / 前馈开关 */
 #include "main.h"   /* HAL_GetTick */
 #include <stdio.h>
 #include <stdlib.h>
@@ -45,6 +46,7 @@ static void print_help(void)
     printf("  identify pole  offline pole-pairs/direction (voltage drag fwd+rev)\r\n");
     printf("  identify j     offline rotor inertia (accel/decel, needs flux first)\r\n");
     printf("  identify abort\r\n");
+    printf("  plT <ms>       S-curve planner accel/decel time (e.g. 300)\r\n");
     printf("  showparams  print motor params + identify results\r\n");
     printf("  get         print status\r\n");
     printf("  help        show this\r\n");
@@ -148,12 +150,20 @@ static void handle_line(char *line)
             printf("identify <r|l|flux|pole|j|dead|cog|abort>  (先 stop 再辨识)\r\n");
         }
     }
+    else if (strncmp(p, "plT ", 4U) == 0) {
+        uint32_t ms = (uint32_t)atoi(p + 4);
+        FOC_SpeedPlan_SetTimeMs(ms);
+        printf("S-curve accel/decel time -> %u ms\r\n", (unsigned)ms);
+    }
     else if (strcmp(p, "showparams") == 0) {
         printf("VBUS=%.1f R=%.4f Ld=%.5f Lq=%.5f Flux=%.6f P=%.0f J=%.8f\r\n",
                (double)Motor_Params.VBUS, (double)Motor_Params.Phase_R,
                (double)Motor_Params.Ld, (double)Motor_Params.Lq,
                (double)Motor_Params.Flux,
                (double)Motor_Params.Pole_Pairs, (double)Motor_Params.Rotor_inertia);
+        printf("friction: B_nm_rps=%.6f fc_nm=%.6f\r\n",
+               (double)Motor_Params.friction_B_nm_rps,
+               (double)Motor_Params.friction_Coulomb_nm);
         printf("ident: state=%d Rs=%.4f Vdead=%.4f\r\n",
                (int)Identify_GetStatus(), (double)g_identify.res.Rs,
                (double)g_identify.res.Vdead_est);

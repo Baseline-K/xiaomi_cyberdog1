@@ -64,6 +64,16 @@ ensureParam('CoggingFF_En',      0, '齿槽转矩前馈使能(0/1)');
 ensureParam('Cogging_Lut_Angle', linspace(0,2*pi,360), '齿槽前馈LUT 电角度断点(rad)');
 ensureParam('Cogging_Lut_V',     zeros(360,1), '齿槽前馈LUT iq补偿(A)');
 
+% ---- 速度 S 曲线规划（固件侧，常开）+ 速度环三项前馈 ----
+% 规划器在固件 Code_Source/MID/MID_foc/speed_plan.c（AC_Control 式 jerk 三段，1kHz），
+% 平滑 ref_speed + α_ref 经 U.ref_speed/ref_accel 进模型；本模型只消费前馈系数（常开，速度模式）。
+% iq_ff[A] = SpeedFF_J2piKt*α_ref + SpeedFF_B*speed_fbk + SpeedFF_Fc*sign(speed_fbk)；
+% 系数在固件 FOC_Generated_Init 由 Motor_Params 派生：J2piKt=2πJ/Kt, B=friction_B_nm_rps/Kt,
+% Fc=friction_Coulomb_nm/Kt（identify flux 提交 B/fc 后 Init 自动重算）。
+ensureParam('SpeedFF_J2piKt', 2*pi*2.5e-6/0.0304, '惯量前馈系数 A/(RPS/s)=2πJ/Kt(固件 Init 从 Motor_Params 写)');
+ensureParam('SpeedFF_B',      0,    '粘性前馈系数 A/RPS=friction_B_nm_rps/Kt(固件 Init 写)');
+ensureParam('SpeedFF_Fc',     0,    '库仑前馈系数 A=friction_Coulomb_nm/Kt(固件 Init 写)');
+
 % ---- 电机参数（按固件 Motor_Params_t 关键项，用于电流环增益推导）----
 ensureParam('Motor_Phase_L', 0.0002, '相电感(H)');
 ensureParam('Motor_Phase_R', 0.2,    '相电阻(Ω)');
