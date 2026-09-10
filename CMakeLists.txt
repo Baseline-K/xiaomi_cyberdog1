@@ -87,8 +87,9 @@ target_sources(${CMAKE_PROJECT_NAME} PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/Simulink_Model/generated/CyberDog_Motor_FOC_data.c
     ${CMAKE_CURRENT_SOURCE_DIR}/Simulink_Model/generated/rt_nonfinite.c
     ${CMAKE_CURRENT_SOURCE_DIR}/Simulink_Model/generated/rtGetNaN.c
-    # 速度 S 曲线规划（固件侧，喂给生成的速度环/前馈）
+    # 速度/位置 S 曲线规划（固件侧，喂给生成的速度环/前馈）
     ${CMAKE_CURRENT_SOURCE_DIR}/Code_Source/MID/MID_foc/speed_plan.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/Code_Source/MID/MID_foc/position_plan.c
     # FreeRTOS Kernel（固定版本 V11.3.0，见 FreeRTOS-Kernel/README.md）
     ${CMAKE_CURRENT_SOURCE_DIR}/FreeRTOS-Kernel/tasks.c
     ${CMAKE_CURRENT_SOURCE_DIR}/FreeRTOS-Kernel/queue.c

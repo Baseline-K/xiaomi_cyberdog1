@@ -268,6 +268,37 @@ lesoBw 30 → 60 → 100         # 从低往高加，同工况对比 speed_meas_
 
 ---
 
+## 9. 前馈归位 + 电机参数打包(MotorCfg) + 位置环 S 曲线与前馈（2026-09-11）
+
+### 9.1 前馈归位到各自模块（不再散在父层）
+- **电流环 dq 前馈** → 移入 `CurrentController`（新增 inport `we_elec`/`ff_en`；内部 `vd=PI_d−we·Lq·iq`、`vq=PI_q+we·(Ld·id+Flux)`；输出直连 `DeadTimeComp`）。原先在 `FOC_Algorithm` 顶层的 12 个块删除。
+- **速度环三项前馈 + LESO** → 移入 `SpeedController`（内部 `iq_ref_speed = PID + iq_ff + iq_comp`）。原先在 `OuterLoop` 顶层的 FF/ESO 42 个块删除，`Sum_iqff` 退回 `++`（仅 Sw_mode + 齿槽）。
+  - **速率**：ESO 单位延迟仍 `Ts=1e-4`（观测随电流环拍）、`PID_speed` 仍 1e-3；`iq_comp` 随 iq 指令路径（1e-4）注入 —— 与迁移前一致，无功能变化。
+  - 因 `SpeedController` 输出仅在 `ctrl_mode>=1`（速度/位置）被 `Sw_mode` 选中，速度环前馈/ LESO **天然只在速度/位置模式生效**，显式模式门可省（`ctrl_mode>=1` 门仍保留用于冻结 ESO 状态）。
+
+### 9.2 电机/前馈/LESO 参数打包 `MotorCfg`（Simulink.Bus + ExportedGlobal 结构体）
+- `scripts/motor_params.m` 定义 `MotorCfgBus`（全 single）与 `Simulink.Parameter MotorCfg`（`DataType='Bus: MotorCfgBus'`, `ExportedGlobal`）。字段：`Ld,Lq,Flux,Kt,J`、`ffd_ld,ffd_lq,ffd_flux`（电流环 FF）、`ff_j2pikt,ff_b,ff_fc`（速度环 FF）、`leso_b0,leso_invB0,leso_beta1,leso_beta2`、`plT_ms`。
+- 模型块直接引用 `MotorCfg.<field>`；生成代码暴露 `extern MotorCfgBus MotorCfg;`，固件 `FOC_Generated_Init` 一次写入（退役 `Motor_Ld/Lq/Flux`、`SpeedFF_*`、`LESO_*` 散全局）。
+- FF 不设增益旋钮（系数=1 全量作用）。增益类与 LUT 暂未并入（后续第二批）。
+
+### 9.3 位置环 S 曲线 + 位置前馈
+- 固件新增 `MID_foc/position_plan.c/.h`：**绝对目标**非对称梯形/三角（移植 AC_Control 位置规划，闭式 `pos/vel/acc=f(time)`，无 jerk 限幅），10kHz→1kHz，加减速时间共用 `plT`，限速 `MOTOR_SPEED_LIMIT_RPS`。
+- 模型： `PositionController` 增 inport `vel_ff`（规划速度，RPS），与 PD 输出相加（**增益 1**）→ `speed_ref_pos`；新增根输入 `vel_ff`（root→FOC_Algorithm→OuterLoop→PositionController）。
+- **级联前馈**：位置模式 `U.pos_ref=平滑位置`、`U.vel_ff=规划速度`、`U.ref_accel=规划加速度`；后者经速度环 FF（`ff_j2pikt·α`）形成 **加速度前馈**，与速度前馈共同构成位置环的“速度+加速度”前馈。
+- 模式分派（`FOC_Generated_Step` 非辨识段）：`SPEED`→速度规划器；`POSITION`→位置规划器；`TORQUE`→直通。
+
+**构建**：RAM 58.92% / FLASH 20.10%（含位置规划器与前馈接线）。
+
+### 9.4 台架验证（位置环）
+```
+plT 300                       # 速度/位置共用机动时间
+mode 2 ; pos <rad> ; start    # 位置模式：应平滑梯形运动到位、无超调
+# 对比：临时把 PositionController 的 vel_ff 增益置 0（或断线）看跟踪滞后差异
+```
+速度模式回归：`mode 1; spd 5/10/-15`、`lesoBw 0/200` 对比；`g_foc_isr_us` 无明显变化。
+
+---
+
 ## 附录：轨迹函数核实细节
 
 - 已安装：Navigation Toolbox、Robotics System Toolbox、Motor Control Blockset、Simulink Coder / Embedded Coder、Fixed-Point Designer（R2025b）。

@@ -3,9 +3,9 @@
  *
  * Code generated for Simulink model 'CyberDog_Motor_FOC'.
  *
- * Model version                  : 1.51
+ * Model version                  : 1.56
  * Simulink Coder version         : 25.2 (R2025b) 28-Jul-2025
- * C/C++ source code generated on : Thu Sep 10 23:09:24 2026
+ * C/C++ source code generated on : Fri Sep 11 01:24:13 2026
  *
  * Target selection: ert.tlc
  * Embedded hardware selection: Intel->x86-64 (Windows64)
@@ -51,10 +51,10 @@ typedef struct {
   real32_T Filter_DSTATE;              /* '<S278>/Filter' */
   real32_T Delay_DSTATE_k;             /* '<S12>/Delay' */
   real32_T Integrator_DSTATE_m;        /* '<S336>/Integrator' */
-  real32_T ESO_UD_z2_DSTATE;           /* '<S125>/ESO_UD_z2' */
+  real32_T ESO_UD_z2_DSTATE;           /* '<S247>/ESO_UD_z2' */
   real32_T Integrator_DSTATE_k;        /* '<S223>/Integrator' */
-  real32_T ESO_UD_lpf_DSTATE;          /* '<S125>/ESO_UD_lpf' */
-  real32_T ESO_UD_z1_DSTATE;           /* '<S125>/ESO_UD_z1' */
+  real32_T ESO_UD_lpf_DSTATE;          /* '<S247>/ESO_UD_lpf' */
+  real32_T ESO_UD_z1_DSTATE;           /* '<S247>/ESO_UD_z1' */
   real32_T Delay_DSTATE_o;             /* '<S95>/Delay' */
   real32_T Delay2_DSTATE;              /* '<S90>/Delay2' */
   real32_T Delay3_DSTATE;              /* '<S90>/Delay3' */
@@ -119,6 +119,7 @@ typedef struct {
   real32_T we_elec;                    /* '<Root>/we_elec' */
   real32_T ff_en;                      /* '<Root>/ff_en' */
   real32_T ref_accel;                  /* '<Root>/ref_accel' */
+  real32_T vel_ff;                     /* '<Root>/vel_ff' */
 } ExtU_CyberDog_Motor_FOC_T;
 
 /* External outputs (root outports fed by signals with default storage) */
@@ -178,6 +179,22 @@ extern const ConstP_CyberDog_Motor_FOC_T CyberDog_Motor_FOC_ConstP;
  * these parameters and exports their symbols.
  *
  */
+extern MotorCfgBus MotorCfg;           /* Variable: MotorCfg
+                                        * Referenced by:
+                                        *   '<S122>/G_MFlux'
+                                        *   '<S122>/G_MLd'
+                                        *   '<S122>/G_MLq'
+                                        *   '<S247>/ESO_C_b0'
+                                        *   '<S247>/ESO_C_b1'
+                                        *   '<S247>/ESO_G_b0'
+                                        *   '<S247>/ESO_G_b1'
+                                        *   '<S247>/ESO_G_b2'
+                                        *   '<S247>/ESO_G_inv'
+                                        *   '<S247>/G_FFB'
+                                        *   '<S247>/G_FFFc'
+                                        *   '<S247>/G_FFJ'
+                                        * 固件打包传入：电机参数 + 电流/速度前馈系数 + LESO + 规划时间
+                                        */
 extern real32_T CoggingFF_En;          /* Variable: CoggingFF_En
                                         * Referenced by: '<S125>/Const_CogEn'
                                         * 齿槽转矩前馈使能(0/1)
@@ -252,38 +269,6 @@ extern real32_T InvVbus;               /* Variable: InvVbus
                                         *   '<S127>/G_ubeta'
                                         * 母线电压倒数 1/Vbus
                                         */
-extern real32_T LESO_b0;               /* Variable: LESO_b0
-                                        * Referenced by:
-                                        *   '<S125>/ESO_C_b0'
-                                        *   '<S125>/ESO_G_b0'
-                                        * LESO 对象增益 A→RPS/s=Kt/(2πJ)(固件 Init 写)
-                                        */
-extern real32_T LESO_beta1;            /* Variable: LESO_beta1
-                                        * Referenced by:
-                                        *   '<S125>/ESO_C_b1'
-                                        *   '<S125>/ESO_G_b1'
-                                        * LESO β1=2ω0(固件按带宽写；带宽0→0=关)
-                                        */
-extern real32_T LESO_beta2;            /* Variable: LESO_beta2
-                                        * Referenced by: '<S125>/ESO_G_b2'
-                                        * LESO β2=ω0&#xB2;(固件按带宽写)
-                                        */
-extern real32_T LESO_invB0;            /* Variable: LESO_invB0
-                                        * Referenced by: '<S125>/ESO_G_inv'
-                                        * LESO 1/b0(固件写，缩放 iq_comp，避免除零)
-                                        */
-extern real32_T Motor_Flux;            /* Variable: Motor_Flux
-                                        * Referenced by: '<S2>/G_MFlux'
-                                        * 磁链(Wb, 电流环反电动势前馈用)
-                                        */
-extern real32_T Motor_Ld;              /* Variable: Motor_Ld
-                                        * Referenced by: '<S2>/G_MLd'
-                                        * d轴电感(H, 电流环前馈 &#x2212;we·Lq·iq / +we·(Ld·id+Flux) 用)
-                                        */
-extern real32_T Motor_Lq;              /* Variable: Motor_Lq
-                                        * Referenced by: '<S2>/G_MLq'
-                                        * q轴电感(H, 电流环前馈用)
-                                        */
 extern real32_T Pos_Kd;                /* Variable: Pos_Kd
                                         * Referenced by: '<S276>/Derivative Gain'
                                         * 位置环微分增益(预留, 先0)
@@ -299,18 +284,6 @@ extern real32_T Pos_MaxOut;            /* Variable: Pos_MaxOut
 extern real32_T Pos_MinOut;            /* Variable: Pos_MinOut
                                         * Referenced by: '<S290>/Saturation'
                                         * 位置环输出下限(RPS)
-                                        */
-extern real32_T SpeedFF_B;             /* Variable: SpeedFF_B
-                                        * Referenced by: '<S125>/G_FFB'
-                                        * 粘性前馈系数 A/RPS=friction_B_nm_rps/Kt(固件 Init 写)
-                                        */
-extern real32_T SpeedFF_Fc;            /* Variable: SpeedFF_Fc
-                                        * Referenced by: '<S125>/G_FFFc'
-                                        * 库仑前馈系数 A=friction_Coulomb_nm/Kt(固件 Init 写)
-                                        */
-extern real32_T SpeedFF_J2piKt;        /* Variable: SpeedFF_J2piKt
-                                        * Referenced by: '<S125>/G_FFJ'
-                                        * 惯量前馈系数 A/(RPS/s)=2πJ/Kt(固件 Init 从 Motor_Params 写)
                                         */
 extern real32_T Speed_Ki;              /* Variable: Speed_Ki
                                         * Referenced by: '<S333>/Integral Gain'

@@ -201,6 +201,8 @@ Motor Control Blockset 25.2 的库块已实际使用，并**用探针逐块验�
 
 ### 4.1 参数形态：导出一个全局配置结构体
 
+> **2026-09-11 已落地（第一批）**：电机/前馈/LESO/规划时间参数已打包为 `MotorCfg`（`Simulink.Bus` + `Simulink.Parameter`，`ExportedGlobal`），生成代码暴露 `extern MotorCfgBus MotorCfg;`，固件 `FOC_Generated_Init` 一次写入；模型块引用 `MotorCfg.<field>`。已退役散全局 `Motor_Ld/Lq/Flux`、`SpeedFF_*`、`LESO_*`。增益类（`CurrQ_Kp…`/`Speed_Kp/Ki`/`Pos_Kp`）与 LUT 待第二批并入。
+
 所有需要固件运行时控制的量，在模型中一律定义为**可调参数对象**，不写死为常量。
 
 **当前实际状态：** 参数为**独立 Simulink.Parameter + ExportedGlobal**（经 `scripts/motor_params.m` 集中定义 + 模型 InitFcn 自动加载），生成代码侧为多个全局变量（`CurrQ_Kp`、`DeadComp_En` 等）。

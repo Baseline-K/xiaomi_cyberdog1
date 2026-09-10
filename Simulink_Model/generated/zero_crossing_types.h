@@ -3,9 +3,9 @@
  *
  * Code generated for Simulink model 'CyberDog_Motor_FOC'.
  *
- * Model version                  : 1.51
+ * Model version                  : 1.56
  * Simulink Coder version         : 25.2 (R2025b) 28-Jul-2025
- * C/C++ source code generated on : Thu Sep 10 23:09:24 2026
+ * C/C++ source code generated on : Fri Sep 11 01:24:13 2026
  *
  * Target selection: ert.tlc
  * Embedded hardware selection: Intel->x86-64 (Windows64)

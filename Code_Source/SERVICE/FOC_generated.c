@@ -19,6 +19,7 @@
 #include "AS5600.h"               /* Encoder_AS5600.eleangle */
 #include "identify.h"             /* g_ident_eleangle_ovr（极对数辨识开环电角覆盖） */
 #include "speed_plan.h"           /* 速度 S 曲线规划（喂给生成速度环/前馈） */
+#include "position_plan.h"        /* 位置 S 曲线规划（位置模式 + 速度/加速度前馈） */
 #include <math.h>
 
 /* FOC_run.c 的全局量（未在头文件声明，此处 extern） */
@@ -36,7 +37,7 @@ extern float Predict_eleangle;
 /* ---- LESO 2 阶扰动观测：参数（像 Kp/Ki 一样传进模型）
  * b0 = Kt/(2πJ) [A→RPS/s]；β1=2ω0、β2=ω0²（ω0=2π·BW）。
  * BW=0（或 b0=0）→ β=0 → 模型内 ESO 自动旁路（不用 LESO）。RTT `lesoBw <hz>` 调。 */
-static float s_leso_bw_hz = 0.0f;   /* bring-up 默认关；台架用 lesoBw 打开 */
+static float s_leso_bw_hz = 200.0f;   /* LESO 默认带宽 200Hz（0=关，模型自动旁路）；RTT `lesoBw <hz>` 调 */
 
 static void leso_apply_params(void)
 {
@@ -46,10 +47,10 @@ static void leso_apply_params(void)
     float b0 = (J > 1e-9f) ? (kt / (TWO_PI_F * J)) : 0.0f;
     float w0 = TWO_PI_F * s_leso_bw_hz;
 
-    LESO_b0     = b0;
-    LESO_invB0  = (b0 != 0.0f) ? (1.0f / b0) : 0.0f;
-    LESO_beta1  = 2.0f * w0;
-    LESO_beta2  = w0 * w0;
+    MotorCfg.leso_b0    = b0;
+    MotorCfg.leso_invB0 = (b0 != 0.0f) ? (1.0f / b0) : 0.0f;
+    MotorCfg.leso_beta1 = 2.0f * w0;
+    MotorCfg.leso_beta2 = w0 * w0;
 }
 
 void FOC_Generated_Init(void)
@@ -64,10 +65,16 @@ void FOC_Generated_Init(void)
     CurrD_MaxOut = Motor_Params.VBUS * ONE_BY_SQRT3;  /* d 轴与 q 轴一致 ±VBUS/√3（原 ±3V 限死 d-PI 抵消耦合的能力） */
     CurrD_MinOut = -CurrD_MaxOut;
 
-    /* ---- dq 电流环前馈参数（模型全局，辨识值） ---- */
-    Motor_Ld   = Motor_Params.Ld;
-    Motor_Lq   = Motor_Params.Lq;
-    Motor_Flux = Motor_Params.Flux;
+    /* ---- 电机参数打包写入 MotorCfg（模型消费的单结构体） ---- */
+    MotorCfg.Ld   = Motor_Params.Ld;
+    MotorCfg.Lq   = Motor_Params.Lq;
+    MotorCfg.Flux = Motor_Params.Flux;
+    MotorCfg.Kt   = Motor_Params.Kt;
+    MotorCfg.J    = Motor_Params.Rotor_inertia;
+    /* 电流环 dq 前馈系数（= 电机 Ld/Lq/Flux；此处单列便于独立改） */
+    MotorCfg.ffd_ld   = Motor_Params.Ld;
+    MotorCfg.ffd_lq   = Motor_Params.Lq;
+    MotorCfg.ffd_flux = Motor_Params.Flux;
 
     /* ---- 母线电压 / 调制度（模型用 VmaxCoeff/InvVbus 两个可调全局） ---- */
     VmaxCoeff = Motor_Params.VBUS * ONE_BY_SQRT3 * 0.95f;   /* = Vbus/√3·MaxMod */
@@ -88,16 +95,19 @@ void FOC_Generated_Init(void)
 
         /* 速度环三项前馈系数（A 域，模型 SpeedFF_* 全局）：
          *   J2piKt = 2π·J/Kt [A/(RPS/s)]；B = friction_B_nm_rps/Kt [A/RPS]；Fc = friction_Coulomb_nm/Kt [A] */
-        SpeedFF_J2piKt = TWO_PI_F * Motor_Params.Rotor_inertia / kt_spd;
-        SpeedFF_B      = Motor_Params.friction_B_nm_rps / kt_spd;
-        SpeedFF_Fc     = Motor_Params.friction_Coulomb_nm / kt_spd;
+        MotorCfg.ff_j2pikt = TWO_PI_F * Motor_Params.Rotor_inertia / kt_spd;
+        MotorCfg.ff_b      = Motor_Params.friction_B_nm_rps / kt_spd;
+        MotorCfg.ff_fc     = Motor_Params.friction_Coulomb_nm / kt_spd;
     }
     Speed_MaxOut = 5.0f;
     Speed_MinOut = -5.0f;
 
-    /* ---- 速度 S 曲线规划：常开；机动时间默认 300ms（RTT `plT <ms>` 调） ---- */
+    /* ---- 速度/位置 S 曲线规划：常开；机动时间默认 300ms（RTT `plT <ms>` 调） ---- */
     SpeedPlan_SetTimeMs(300u, 300u);
     SpeedPlan_Reset();
+    PositionPlan_Reset();
+    PositionPlan_SetTimeMs(300u);
+    PositionPlan_SetMaxVelRps(MOTOR_SPEED_LIMIT_RPS);
 
     /* ---- LESO 参数：b0 物理值 + 按带宽算 β（BW=0 → β=0 → 模型旁路） ---- */
     leso_apply_params();
@@ -187,19 +197,29 @@ void FOC_Generated_Step(void)
     if (MotorState.run_state != RUNSTATE_IDENTIFYING) {
         /* 正常运行时由命令映射；辨识时已由 Identify_FocIsrStep 填好
          * （电压模式 ctrl_mode=3/4 填 vd/vq_ref；J 转矩模式 ctrl_mode=0 填 iq_ref——若这里覆盖会丢失） */
-        /* 速度 S 曲线规划：速度模式且未 coast 时输出平滑 ref_speed + α_ref（供前馈），否则直通原值 */
+        /* 轨迹规划分派：速度模式→速度 S 曲线；位置模式→位置 S 曲线(含速度/加速度前馈)；否则直通 */
         {
             const int spd_active = (cmd->mode == MC_MODE_SPEED) && (cmd->coast == 0);
-            float ref_pl = cmd->speed_rps, acc_pl = 0.0f;
+            const int pos_active = (cmd->mode == MC_MODE_POSITION) && (cmd->coast == 0);
+            float ref_pl, acc_pl;
+            float pos_pl = cmd->pos_ref, vel_ff = 0.0f;
+
             SpeedPlan_Step10k(spd_active, cmd->speed_rps,
                               CyberDog_Motor_FOC_Y.speed_meas_rps, &ref_pl, &acc_pl);
-            CyberDog_Motor_FOC_U.ref_speed = ref_pl;
-            CyberDog_Motor_FOC_U.ref_accel = acc_pl;
+            if (pos_active) {
+                PositionPlan_SetTarget(cmd->pos_ref);
+                PositionPlan_Step10k(1, g_mech_pos_rad, &pos_pl, &vel_ff, &acc_pl);
+            } else {
+                PositionPlan_Step10k(0, g_mech_pos_rad, &pos_pl, &vel_ff, &acc_pl);
+            }
+            CyberDog_Motor_FOC_U.ref_speed = ref_pl;    /* 速度模式用；位置模式由 speed_ref_pos 决定 */
+            CyberDog_Motor_FOC_U.ref_accel = acc_pl;    /* 速度环 α 前馈：速度/位置规划器均提供 */
+            CyberDog_Motor_FOC_U.vel_ff    = vel_ff;    /* 位置环速度前馈 */
+            CyberDog_Motor_FOC_U.pos_ref   = pos_pl;    /* 位置模式：平滑位置给定（非平稳输入直通） */
         }
         CyberDog_Motor_FOC_U.iq_ref     = cmd->iq_ref_A;     /* 转矩模式目标 */
         CyberDog_Motor_FOC_U.ctrl_mode  = (cmd->mode == MC_MODE_POSITION) ? 2.0f :
                                           (cmd->mode == MC_MODE_SPEED)    ? 1.0f : 0.0f;
-        CyberDog_Motor_FOC_U.pos_ref    = cmd->pos_ref;   /* rad, 连续，位置模式目标 */
         CyberDog_Motor_FOC_U.pos_fbk    = g_mech_pos_rad; /* rad, 连续，10kHz ISR 累加 */
         CyberDog_Motor_FOC_U.coast      = cmd->coast ? 1.0f : 0.0f;  /* 模型内 duty 强制 0.5（coast） */
     }
@@ -226,6 +246,8 @@ float FOC_Generated_GetSpeedRps(void)
 void FOC_SpeedPlan_SetTimeMs(uint32_t t_ms)
 {
     SpeedPlan_SetTimeMs(t_ms, t_ms);
+    PositionPlan_SetTimeMs(t_ms);    /* 位置规划共用同一机动时间 plT */
+    MotorCfg.plT_ms = (float)t_ms;
 }
 
 /* ---- LESO：带宽可调（RTT `lesoBw <hz>`；<=0 关闭=β0，模型旁路） ---- */

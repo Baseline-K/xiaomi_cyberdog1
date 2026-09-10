@@ -34,10 +34,44 @@ ensureParam('Pos_MinOut', -5.0,  '位置环输出下限(RPS)');
 
 % ---- 电机参数 ----
 ensureParam('Pole_Pairs', 7, '极对数');
-% dq 电流环前馈参数（可调全局，固件 FOC_Generated_Init 从 Motor_Params 写入辨识值）
-ensureParam('Motor_Ld',   0.0018,  'd轴电感(H, 电流环前馈 −we·Lq·iq / +we·(Ld·id+Flux) 用)');
-ensureParam('Motor_Lq',   0.0021,  'q轴电感(H, 电流环前馈用)');
-ensureParam('Motor_Flux', 0.002896,'磁链(Wb, 电流环反电动势前馈用)');
+
+% ---- 电机/前馈/LESO 参数打包：Simulink.Bus + ExportedGlobal 结构体（固件一次写入）----
+% 固件 FOC_Generated_Init 填 MotorCfg.*；模型块直接引用 MotorCfg.<field>（Gain/常量参数表达式），
+% 避免一堆散全局。字段含义：
+%   Ld/Lq/Flux/Kt/J     电机参数（辨识值）
+%   ffd_ld/ffd_lq/ffd_flux  电流环 dq 前馈系数（Init 时 = Ld/Lq/Flux）
+%   ff_j2pikt/ff_b/ff_fc    速度环三项前馈系数 A 域（2πJ/Kt、B/Kt、fc/Kt）
+%   leso_b0/leso_invB0/leso_beta1/leso_beta2  LESO 参数（b0 或带宽 0 → 自动旁路）
+%   plT_ms              速度/位置规划共用的加/减速时间(ms)
+cfgNames = { 'Ld','Lq','Flux','Kt','J', ...
+             'ffd_ld','ffd_lq','ffd_flux', ...
+             'ff_j2pikt','ff_b','ff_fc', ...
+             'leso_b0','leso_invB0','leso_beta1','leso_beta2','plT_ms' };
+be = repmat(Simulink.BusElement, 1, numel(cfgNames));
+for i = 1:numel(cfgNames)
+    be(i).Name       = cfgNames{i};
+    be(i).DataType   = 'single';
+    be(i).Dimensions = 1;
+    be(i).SampleTime = -1;
+    be(i).Complexity = 'real';
+end
+bc = Simulink.Bus; bc.Elements = be;
+assignin('base', 'MotorCfgBus', bc);
+if ~evalin('base','exist(''MotorCfg'',''var'')') || ~isa(evalin('base','MotorCfg'),'Simulink.Parameter')
+    dv = struct();
+    dflt = { 0.0018, 0.0021, 0.002896, 0.0304, 2.5e-6, ...
+             0.0018, 0.0021, 0.002896, ...
+             2*pi*2.5e-6/0.0304, 0, 0, ...
+             0, 0, 0, 0, 300 };
+    for i = 1:numel(cfgNames)
+        dv.(cfgNames{i}) = single(dflt{i});
+    end
+    p = Simulink.Parameter(dv);
+    p.DataType     = 'Bus: MotorCfgBus';
+    p.StorageClass = 'ExportedGlobal';
+    p.Description  = '固件打包传入：电机参数 + 电流/速度前馈系数 + LESO + 规划时间';
+    assignin('base', 'MotorCfg', p);
+end
 
 % ---- PLL 角度/速度滤波 (MCB PLL with Feed Forward, 带宽 1000Hz) ----
 % 掩码增益约定: Kp = 2*zeta*wn (wn=2*pi*1000, zeta=1);  Ki = wn^2 (连续)
@@ -64,24 +98,10 @@ ensureParam('CoggingFF_En',      0, '齿槽转矩前馈使能(0/1)');
 ensureParam('Cogging_Lut_Angle', linspace(0,2*pi,360), '齿槽前馈LUT 电角度断点(rad)');
 ensureParam('Cogging_Lut_V',     zeros(360,1), '齿槽前馈LUT iq补偿(A)');
 
-% ---- 速度 S 曲线规划（固件侧，常开）+ 速度环三项前馈 ----
-% 规划器在固件 Code_Source/MID/MID_foc/speed_plan.c（AC_Control 式 jerk 三段，1kHz），
-% 平滑 ref_speed + α_ref 经 U.ref_speed/ref_accel 进模型；本模型只消费前馈系数（常开，速度模式）。
-% iq_ff[A] = SpeedFF_J2piKt*α_ref + SpeedFF_B*speed_fbk + SpeedFF_Fc*sign(speed_fbk)；
-% 系数在固件 FOC_Generated_Init 由 Motor_Params 派生：J2piKt=2πJ/Kt, B=friction_B_nm_rps/Kt,
-% Fc=friction_Coulomb_nm/Kt（identify flux 提交 B/fc 后 Init 自动重算）。
-ensureParam('SpeedFF_J2piKt', 2*pi*2.5e-6/0.0304, '惯量前馈系数 A/(RPS/s)=2πJ/Kt(固件 Init 从 Motor_Params 写)');
-ensureParam('SpeedFF_B',      0,    '粘性前馈系数 A/RPS=friction_B_nm_rps/Kt(固件 Init 写)');
-ensureParam('SpeedFF_Fc',     0,    '库仑前馈系数 A=friction_Coulomb_nm/Kt(固件 Init 写)');
-
-% ---- 2 阶 LESO 扰动观测叠加层（算法在模型 10kHz；参数像 Kp/Ki 由固件传）----
-% 观测 Ts=1e-4(电流环拍)。b0 或带宽任一为 0 → beta=0 → 模型自动旁路(不用 LESO)。
-% 固件 FOC_Generated_Init 写：LESO_b0=Kt/(2πJ)≈1936 A→RPS/s、LESO_invB0=1/b0、
-% LESO_beta1/2=2ω0/ω0²(ω0=2π·LESO_BW_Hz)；RTT `lesoBw <hz>` 调带宽、0=关。
-ensureParam('LESO_b0',     0, 'LESO 对象增益 A→RPS/s=Kt/(2πJ)(固件 Init 写)');
-ensureParam('LESO_beta1',  0, 'LESO β1=2ω0(固件按带宽写；带宽0→0=关)');
-ensureParam('LESO_beta2',  0, 'LESO β2=ω0²(固件按带宽写)');
-ensureParam('LESO_invB0',  0, 'LESO 1/b0(固件写，缩放 iq_comp，避免除零)');
+% ---- 速度 S 曲线规划（固件侧，常开）+ 速度环三项前馈 + 2 阶 LESO ----
+% 规划器在固件 MID_foc/speed_plan.c（AC_Control 式 jerk 三段，1kHz）；前馈/LESO 系数一律来自上面
+% 的 MotorCfg 结构体（固件 FOC_Generated_Init 写入）：ff_* / leso_*。
+% 模型内块引用 MotorCfg.ff_j2pikt / ff_b / ff_fc / leso_b0 / leso_beta1 / leso_beta2 / leso_invB0。
 
 % ---- 电机参数（按固件 Motor_Params_t 关键项，用于电流环增益推导）----
 ensureParam('Motor_Phase_L', 0.0002, '相电感(H)');
