@@ -74,6 +74,15 @@ ensureParam('SpeedFF_J2piKt', 2*pi*2.5e-6/0.0304, '惯量前馈系数 A/(RPS/s)=
 ensureParam('SpeedFF_B',      0,    '粘性前馈系数 A/RPS=friction_B_nm_rps/Kt(固件 Init 写)');
 ensureParam('SpeedFF_Fc',     0,    '库仑前馈系数 A=friction_Coulomb_nm/Kt(固件 Init 写)');
 
+% ---- 2 阶 LESO 扰动观测叠加层（算法在模型 10kHz；参数像 Kp/Ki 由固件传）----
+% 观测 Ts=1e-4(电流环拍)。b0 或带宽任一为 0 → beta=0 → 模型自动旁路(不用 LESO)。
+% 固件 FOC_Generated_Init 写：LESO_b0=Kt/(2πJ)≈1936 A→RPS/s、LESO_invB0=1/b0、
+% LESO_beta1/2=2ω0/ω0²(ω0=2π·LESO_BW_Hz)；RTT `lesoBw <hz>` 调带宽、0=关。
+ensureParam('LESO_b0',     0, 'LESO 对象增益 A→RPS/s=Kt/(2πJ)(固件 Init 写)');
+ensureParam('LESO_beta1',  0, 'LESO β1=2ω0(固件按带宽写；带宽0→0=关)');
+ensureParam('LESO_beta2',  0, 'LESO β2=ω0²(固件按带宽写)');
+ensureParam('LESO_invB0',  0, 'LESO 1/b0(固件写，缩放 iq_comp，避免除零)');
+
 % ---- 电机参数（按固件 Motor_Params_t 关键项，用于电流环增益推导）----
 ensureParam('Motor_Phase_L', 0.0002, '相电感(H)');
 ensureParam('Motor_Phase_R', 0.2,    '相电阻(Ω)');

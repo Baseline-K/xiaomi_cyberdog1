@@ -8,6 +8,7 @@
 #define CAN_NODE_ID        1U
 #define CAN_ID_SDO_RX      (0x600U + CAN_NODE_ID)   /* 0x601 命令收 */
 #define CAN_ID_SDO_TX      (0x580U + CAN_NODE_ID)   /* 0x581 回复发 */
+#define CAN_ID_EMCY        (0x080U + CAN_NODE_ID)   /* 0x081 故障上报(EMCY) */
 
 #define CAN_RX_BUF_SIZE    16U
 
@@ -25,6 +26,9 @@ uint8_t CAN_bsp_PopFrame(CAN_Frame_t *frame);
 
 /* 发送标准帧 */
 uint8_t CAN_bsp_Send(uint32_t std_id, const uint8_t data[8], uint8_t dlc);
+
+/* 通信恢复（bus-off/未就绪 → Stop/Start/重挂通知）；1=已就绪或恢复成功 */
+uint8_t CAN_bsp_Recover(void);
 
 /* 统计（调试/诊断） */
 void    CAN_bsp_GetStats(uint32_t *rx_total, uint32_t *rx_overrun, uint32_t *rx_drop);

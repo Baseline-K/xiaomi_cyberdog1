@@ -134,6 +134,6 @@ void MotorCtrl_GetStatus(uint8_t out[4])
 {
     out[0] = (uint8_t)MotorCtrl.state;
     out[1] = (uint8_t)MotorCtrl.mode;
-    out[2] = (MotorCtrl.enable ? 1U : 0U) | ((uint8_t)MotorCtrl.faults & 0xFFU);
-    out[3] = (uint8_t)((MotorCtrl.faults >> 8) & 0xFFU);
+    out[2] = (MotorCtrl.enable ? 1U : 0U);              /* 仅使能位（原与故障 bit0 别名，已修） */
+    out[3] = (uint8_t)((MotorCtrl.faults >> 8) & 0xFFU);/* 故障位 8..15；完整 32 位见 EMCY 0x081 */
 }

@@ -3,9 +3,9 @@
  *
  * Code generated for Simulink model 'CyberDog_Motor_FOC'.
  *
- * Model version                  : 1.50
+ * Model version                  : 1.51
  * Simulink Coder version         : 25.2 (R2025b) 28-Jul-2025
- * C/C++ source code generated on : Sun Sep  6 18:34:23 2026
+ * C/C++ source code generated on : Thu Sep 10 23:09:24 2026
  *
  * Target selection: ert.tlc
  * Embedded hardware selection: Intel->x86-64 (Windows64)
@@ -51,7 +51,10 @@ typedef struct {
   real32_T Filter_DSTATE;              /* '<S278>/Filter' */
   real32_T Delay_DSTATE_k;             /* '<S12>/Delay' */
   real32_T Integrator_DSTATE_m;        /* '<S336>/Integrator' */
+  real32_T ESO_UD_z2_DSTATE;           /* '<S125>/ESO_UD_z2' */
   real32_T Integrator_DSTATE_k;        /* '<S223>/Integrator' */
+  real32_T ESO_UD_lpf_DSTATE;          /* '<S125>/ESO_UD_lpf' */
+  real32_T ESO_UD_z1_DSTATE;           /* '<S125>/ESO_UD_z1' */
   real32_T Delay_DSTATE_o;             /* '<S95>/Delay' */
   real32_T Delay2_DSTATE;              /* '<S90>/Delay2' */
   real32_T Delay3_DSTATE;              /* '<S90>/Delay3' */
@@ -93,7 +96,7 @@ typedef struct {
    *   '<S359>/sine_table_values'
    *   '<S105>/sine_table_values'
    */
-  real32_T pooled5[1002];
+  real32_T pooled6[1002];
 } ConstP_CyberDog_Motor_FOC_T;
 
 /* External inputs (root inport signals with default storage) */
@@ -248,6 +251,26 @@ extern real32_T InvVbus;               /* Variable: InvVbus
                                         *   '<S127>/G_1_vbus'
                                         *   '<S127>/G_ubeta'
                                         * 母线电压倒数 1/Vbus
+                                        */
+extern real32_T LESO_b0;               /* Variable: LESO_b0
+                                        * Referenced by:
+                                        *   '<S125>/ESO_C_b0'
+                                        *   '<S125>/ESO_G_b0'
+                                        * LESO 对象增益 A→RPS/s=Kt/(2πJ)(固件 Init 写)
+                                        */
+extern real32_T LESO_beta1;            /* Variable: LESO_beta1
+                                        * Referenced by:
+                                        *   '<S125>/ESO_C_b1'
+                                        *   '<S125>/ESO_G_b1'
+                                        * LESO β1=2ω0(固件按带宽写；带宽0→0=关)
+                                        */
+extern real32_T LESO_beta2;            /* Variable: LESO_beta2
+                                        * Referenced by: '<S125>/ESO_G_b2'
+                                        * LESO β2=ω0&#xB2;(固件按带宽写)
+                                        */
+extern real32_T LESO_invB0;            /* Variable: LESO_invB0
+                                        * Referenced by: '<S125>/ESO_G_inv'
+                                        * LESO 1/b0(固件写，缩放 iq_comp，避免除零)
                                         */
 extern real32_T Motor_Flux;            /* Variable: Motor_Flux
                                         * Referenced by: '<S2>/G_MFlux'

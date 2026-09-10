@@ -245,6 +245,29 @@ stop
 
 ---
 
+## 8. v3 LESO 扰动观测叠加层（2026-09-09）
+
+**频率归属（核实两家参考）**：AC_Control 双速率——LESO 观测 `z1/z2` 每**电流环拍(40kHz, Ts=1/40000)** 积分，`iq_comp=−z2/b0` 只在**速度环步(8kHz)** 重算注入；SguanFOC 单速率——整个速度环 LADRC(LESO 内嵌)在降采样速度环频率(≈4kHz)跑并替换 PI。**本工程照 AC 双速率**：模型 10kHz=电流环(观测层)、1kHz=速度环；ESO 算法做在模型内(纯块)。
+
+**实现**（算法在 Simulink，参数像 Kp/Ki 由固件传）
+- 模型 `OuterLoop` 内新增 10kHz 离散 2 阶 ESO（Ts=1e-4）：`e=z1−speed_fbk`；`z1+=Ts(z2+b0·u−β1·e)`；`z2+=Ts(−β2·e)`，u=实测 iq(Park 引出, 0.99 低通)；`iq_comp=clamp(−z2·invB0, ±3A)`，接到 `Sum_iqff` 第 4 输入；门控 `en=(ctrl_mode>=1)&&(b0≠0)&&(β1≠0)`，en=0 状态冻结、comp=0。
+- 参数(ExportedGlobal，固件写)：`LESO_b0`(=Kt/(2πJ)≈1936 A→RPS/s)、`LESO_invB0`、`LESO_beta1`、`LESO_beta2`。
+- 固件 `FOC_generated.c`：`leso_apply_params()` 按 `s_leso_bw_hz`(默认 **0=关**) 算 β；`FOC_Leso_SetBwHz()`；`FOC_Generated_Reset` 清 `ESO_UD_z1/z2/lpf_DSTATE`。RTT `lesoBw <hz>`（0=关），`showparams` 打 bw。
+- **b0 或带宽任一为 0 ⇒ β=0 ⇒ 模型自动旁路**（不用 LESO）。
+
+**构建**：RAM 58.72%(+32B) / FLASH 19.73%(+~0.9KB)；观测每 10kHz 拍 ~10 flop，`g_foc_isr_us` 增量应 <1µs。
+
+### 台架（LESO 带宽标定）
+```
+identify flux / j            # 有则更准（b0 用 J/Kt）
+lesoBw 0                     # 基线：LESO 关
+mode 1; spd 5; start ; spd 10/20/-15/5 ; stop
+lesoBw 30 → 60 → 100         # 从低往高加，同工况对比 speed_meas_rps 纹波 / iq 抖动
+```
+判据：开关对比下**速度纹波/负载扰动恢复更好**且**不出现振荡**；一旦振荡/噪声放大即回退到上一档。稳定后把 `s_leso_bw_hz` 默认值写定（并把 bring-up 开关按需保留/删除）。
+
+---
+
 ## 附录：轨迹函数核实细节
 
 - 已安装：Navigation Toolbox、Robotics System Toolbox、Motor Control Blockset、Simulink Coder / Embedded Coder、Fixed-Point Designer（R2025b）。

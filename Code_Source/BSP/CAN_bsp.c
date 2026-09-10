@@ -96,3 +96,24 @@ void CAN_bsp_GetStats(uint32_t *rx_total_o, uint32_t *rx_overrun_o, uint32_t *rx
     if (rx_overrun_o) *rx_overrun_o = rx_overrun;
     if (rx_drop_o)    *rx_drop_o    = rx_drop;
 }
+
+/* 通信恢复：仅当 bus-off 或未就绪时重初始化（供 FAULT_NOW 通信类重试）。
+ * 就绪时立即返回 1，避免无谓地中断 CAN。 */
+uint8_t CAN_bsp_Recover(void)
+{
+    uint32_t err = HAL_CAN_GetError(&hcan);
+
+    if (((err & HAL_CAN_ERROR_BOF) == 0U) &&
+        (HAL_CAN_GetState(&hcan) == HAL_CAN_STATE_READY)) {
+        return 1U;                       /* 已就绪，无需恢复 */
+    }
+
+    (void)HAL_CAN_Stop(&hcan);
+    if (HAL_CAN_Start(&hcan) != HAL_OK) {
+        return 0U;
+    }
+    if (HAL_CAN_ActivateNotification(&hcan, CAN_IT_RX_FIFO0_MSG_PENDING) != HAL_OK) {
+        return 0U;
+    }
+    return 1U;
+}

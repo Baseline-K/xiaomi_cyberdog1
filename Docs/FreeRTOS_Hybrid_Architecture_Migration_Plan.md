@@ -673,6 +673,10 @@ bring-up 修复记录：
 - [ ] TIM1 Break、FastStep紧急故障、驱动故障和严重软件故障执行立即PWM关断。
 - [ ] 实现 `FAULT_ACTIVE/FAULT_RECOVERY` 进入、保持、恢复判定和分类清除策略。
 - [ ] 将故障CAN上报交给 `CommTask`，故障快照持久化交给 `DiagTask`，不阻塞状态机。
+      > **2026-09-11 更新**：故障上报已实现为 **EMCY `0x081` + 32 位掩码**，由 `CommTask` 10ms 节拍发送（`FAULT_NOW/OVER` 期间每 10ms 重发）。
+      > 同时改为**全自动恢复**：FAULT_NOW 内做定向软重初始化（编码器/CAN），完成即自动转 FAULT_OVER，`exit` 清故障字，FAULT_OVER 静止后回 IDLE；
+      > **不再需要 `CLEAR_FAULT`/`clearfault`**（命令已删除）。详见 `Docs/Fault_Recovery_And_Reporting.md`。
+      > 注：§6.3/§6.4 中“需明确复位流程/CLEAR_FAULT 授权”的表述随之作废（保留锁存语义在 FAULT 期间，恢复改为自动）。
 - [ ] 看门狗只在关键任务均报告健康且 FOC未超时时喂狗。
 
 验收门：

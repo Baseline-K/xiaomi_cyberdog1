@@ -33,6 +33,25 @@ extern float Predict_eleangle;
 #define ONE_BY_SQRT3    0.57735027f
 #define TWO_PI_F        6.283185307f
 
+/* ---- LESO 2 阶扰动观测：参数（像 Kp/Ki 一样传进模型）
+ * b0 = Kt/(2πJ) [A→RPS/s]；β1=2ω0、β2=ω0²（ω0=2π·BW）。
+ * BW=0（或 b0=0）→ β=0 → 模型内 ESO 自动旁路（不用 LESO）。RTT `lesoBw <hz>` 调。 */
+static float s_leso_bw_hz = 0.0f;   /* bring-up 默认关；台架用 lesoBw 打开 */
+
+static void leso_apply_params(void)
+{
+    float J  = Motor_Params.Rotor_inertia;
+    float kt = (Motor_Params.Kt > 1e-6f) ? Motor_Params.Kt
+                                         : (1.5f * Motor_Params.Pole_Pairs * Motor_Params.Flux);
+    float b0 = (J > 1e-9f) ? (kt / (TWO_PI_F * J)) : 0.0f;
+    float w0 = TWO_PI_F * s_leso_bw_hz;
+
+    LESO_b0     = b0;
+    LESO_invB0  = (b0 != 0.0f) ? (1.0f / b0) : 0.0f;
+    LESO_beta1  = 2.0f * w0;
+    LESO_beta2  = w0 * w0;
+}
+
 void FOC_Generated_Init(void)
 {
     /* ---- 电流环增益：固件公式（UseI*Ts 约定，模型 I 增益直接=固件 ki） ---- */
@@ -79,6 +98,9 @@ void FOC_Generated_Init(void)
     /* ---- 速度 S 曲线规划：常开；机动时间默认 300ms（RTT `plT <ms>` 调） ---- */
     SpeedPlan_SetTimeMs(300u, 300u);
     SpeedPlan_Reset();
+
+    /* ---- LESO 参数：b0 物理值 + 按带宽算 β（BW=0 → β=0 → 模型旁路） ---- */
+    leso_apply_params();
 
     /* ---- 位置环增益（PD 结构，先只给 P 项；D 预留，仿真整定后直接写值即可） ---- */
     Pos_Kp     = 10.0f;    /* 位置环比例增益 RPS/rad */
@@ -132,6 +154,9 @@ void FOC_Generated_Reset(void)
     CyberDog_Motor_FOC_DW.Filter_DSTATE      = 0.0f;    /* 位置环 D 滤波(预留) */
     CyberDog_Motor_FOC_B.Saturation          = 0.0f;    /* 位置环输出(饱和后) */
     CyberDog_Motor_FOC_B.Saturation_f        = 0.0f;    /* 速度环输出(饱和后) */
+    CyberDog_Motor_FOC_DW.ESO_UD_z1_DSTATE   = 0.0f;    /* LESO 转速估计 z1 */
+    CyberDog_Motor_FOC_DW.ESO_UD_z2_DSTATE   = 0.0f;    /* LESO 扰动估计 z2 */
+    CyberDog_Motor_FOC_DW.ESO_UD_lpf_DSTATE  = 0.0f;    /* LESO iq 低通 */
 }
 
 void FOC_Generated_Step(void)
@@ -201,4 +226,17 @@ float FOC_Generated_GetSpeedRps(void)
 void FOC_SpeedPlan_SetTimeMs(uint32_t t_ms)
 {
     SpeedPlan_SetTimeMs(t_ms, t_ms);
+}
+
+/* ---- LESO：带宽可调（RTT `lesoBw <hz>`；<=0 关闭=β0，模型旁路） ---- */
+void FOC_Leso_SetBwHz(float hz)
+{
+    if (hz < 0.0f) hz = 0.0f;
+    s_leso_bw_hz = hz;
+    leso_apply_params();
+}
+
+float FOC_Leso_GetBwHz(void)
+{
+    return s_leso_bw_hz;
 }

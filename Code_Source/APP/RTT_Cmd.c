@@ -47,6 +47,7 @@ static void print_help(void)
     printf("  identify j     offline rotor inertia (accel/decel, needs flux first)\r\n");
     printf("  identify abort\r\n");
     printf("  plT <ms>       S-curve planner accel/decel time (e.g. 300)\r\n");
+    printf("  lesoBw <hz>    LESO observer bandwidth (0=off) e.g. 60\r\n");
     printf("  showparams  print motor params + identify results\r\n");
     printf("  get         print status\r\n");
     printf("  help        show this\r\n");
@@ -102,7 +103,7 @@ static void handle_line(char *line)
     else if (strcmp(p, "start") == 0)      { post_cmd_event(EVENT_toRUN);  printf("start event posted\r\n"); }
     else if (strcmp(p, "stop") == 0)       { post_cmd_event(EVENT_RUNtoSTOP); printf("stop event posted\r\n"); }
     else if (strcmp(p, "fault") == 0)      { MotorStateMachine_PostFault(0x1U); printf("fault injected (bit0)\r\n"); }
-    else if (strcmp(p, "clearfault") == 0) { MotorStateMachine_ClearFault(0x1U); printf("fault cleared\r\n"); }
+    /* clearfault 已移除：故障为全自动恢复（FAULT_NOW->FAULT_OVER->IDLE），无需手动清 */
     else if (strcmp(p, "calib") == 0)      { post_cmd_event(EVENT_IDLEtoCALIB); printf("calib event posted\r\n"); }
     /* 安全检测测试强制（调试用） */
     else if (strcmp(p, "safedbg overcurrent") == 0) { Safety_TestForce(SAFETY_TEST_FORCE_OVERCURRENT); printf("safedbg: force overcurrent\r\n"); }
@@ -155,6 +156,10 @@ static void handle_line(char *line)
         FOC_SpeedPlan_SetTimeMs(ms);
         printf("S-curve accel/decel time -> %u ms\r\n", (unsigned)ms);
     }
+    else if (strncmp(p, "lesoBw ", 7U) == 0) {
+        FOC_Leso_SetBwHz((float)atof(p + 7));
+        printf("LESO bandwidth -> %.1f Hz (0=off)\r\n", (double)FOC_Leso_GetBwHz());
+    }
     else if (strcmp(p, "showparams") == 0) {
         printf("VBUS=%.1f R=%.4f Ld=%.5f Lq=%.5f Flux=%.6f P=%.0f J=%.8f\r\n",
                (double)Motor_Params.VBUS, (double)Motor_Params.Phase_R,
@@ -164,6 +169,7 @@ static void handle_line(char *line)
         printf("friction: B_nm_rps=%.6f fc_nm=%.6f\r\n",
                (double)Motor_Params.friction_B_nm_rps,
                (double)Motor_Params.friction_Coulomb_nm);
+        printf("LESO: bw=%.1f Hz (0=off)\r\n", (double)FOC_Leso_GetBwHz());
         printf("ident: state=%d Rs=%.4f Vdead=%.4f\r\n",
                (int)Identify_GetStatus(), (double)g_identify.res.Rs,
                (double)g_identify.res.Vdead_est);

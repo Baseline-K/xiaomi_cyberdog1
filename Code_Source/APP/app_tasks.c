@@ -176,8 +176,10 @@ void AppTasks_Diag(void)
  * CAN RX ISR 收帧入环形缓冲 → vTaskNotifyGiveFromISR 唤醒本任务 → 批量弹帧处理。
  * 同时周期性发送心跳测试帧，便于用 CAN 分析仪验证 TX。
  *----------------------------------------------------------*/
-#define CAN_HB_PERIOD_MS   100U   /* 心跳周期，改这里即可调整发送频率 */
-#define CAN_HB_MARKER      0xFEU  /* 心跳标记 data[0]，与分析仪区分 */
+#define CAN_COMM_PERIOD_MS  10U    /* CommTask 节拍：故障上报重发周期 */
+#define CAN_HB_EVERY_TICKS  10U    /* 每 10 拍(10ms)=100ms 发一次心跳 */
+#define CAN_HB_MARKER       0xFEU  /* 心跳标记 data[0]，与分析仪区分 */
+#define CAN_EMCY_CLASS      0x01U  /* 故障帧 data[0]：设备故障类 */
 
 /* 心跳帧：ID=0x581，data[0]=0xFE 标记，data[1]=节点号，data[2..4]=时间戳，data[6..7]=递增计数 */
 static void CAN_SendHeartbeat(void)
@@ -197,24 +199,48 @@ static void CAN_SendHeartbeat(void)
     CAN_bsp_Send(CAN_ID_SDO_TX, d, 8);
 }
 
+/* 故障上报帧：ID=EMCY 0x081
+ * data[0]=故障类(0x01 设备) data[1..4]=32 位故障掩码 LE data[5]=FSM 状态 data[7]=递增计数 */
+static void CAN_SendFaultReport(void)
+{
+    uint8_t d[8] = {0};
+    static uint8_t seq = 0U;
+    uint32_t w = g_fault_report_word;
+
+    d[0] = CAN_EMCY_CLASS;
+    d[1] = (uint8_t)(w & 0xFFU);
+    d[2] = (uint8_t)((w >> 8) & 0xFFU);
+    d[3] = (uint8_t)((w >> 16) & 0xFFU);
+    d[4] = (uint8_t)((w >> 24) & 0xFFU);
+    d[5] = (uint8_t)MotorState_GetCurrent();
+    d[7] = seq++;
+    if (CAN_bsp_Send(CAN_ID_EMCY, d, 8U)) {
+        g_fault_report_dirty = 0U;   /* 至少发出一次后清 dirty */
+    }
+}
+
 static void CommTask_Entry(void *pvParam)
 {
     (void) pvParam;
-    const TickType_t xHbPeriod = pdMS_TO_TICKS(CAN_HB_PERIOD_MS);
-    TickType_t xLastHb = xTaskGetTickCount();
+    const TickType_t xPeriod = pdMS_TO_TICKS(CAN_COMM_PERIOD_MS);
+    uint8_t hb_div = 0U;
 
     for (;;)
     {
-        /* 等待 CAN 帧通知（通知值计数累加，忽略具体值）；带超时以便周期发心跳 */
-        xTaskNotifyWait(0UL, 0xFFFFFFFFUL, NULL, xHbPeriod);
+        /* 等待 CAN 帧通知；带 10ms 超时以便周期处理心跳/故障上报 */
+        xTaskNotifyWait(0UL, 0xFFFFFFFFUL, NULL, xPeriod);
 
         /* 一次性批处理缓冲内全部帧（内部 while PopFrame） */
         CANopen_OD_Process();
 
-        /* 周期发送心跳测试帧（验证 TX，分析仪可见） */
-        if ((xTaskGetTickCount() - xLastHb) >= xHbPeriod)
-        {
-            xLastHb = xTaskGetTickCount();
+        /* 故障态：每 10ms 重发 EMCY（新故障立即发；发送成功清 dirty） */
+        if (g_fault_report_active != 0U) {
+            CAN_SendFaultReport();
+        }
+
+        /* 心跳 100ms（10×10ms）；故障帧优先占用邮箱，心跳可容忍偶发丢帧 */
+        if (++hb_div >= CAN_HB_EVERY_TICKS) {
+            hb_div = 0U;
             CAN_SendHeartbeat();
         }
     }

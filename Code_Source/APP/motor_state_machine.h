@@ -70,6 +70,13 @@ typedef struct {
     MotorStateAction exit;
 } MotorActionMap_t;
 
+/*-----------------------------------------------------------
+ * 故障 CAN 上报（EMCY 0x081）：状态机维护，CommTask 发送
+ *----------------------------------------------------------*/
+extern volatile uint32_t g_fault_report_word;    /* 故障时刻锁存的 32 位掩码 */
+extern volatile uint8_t  g_fault_report_active;  /* 1=故障态（FAULT_NOW/OVER），持续上报 */
+extern volatile uint8_t  g_fault_report_dirty;   /* 1=新故障，CommTask 立即发一帧后清 */
+
 typedef struct {
     motor_event_id_t event;
     motor_state_t    cur_state;

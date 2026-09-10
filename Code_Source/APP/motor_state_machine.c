@@ -18,6 +18,8 @@
 #include "FOC_run.h"       /* MotorState */
 #include "main_user.h"     /* Param_init / Param_deinit */
 #include "identify.h"      /* 离线辨识：S_CALIB 复用 */
+#include "Safety_Module.h" /* FAULT_*_MASK（定向重初始化分类） */
+#include "CAN_bsp.h"       /* CAN_bsp_Recover（通信类故障恢复） */
 
 #include <stdio.h>
 #include <math.h>
@@ -42,6 +44,13 @@ static motor_state_t          g_cur_state = S_INIT;
 static volatile uint8_t       g_fault_pending = 0U;   /* FOC ISR 原子置位 */
 static volatile uint8_t       g_stop_pending  = 0U;   /* STOP 锁存兜底（队列满不丢） */
 static volatile uint32_t      g_fault_bits    = 0U;   /* 故障位锁存 */
+/* 故障 CAN 上报（CommTask 读、状态机维护；见 motor_state_machine.h） */
+volatile uint32_t             g_fault_report_word   = 0U;   /* 故障时刻锁存的 32 位掩码 */
+volatile uint8_t              g_fault_report_active = 0U;   /* 1=故障态，持续上报 */
+volatile uint8_t              g_fault_report_dirty  = 0U;   /* 1=新故障，需立即发一帧 */
+/* FAULT_NOW 定向软重初始化（编码器/CAN 通信，非阻塞） */
+static uint32_t               g_recovery_mask = 0U;
+static uint8_t                g_recovery_done = 0U;
 static volatile uint32_t      g_stats_posted = 0U;
 static volatile uint32_t      g_stats_dropped = 0U;
 static volatile uint32_t      g_stats_illegal = 0U;
@@ -103,6 +112,7 @@ static void state_IDLE_entry(void)
     MotorCtrl.enable = 0U;
     MotorCtrl.state  = MC_STATE_STOPPED;
     PowerStage_Disable();
+    g_fault_report_active = 0U;   /* 回 IDLE 停止故障上报 */
 }
 static void state_IDLE_do(void) { }
 
@@ -189,13 +199,39 @@ static void state_FAULT_entry(void)
     MotorState.run_state = RUNSTATE_STOPPED;
     MotorCtrl.enable = 0U;
     MotorCtrl.state  = MC_STATE_STOPPED;
-    MotorCtrl.faults |= (uint16_t)g_fault_bits;   /* 锁存故障位供状态上报 */
+    MotorCtrl.faults |= g_fault_bits;   /* 锁存故障位供状态上报（32 位，不再截断） */
+
+    /* CAN 上报准备：锁存故障字，CommTask 立即发一帧、之后每 10ms 重发 */
+    g_fault_report_word   = g_fault_bits;
+    g_fault_report_active = 1U;
+    g_fault_report_dirty  = 1U;
+
+    /* 需定向软重初始化的硬件类（编码器 / CAN 通信）；其余类下一拍即自动恢复 */
+    g_recovery_mask = g_fault_bits & (FAULT_ENCODER_MASK | FAULT_COMM_TIMEOUT_MASK);
+    g_recovery_done = (g_recovery_mask == 0U) ? 1U : 0U;
+
     printf("FSM: FAULT_NOW, fault=0x%08lX\r\n", (unsigned long)g_fault_bits);
 }
 static void state_FAULT_do(void)
 {
-    /* 恢复判定：故障位全部清除后进入 FAULT_OVER（Phase 4 由 Safety 细化） */
-    if (g_fault_bits == 0U) {
+    /* 定向软重初始化（非阻塞；失败下拍重试，仿 AC_Control 的 ops 重初始化）。
+     * 不在此做 DRV83XX_Init / Offset_Current_Start 等阻塞操作（会饿死 CommTask）。 */
+    if (g_recovery_done == 0U) {
+        uint8_t ok = 1U;
+
+        if ((g_recovery_mask & FAULT_ENCODER_MASK) != 0U) {
+            Param_init();            /* AS5600 跟踪软复位（无 I2C） */
+            Param_deinit();          /* 清 dq/PLL 滤波状态（ISR 并发仅影响个别采样） */
+            FOC_Generated_Reset();   /* 清模型控制环状态 */
+        }
+        if ((g_recovery_mask & FAULT_COMM_TIMEOUT_MASK) != 0U) {
+            ok = CAN_bsp_Recover();  /* bus-off 恢复；本已就绪则直接返回 1 */
+        }
+        g_recovery_done = ok;
+    }
+
+    /* 重初始化完成（或本类无需）→ 自动转 FAULT_OVER（不再需要手动清故障位） */
+    if (g_recovery_done != 0U) {
         MotorEvent_t evt = { 0 };
         evt.id = EVENT_FAULTtoOVER;
         evt.timestamp_ms = HAL_GetTick();
@@ -204,14 +240,26 @@ static void state_FAULT_do(void)
 }
 static void state_FAULT_exit(void)
 {
-    MotorCtrl.faults = 0U;   /* 清除锁存（分类清除策略 Phase 4 细化） */
+    /* 自动恢复：退出 FAULT_NOW 即清故障字与锁存（对应 AC 的 state_FAULT_exit） */
+    g_fault_bits     = 0U;
+    MotorCtrl.faults = 0U;
 }
 
 static void state_FAULTOVER_do(void)
 {
-    /* 电机静止后才允许回 IDLE */
+    /* 又出现故障 → 回 FAULT_NOW（防抖，仿 AC_Control） */
+    if (g_fault_bits != 0U) {
+        MotorEvent_t e = { 0 };
+        e.id = EVENT_toFAULT;
+        e.timestamp_ms = HAL_GetTick();
+        MotorStateMachine_PostEvent(&e);
+        return;
+    }
+
+    /* 电机静止 → 停止上报并回 IDLE */
     float speed = fabsf(FOC_Generated_GetSpeedRps());
     if (speed < STOP_SPEED_THRESHOLD_RPS) {
+        g_fault_report_active = 0U;
         MotorEvent_t evt = { 0 };
         evt.id = EVENT_toIDLE;
         evt.timestamp_ms = HAL_GetTick();

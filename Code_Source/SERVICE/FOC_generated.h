@@ -19,4 +19,8 @@ float FOC_Generated_GetSpeedRps(void);
 /* ---- 速度 S 曲线规划：常开（速度模式+未 coast 自动平滑）；仅机动时间可调（RTT plT） ---- */
 void FOC_SpeedPlan_SetTimeMs(uint32_t t_ms);   /* 加减速时间对称，默认 300ms */
 
+/* ---- LESO 扰动观测：带宽可调（像 Kp/Ki 传参）；<=0 即关闭（模型自动旁路） ---- */
+void  FOC_Leso_SetBwHz(float hz);
+float FOC_Leso_GetBwHz(void);
+
 #endif /* FOC_GENERATED_H */
