@@ -20,6 +20,15 @@
 #define FAULT_OVERCURRENT_MASK   (1u << 0)   /* 过流 */
 #define FAULT_SHORTCIRCUIT_MASK  (1u << 1)   /* 短路 */
 #define FAULT_OVERVOLT_MASK      (1u << 2)   /* 过压 */
+/* 非"检测器算出来"的故障：由软件/硬件状态直接上报（不在 Safety_FastStep/SlowStep 里产生）
+ *   1u << 3 : 栅极驱动 nFAULT（DRV8323 FSR1/FSR2）—— 计划 Batch 3
+ *   1u << 4 : 任务看门狗（Task_Watchdog.c 判某任务卡死后 PostFault）
+ * 这两个位都**不进** g_recovery_mask：它们不需要定向硬件重初始化，
+ * 由状态机 state_FAULT_do 走"无需恢复"分支，直接 FAULT_NOW → FAULT_OVER → IDLE。 */
+#define FAULT_GATE_DRIVER_MASK   (1u << 3)   /* 栅极驱动故障（DRV8323 FSR1/FSR2） */
+#define FAULT_TASK_WATCHDOG_MASK (1u << 4)   /* 任务看门狗：某任务卡死 */
+#define FAULT_CURRENT_SENSE_MASK (1u << 5)   /* 电流采样链故障（零偏校准未完成等） */
+
 #define FAULT_UNDERVOLT_MASK     (1u << 8)   /* 欠压 */
 #define FAULT_COMM_TIMEOUT_MASK  (1u << 13)  /* 通信超时 */
 #define FAULT_ENCODER_MASK       (1u << 14)  /* 编码器 */
@@ -93,7 +102,10 @@ typedef struct {
 /*-----------------------------------------------------------
  * API
  *----------------------------------------------------------*/
-void Safety_Config_Init(SafetyConfig_t *cfg);   /* 阈值从 Motor_Params 推算，运行期只读 */
+/* 阈值：母线电压类用板级常量（见 Safety_Module.c 文件头的依据），
+ *       电流类从 Motor_Params 推算（Current_Max×1.2 / ×1.5）。
+ * 运行期只读。注意调用点必须在 Motor_Params 赋值之后。 */
+void Safety_Config_Init(SafetyConfig_t *cfg);
 
 /* 快检：返回本周期新增紧急故障位（纯计算） */
 void Safety_FastStep(const SafetyFastInput_t *input,

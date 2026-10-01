@@ -120,7 +120,10 @@ extern void vAssertCalled(const char *pcFile, unsigned long ulLine);
 /* 供 configASSERT 与钩子引用的宏（FreeRTOS.h 引入后可展开） */
 #define INCLUDE_vTaskPrioritySet           1
 #define INCLUDE_uxTaskPriorityGet          1
-#define INCLUDE_vTaskDelete                0
+/* 任务看门狗（Task_Watchdog.c）重建卡死的非关键任务需要 vTaskDelete。
+ * 静态分配下 vTaskDelete 不释放内存（prvDeleteTCB 为空实现），
+ * 只是把 TCB 挂到终止链表，由空闲任务摘除 —— 见 Task_Watchdog.c 的两阶段重建说明。 */
+#define INCLUDE_vTaskDelete                1
 #define INCLUDE_vTaskSuspend               1
 #define INCLUDE_vTaskDelayUntil            1
 #define INCLUDE_vTaskDelay                 1

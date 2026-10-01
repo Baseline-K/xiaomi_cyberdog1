@@ -7,13 +7,14 @@
  *   → CALC(p=round(½(p_f+p_r))、dir=sign(Δθe·Δθm)、质量门限) → DONE；
  *   采集阶段失败 → FAIL_RAMP_DOWN → FAIL。
  * 复用模型 dq 电压模式（ctrl_mode=3）+ 开环电角度覆盖（反 Park 用受控角，非编码器角）。
- * 读编码器机械角（Encoder_AS5600.angle 解包）、机械速度（Speed_RPM/60）、电流幅值（Y.i_alpha/beta_meas）。
+ * 读编码器机械角（Encoder.data.mec 解包）、机械速度（模型 PLL 输出 FOC_Generated_GetSpeedRps）、电流幅值（Y.i_alpha/beta_meas）。
  * 结果存 ctx->res.pole_pairs_identified/control_to_encoder_dir，不自动写回 Motor_Params。
  */
 #include "identify.h"
 #include "identify_pole.h"
 #include "CyberDog_Motor_FOC.h"   /* Y.i_alpha_meas / i_beta_meas */
-#include "AS5600.h"               /* Encoder_AS5600.angle / Speed_RPM */
+#include "Encoder_Adapt.h"        /* Encoder.data.mec */
+#include "FOC_generated.h"        /* FOC_Generated_GetSpeedRps */
 #include "foc.h"                  /* Motor_Params / Two_PI / FOC_Frequency */
 #include <string.h>
 #include <math.h>
@@ -35,7 +36,7 @@
 #define POLE_DIR_WAIT_TIMEOUT_CNT   ((int)(FOC_Frequency * 5.0f))
 #define POLE_DIR_VOLT_TIMEOUT_CNT   ((int)(FOC_Frequency * 3.0f))
 #define POLE_DIR_ALIGN_TIMEOUT_CNT  ((int)(FOC_Frequency * 1.0f))
-#define POLE_DIR_SCAN_TIMEOUT_CNT   ((int)(FOC_Frequency * 30.0f))
+#define POLE_DIR_SCAN_TIMEOUT_CNT   ((int)(FOC_Frequency * 40.0f))
 #define POLE_PI                     3.14159265f
 
 /* ---------------- 子 FSM ---------------- */
@@ -95,7 +96,7 @@ static void pole_dir_apply_voltage(void)
 /* 编码器机械角解包（±π 判环绕） */
 static void pole_dir_update_mec_unwrapped(void)
 {
-    float mec_now = Encoder_AS5600.angle;
+    float mec_now = Encoder.data.mec;
     float mec_delta = mec_now - p_ctx.mec_last;
     if (mec_delta > POLE_PI) mec_delta -= (float)Two_PI;
     else if (mec_delta < -POLE_PI) mec_delta += (float)Two_PI;
@@ -131,7 +132,7 @@ void identify_pole_Init(Identify_Context_t *ctx)
 {
     memset(&p_ctx, 0, sizeof(p_ctx));
     p_ctx.state = POLE_DIR_INIT;
-    p_ctx.mec_last = Encoder_AS5600.angle;
+    p_ctx.mec_last = Encoder.data.mec;
     /* 结果清零（不写回 Motor_Params） */
     ctx->res.pole_pairs_identified = 0U;
     ctx->res.pole_pairs_valid      = 0U;
@@ -146,7 +147,7 @@ void identify_pole_Step(Identify_Context_t *ctx)
     const float voltage_step   = voltage_limit / (FOC_Frequency * POLE_DIR_VOLT_RAMP_TIME_S);
     const float current_target = Motor_Params.Current_Rating * POLE_DIR_CURRENT_TARGET_FRAC;
     const float ele_step       = POLE_DIR_OMEGA_E_CMD / FOC_Frequency;   /* 每拍电角增量 */
-    float speed_rps = Encoder_AS5600.Speed_RPM / 60.0f;   /* 编码器机械 RPS */
+    float speed_rps = FOC_Generated_GetSpeedRps();   /* 模型 PLL 输出的机械 RPS */
     float current_mag;
 
     if (p_ctx.state != POLE_DIR_FAIL_RAMP_DOWN && p_ctx.state != POLE_DIR_FAIL &&
@@ -160,7 +161,7 @@ void identify_pole_Step(Identify_Context_t *ctx)
     case POLE_DIR_INIT:
         p_ctx.voltage_amp = 0.0f;
         p_ctx.theta_cmd_unwrapped = 0.0f;
-        p_ctx.mec_last = Encoder_AS5600.angle;
+        p_ctx.mec_last = Encoder.data.mec;
         p_ctx.mec_unwrapped = 0.0f;
         p_ctx.state_cnt = 0; p_ctx.stable_cnt = 0;
         pole_dir_apply_voltage();

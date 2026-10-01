@@ -64,13 +64,13 @@ static uint32_t s_sysview_foc_isr_divider;
 /* USER CODE END 0 */
 
 /* External variables --------------------------------------------------------*/
-extern ADC_HandleTypeDef hadc1;
-extern ADC_HandleTypeDef hadc2;
+extern ADC_HandleTypeDef hadc3;
 extern CAN_HandleTypeDef hcan;
 extern DMA_HandleTypeDef hdma_spi2_rx;
 extern DMA_HandleTypeDef hdma_spi2_tx;
 extern SPI_HandleTypeDef hspi2;
 extern TIM_HandleTypeDef htim1;
+extern TIM_HandleTypeDef htim4;
 extern UART_HandleTypeDef huart2;
 extern TIM_HandleTypeDef htim6;
 
@@ -157,12 +157,6 @@ void UsageFault_Handler(void)
 }
 
 /**
-  * @brief System service call via SWI instruction.
-  *        FreeRTOS Cortex-M4F 端口经 Direct Routing 提供此处理器
-  *        （FreeRTOSConfig.h: #define vPortSVCHandler SVC_Handler），此处不再定义。
-  */
-
-/**
   * @brief This function handles Debug monitor.
   */
 void DebugMon_Handler(void)
@@ -174,19 +168,6 @@ void DebugMon_Handler(void)
 
   /* USER CODE END DebugMonitor_IRQn 1 */
 }
-
-/**
-  * @brief Pendable request for system service.
-  *        FreeRTOS Cortex-M4F 端口经 Direct Routing 提供此处理器
-  *        （FreeRTOSConfig.h: #define xPortPendSVHandler PendSV_Handler），此处不再定义。
-  */
-
-/**
-  * @brief System tick timer.
-  *        FreeRTOS Cortex-M4F 端口经 Direct Routing 提供此处理器
-  *        （FreeRTOSConfig.h: #define xPortSysTickHandler SysTick_Handler）。
-  *        HAL 时基已迁移到 TIM6，此处不再定义 SysTick_Handler。
-  */
 
 /******************************************************************************/
 /* STM32F1xx Peripheral Interrupt Handlers                                    */
@@ -221,34 +202,6 @@ void DMA1_Channel5_IRQHandler(void)
   /* USER CODE BEGIN DMA1_Channel5_IRQn 1 */
 
   /* USER CODE END DMA1_Channel5_IRQn 1 */
-}
-
-/**
-  * @brief This function handles ADC1 and ADC2 global interrupts.
-  */
-void ADC1_2_IRQHandler(void)
-{
-  /* USER CODE BEGIN ADC1_2_IRQn 0 */
-
-  uint32_t trace_foc_isr = 0U;
-
-  s_sysview_foc_isr_divider++;
-  if (s_sysview_foc_isr_divider >= SYSVIEW_FOC_ISR_DECIMATION) {
-    s_sysview_foc_isr_divider = 0U;
-    trace_foc_isr = 1U;
-    SEGGER_SYSVIEW_RecordEnterISR();
-  }
-
-  /* USER CODE END ADC1_2_IRQn 0 */
-  HAL_ADC_IRQHandler(&hadc1);
-  HAL_ADC_IRQHandler(&hadc2);
-  /* USER CODE BEGIN ADC1_2_IRQn 1 */
-
-  if (trace_foc_isr != 0U) {
-    SEGGER_SYSVIEW_RecordExitISR();
-  }
-
-  /* USER CODE END ADC1_2_IRQn 1 */
 }
 
 /**
@@ -315,6 +268,20 @@ void TIM1_UP_IRQHandler(void)
 }
 
 /**
+  * @brief This function handles TIM4 global interrupt.
+  */
+void TIM4_IRQHandler(void)
+{
+  /* USER CODE BEGIN TIM4_IRQn 0 */
+
+  /* USER CODE END TIM4_IRQn 0 */
+  HAL_TIM_IRQHandler(&htim4);
+  /* USER CODE BEGIN TIM4_IRQn 1 */
+
+  /* USER CODE END TIM4_IRQn 1 */
+}
+
+/**
   * @brief This function handles SPI2 global interrupt.
   */
 void SPI2_IRQHandler(void)
@@ -340,6 +307,34 @@ void USART2_IRQHandler(void)
   /* USER CODE BEGIN USART2_IRQn 1 */
 
   /* USER CODE END USART2_IRQn 1 */
+}
+
+/**
+  * @brief This function handles EXTI line[15:10] interrupts.
+  */
+void EXTI15_10_IRQHandler(void)
+{
+  /* USER CODE BEGIN EXTI15_10_IRQn 0 */
+
+  /* USER CODE END EXTI15_10_IRQn 0 */
+  HAL_GPIO_EXTI_IRQHandler(DRV8232_nFAULT_Pin);
+  /* USER CODE BEGIN EXTI15_10_IRQn 1 */
+
+  /* USER CODE END EXTI15_10_IRQn 1 */
+}
+
+/**
+  * @brief This function handles ADC3 global interrupt.
+  */
+void ADC3_IRQHandler(void)
+{
+  /* USER CODE BEGIN ADC3_IRQn 0 */
+
+  /* USER CODE END ADC3_IRQn 0 */
+  HAL_ADC_IRQHandler(&hadc3);
+  /* USER CODE BEGIN ADC3_IRQn 1 */
+
+  /* USER CODE END ADC3_IRQn 1 */
 }
 
 /**

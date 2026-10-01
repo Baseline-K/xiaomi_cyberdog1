@@ -98,6 +98,10 @@ void MotorStateMachine_PostFault(uint32_t mask);
 /* 清除故障位（恢复判定：故障位清零后 FAULT_NOW_do 才转 FAULT_OVER） */
 void MotorStateMachine_ClearFault(uint32_t mask);
 
+/* 当前锁存的故障位（ISR/任务皆可读，纯读一个 uint32）。
+ * 用于 PowerStage_Enable() 的故障闸门等"不能等状态机"的场合。 */
+uint32_t MotorStateMachine_GetFaultBits(void);
+
 /* STOP 锁存兜底（队列满时 STOP 不丢失，计划 §5.3） */
 void MotorStateMachine_PostStop(void);
 

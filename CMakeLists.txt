@@ -69,6 +69,13 @@ file(GLOB_RECURSE CODE_SOURCE_SRC_ALL
 # Exclude SoftIIC_Fast and SoftIIC_General implementations (use MID_SoftIIC wrapper instead)
 list(FILTER CODE_SOURCE_SRC_ALL EXCLUDE REGEX "SoftIIC_Fast/")
 list(FILTER CODE_SOURCE_SRC_ALL EXCLUDE REGEX "SoftIIC_General/")
+# 2026-09-27：PA5/PC4 被输出端 6 路线性霍尔的 ADC 输入占用，AS5600 的软件 I2C
+# 已经没有引脚可用（CubeMX 再生成后 IIC_SDA/SCL 标签消失，Soft_IIC.c 直接编译失败）。
+# 编码器已换成 AS5047，故整条 AS5600 路径从构建中排除。
+# 若要恢复：注释掉下面两条 EXCLUDE，并把 Encoder_Adapt.h 的
+# ENCODER_SERVICE_ENABLE_AS5600 改回 1（同时必须先给软件 I2C 重新分配两个空闲引脚）。
+list(FILTER CODE_SOURCE_SRC_ALL EXCLUDE REGEX "MID_SoftIIC/")
+list(FILTER CODE_SOURCE_SRC_ALL EXCLUDE REGEX "BSP/AS5600\\.c$")
 # Exclude drv835x.c — conflicts with drv83xx.c (both define global stru_config)
 list(FILTER CODE_SOURCE_SRC_ALL EXCLUDE REGEX "BSP/DRV8353/")
 # Exclude stm32f1xx_hal_can_gd32.c — already compiled in STM32_Drivers via CubeMX CMakeLists

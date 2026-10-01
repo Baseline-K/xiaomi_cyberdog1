@@ -376,7 +376,14 @@ typedef struct
 } StruDRV83XXCfgPara;
  
  
-void DRV83XX_Init(void);
+/* 返回 0 = 配置写入并逐寄存器回读校验通过；-1 = 写/校验失败。
+ * 调用方（main_user）必须检查：写失败意味着 CSA 增益/保护阈值可能不是我们想要的。 */
+int  DRV83XX_Init(void);
+/* 启动期打印读回的关键寄存器（CSA_GAIN/SEN_LVL/VDS_LVL/OCP_MODE/FSR1/FSR2） */
+void DRV83XX_PrintConfig(void);
+/* 读 FSR1/FSR2（读即清锁存）+ 解码打印，返回 nFAULT(PA12) 是否已释放。
+ * 任务上下文调用（含阻塞 SPI/printf），ISR 里禁止调用。 */
+int  DRV83XX_ReadAndClearFaults(void);
 int DRV83XX_updateCfgPara(Stru_DRV83XX *stru_DRV83xxObj, StruDRV83XXCfgPara stru_config);
  
 void DRV83XX_read_ALLReg(Stru_DRV83XX *stru_DRV83xxObj);

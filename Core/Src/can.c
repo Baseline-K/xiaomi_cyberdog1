@@ -88,9 +88,7 @@ void HAL_CAN_MspInit(CAN_HandleTypeDef* canHandle)
 
     __HAL_AFIO_REMAP_CAN1_2();
 
-    /* CAN1 interrupt Init
-     * GD32_NOTE: 优先级移到 6（≥ configLIBRARY_MAX_SYSCALL_INTERRUPT_PRIORITY=5），
-     * 允许 RX0 ISR 调用 vTaskNotifyGiveFromISR 通知 CommTask（计划 §4 表）。 */
+    /* CAN1 interrupt Init */
     HAL_NVIC_SetPriority(USB_HP_CAN1_TX_IRQn, 6, 0);
     HAL_NVIC_EnableIRQ(USB_HP_CAN1_TX_IRQn);
     HAL_NVIC_SetPriority(USB_LP_CAN1_RX0_IRQn, 6, 0);

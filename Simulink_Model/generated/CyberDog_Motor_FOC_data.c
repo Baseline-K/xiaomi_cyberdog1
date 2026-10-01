@@ -5,7 +5,7 @@
  *
  * Model version                  : 1.56
  * Simulink Coder version         : 25.2 (R2025b) 28-Jul-2025
- * C/C++ source code generated on : Fri Sep 11 01:24:13 2026
+ * C/C++ source code generated on : Thu Sep 24 01:32:40 2026
  *
  * Target selection: ert.tlc
  * Embedded hardware selection: Intel->x86-64 (Windows64)
@@ -19,9 +19,9 @@
 const ConstP_CyberDog_Motor_FOC_T CyberDog_Motor_FOC_ConstP = {
   /* Pooled Parameter (Expression: )
    * Referenced by:
-   *   '<S113>/sine_table_values'
-   *   '<S359>/sine_table_values'
-   *   '<S105>/sine_table_values'
+   *   '<S114>/sine_table_values'
+   *   '<S360>/sine_table_values'
+   *   '<S106>/sine_table_values'
    */
   { 0.0F, 0.00785390101F, 0.0157073177F, 0.023559764F, 0.0314107575F,
     0.0392598175F, 0.0471064523F, 0.0549501814F, 0.0627905205F, 0.070626989F,

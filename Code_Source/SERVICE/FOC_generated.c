@@ -16,7 +16,7 @@
 #include "motor_command_snapshot.h"
 #include "foc.h"
 #include "FOC_run.h"
-#include "AS5600.h"               /* Encoder_AS5600.eleangle */
+#include "Encoder_Adapt.h"        /* 编码器服务层：Encoder.data.ele */
 #include "identify.h"             /* g_ident_eleangle_ovr（极对数辨识开环电角覆盖） */
 #include "speed_plan.h"           /* 速度 S 曲线规划（喂给生成速度环/前馈） */
 #include "position_plan.h"        /* 位置 S 曲线规划（位置模式 + 速度/加速度前馈） */
@@ -187,7 +187,7 @@ void FOC_Generated_Step(void)
     if (g_ident_eleangle_ovr) {
         CyberDog_Motor_FOC_U.eleangle = g_ident_eleangle;   /* 极对数辨识：受控开环电角度（反 Park 用） */
     } else {
-        CyberDog_Motor_FOC_U.eleangle = Encoder_AS5600.eleangle;   /* 原始电角度 rad, PLL 在模型内部 */
+        CyberDog_Motor_FOC_U.eleangle = Encoder.data.ele;   /* 原始电角度 rad, PLL 在模型内部 */
     }
     CyberDog_Motor_FOC_U.pll_reset  = 0.0f;   /* PLL 常跟踪（coast 也跟踪，保证转速实时） */
     CyberDog_Motor_FOC_U.id_ref     = 0.0f;   /* 辨识也要 id=0 */
@@ -240,6 +240,11 @@ void FOC_Generated_Step(void)
 float FOC_Generated_GetSpeedRps(void)
 {
     return CyberDog_Motor_FOC_Y.speed_meas_rps;   /* 机械转速 RPS（模型 PLL 输出） */
+}
+
+float FOC_Generated_GetAccelRps2(void)
+{
+    return CyberDog_Motor_FOC_Y.accel_meas_rps2;  /* 机械加速度 RPS/s（模型 AccelEst 输出） */
 }
 
 /* ---- 速度 S 曲线规划：常开；机动时间可调（RTT plT） ---- */

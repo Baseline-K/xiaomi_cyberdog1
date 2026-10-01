@@ -11,10 +11,22 @@
 
 
 
-#define SHUNT_RESISTENCE	0.1f								// Resistance of phase current sampling resistor
-#define V_SCALE (16.0f * 3.3f / 4095.0f)     					// Bus volts per A/D Count (0.015311 V)
-#define I_SCALE 0.00161133f   //Amps per A/D Count ：(3.3f / 4095.0f) / SHUNT_RESISTENCE / 5.0f	
-//0.0201416f   //Amps per A/D Count ：(3.3f / 4095.0f) / SHUNT_RESISTENCE / 40.0f	
+#define SHUNT_RESISTENCE	0.001f								// 相电流采样电阻 1 mΩ（新版硬件；必须 Kelvin 四线接法）
+#define V_SCALE (16.0f * 3.3f / 4095.0f)     					// 12.894 mV/码；16:1分压+3.3V基准 -> 满量程 52.8V，24V≈1861码
+#define CSA_GAIN_VV        20.0f       /* DRV8323 电流放大器增益 V/V。
+                                        * !! 必须与 drv83xx.c 里 .CSA_GAIN = CSA_GAIN_20 一致 !!
+                                        * 不一致则所有电流读数/过流阈值成比例错，是最危险的配置错误。
+                                        * main_user 启动时会读回 CSACR 做一致性检查并打印。 */
+#define I_SCALE  ((3.3f / 4095.0f) / (SHUNT_RESISTENCE * CSA_GAIN_VV))	
+/* Amps per A/D Count = (3.3/4095) / (Rs × Gain)
+ *   = 8.0586e-4 / (0.001 × 20) = 4.02931e-2 A/码（40.3 mA/码）
+ * 双向采样（偏置 VREF/2 = 1.65V）量程 = ±1.65 / (0.001 × 20) = ±82.5 A
+ *   20 A（Current_Rating 峰值额定）  =  496 码
+ *   40 A（Current_Max）             =  993 码
+ *   48 A（软件过流 Current_Max×1.2）= 1191 码（58% 满量程）
+ *   60 A（软件短路 ×1.5）           = 1489 码
+ * 分流电阻功耗：20 A 峰值 0.4 W / 40 A 峰值 1.6 W → 选 2 W 的 2512/2725。
+ * 注意：改 Rs / 增益后所有电流阈值全部跟着变，必须重新跑 identify r → l → flux → j。 */	
 
 
 
@@ -82,6 +94,7 @@ typedef struct {
 extern MotorState_t MotorState;
 
 extern float g_mech_pos_rad;   /* 连续机械角(rad, 多圈)，10kHz ISR 累加 */
+extern float Vbus;             /* 母线电压实测值 V（FOC ISR 每拍更新） */
 
 
 

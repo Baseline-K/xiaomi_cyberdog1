@@ -12,6 +12,32 @@
 
 SafetyConfig_t Safety_Config;
 
+/*-----------------------------------------------------------
+ * 母线电压保护阈值 —— 板级常量，与电机型号无关
+ *
+ * 依据（本板硬件规格）：
+ *   板级推荐输入 24 V，输入范围 12–30 V
+ *   母线电容耐压 50 V  -> 硬闸 40 V，留 20% 余量
+ *   MOSFET Vds    60 V  -> 硬闸 40 V，留 33% 余量
+ *   母线采样：16:1 分压 + 3.3 V 基准 -> 满量程 16*3.3 = 52.8 V
+ *            V_SCALE = 16*3.3/4095 = 12.894 mV/码；24 V ≈ 1861 码，量程充足
+ *
+ * 取值：
+ *   40 V  瞬时硬闸：>40 V 立即关功率（FastStep），由器件耐压决定
+ *   33 V  软积分起点：超过即按 (vbus-33)*dt 积分，累到 100 V·ms 触发
+ *                     33 V = 板级上限 30 V × 1.1；24 V 正常再生过冲不会误报
+ *                     36 V 持续 ~33 ms / 38 V ~20 ms / 39 V ~17 ms 触发
+ *    9 V  欠压起点：板级下限 12 V 之下的硬件兜底，略高于 DRV8353 自身 VM UVLO，
+ *                   构成"先报欠压、再等驱动 UVLO"的分层保护
+ *
+ * 换板子只改这 4 个数。不要用 Motor_Params.VBUS 推导：该字段每个 ISR 都被
+ * 实测母线电压覆盖（FOC_run.c），语义是"当前母线电压"而非"电机额定电压"。
+ *----------------------------------------------------------*/
+#define BOARD_VBUS_OV_HARD_V      40.0f
+#define BOARD_VBUS_OV_SOFT_V      33.0f
+#define BOARD_VBUS_OV_TRIP_VMS   100.0f
+#define BOARD_VBUS_UV_V            9.0f
+
 /* 测试强制位（仅调试） */
 static volatile uint32_t g_safety_test_force = 0U;
 
@@ -39,13 +65,18 @@ void Safety_Config_Init(SafetyConfig_t *cfg)
 {
     (void)0;
     *cfg = (SafetyConfig_t){
-        .v_bus_over_V           = 15.0f,   /* 过压瞬时硬闸（极端；原 14.5，需允许短暂再生过冲把软积分做主角） */
-        .vbus_over_soft_V       = 14.0f,   /* 过压软积分起点：14.0V 持续约 500ms / 14.5V~200ms / 14.8V~125ms 触发 */
-        .vbus_over_trip_Vms     = 100.0f,
-        .v_bus_under_V          = 9.0f,    /* 欠压软积分起点：8.2V~500ms / 7.5V~266ms / 6V~133ms 触发 */
+        .v_bus_over_V           = BOARD_VBUS_OV_HARD_V,   /* 板级常量：见文件头说明 */
+        .vbus_over_soft_V       = BOARD_VBUS_OV_SOFT_V,   /* 板级常量 */
+        .vbus_over_trip_Vms     = BOARD_VBUS_OV_TRIP_VMS,
+        .v_bus_under_V          = BOARD_VBUS_UV_V,        /* 板级常量 */
         .vbus_under_trip_Vms    = 400.0f,
-        .current_over_A         = 3.0f,    /* 高于典型启动电流，低于堵转(12V/3.2Ω≈3.75A) */
-        .shortcircuit_A         = 5.0f,    /* 高于堵转，异常大电流视为短路 */
+        /* 电流类阈值从 Motor_Params 推算（调用点在 Motor_Params 赋值之后）。
+         * 单位统一是**相电流峰值**（FOC_run.c 里 ia/ib/ic 就是瞬时相电流）。
+         * 现硬件：Rs=1mΩ + CSA 增益 20 → ±82.5A 量程，40.3mA/码。
+         *   20A(Current_Rating) =  496码   40A(Current_Max) =  993码
+         *   48A(过流 ×1.2)      = 1191码   60A(短路 ×1.5)   = 1489码 */
+        .current_over_A         = Motor_Params.Current_Max * 1.2f,   /* 48A：在峰值上限之上留 20% 余量 */
+        .shortcircuit_A         = Motor_Params.Current_Max * 1.5f,   /* 60A：明显畸变的大电流视为短路 */
         .locked_current_thr_A   = Motor_Params.Current_Rating * 0.8f,
         .locked_speed_thr_rps   = 0.5f,
         .locked_thr_ms          = 2000U,

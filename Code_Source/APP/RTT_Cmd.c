@@ -20,6 +20,14 @@
 #include "app_tasks.h"   /* AppTasks_Diag */
 #include "identify.h"   /* 离线辨识命令 */
 #include "FOC_generated.h"   /* 速度 S 曲线规划 / 前馈开关 */
+#include "FOC_run.h"   /* Vbus / V_SCALE（get 命令的母线电压自检） */
+#include "Encoder_Adapt.h"   /* 编码器状态自检 */
+/* 直接引用 AS5047 驱动只为一件事：打印阻塞读超时的时基状态 as5047_dwt_state。
+ * 适配层是给"换编码器不动别处"用的，但"超时判据有没有失效"是驱动内部的
+ * 安全属性，不该被适配层抽象掉 —— 所以这里刻意穿透一层。 */
+#include "AS5047.h"
+#include "Task_Watchdog.h"  /* 复位原因 + 任务看门狗自检 */
+#include "main_user.h"      /* Hall_ADC_DMA / Vbus_ADC_DMA（双路径电压与霍尔原始码自检） */
 #include "main.h"   /* HAL_GetTick */
 #include <stdio.h>
 #include <stdlib.h>
@@ -76,6 +84,84 @@ static void print_status(void)
            (double)MotorCtrl.pos_ref, (unsigned)MotorCtrl.state, sn,
            (unsigned long)posted, (unsigned long)dropped,
            (unsigned long)illegal, (unsigned long)fault_forced);
+    /* 母线电压（16:1 分压满量程 52.8V，24V 应约 1861 码）：
+     * 来源 = ADC3 注入 rank2（PC3 / ADC3_IN13），与两个电流同被 TIM1_TRGO 触发、
+     * PWM 同步采样，由 FOC ISR 读进 Vbus。慢安全用的是同一个值。 */
+    printf("  vbus=%.2fV  adc=%u  full-scale=%.1fV  ov_hard=%.1fV ov_soft=%.1fV uv=%.1fV\r\n",
+           (double)Vbus,
+           (unsigned)((Vbus / V_SCALE) + 0.5f),
+           (double)(16.0f * 3.3f),
+           (double)Safety_Config.v_bus_over_V,
+           (double)Safety_Config.vbus_over_soft_V,
+           (double)Safety_Config.v_bus_under_V);
+    /* 输出端 6 路线性霍尔原始码（1kHz 扫描，rank 顺序 = PA4 PA5 PA6 PA7 PC4 PC5）。
+     * 静止时应都在中点附近（约 2048）且 6 路不全相同；手动转输出轴时应看到
+     * 6 路依次呈正弦变化。全 0 = ADC1 规则组没被 SWSTART 启动；
+     * 6 路完全相同 = DMA 长度不对或只采到了一个通道。 */
+    printf("  hall: %u %u %u %u %u %u\r\n",
+           (unsigned)Hall_ADC_DMA[0], (unsigned)Hall_ADC_DMA[1],
+           (unsigned)Hall_ADC_DMA[2], (unsigned)Hall_ADC_DMA[3],
+           (unsigned)Hall_ADC_DMA[4], (unsigned)Hall_ADC_DMA[5]);
+    /* 电流采样链自检：
+     *   cal_done=1 表示上电零偏校准采满 OFFSET_CAL_SAMPLES 拍；0 = 超时失败
+     *   （已退回中点 2048 并上报 FAULT_CURRENT_SENSE_MASK，且 main_user 会跳过
+     *   强拖和编码器零位校准）。n = 实际采到的拍数。
+     *   ib/ic 是实测零偏码值，静止无电流时应都在 ~2048（1.65V 中点）附近，
+     *   两者差几十个码属正常（运放/采样电阻容差）。 */
+    printf("  cur: cal_done=%u n=%u  offset ib=%ld ic=%ld (mid=%u)\r\n",
+           (unsigned)g_offset_cal_done,
+           (unsigned)g_offset_cal_count,
+           (long)foc_abc_current_i.offset_phase_ib,
+           (long)foc_abc_current_i.offset_phase_ic,
+           (unsigned)2048U);
+    /* 编码器自检：err 是通信错误累计，streak 是"连续取不到样本"的当前拍数
+     * （到 ENCODER_FAULT_STREAK_N 就报 FAULT_ENCODER_MASK 并清零重计时），
+     * posts 是累计上报次数。streak 持续增长 = 编码器有问题。 */
+    printf("  enc=%s status=%d err=%lu miss=%lu streak=%lu/%u posts=%lu\r\n",
+           Encoder_GetName(),
+           (int)Encoder_GetStatus(),
+           (unsigned long)Encoder.data.error_cnt,
+           (unsigned long)Encoder.data.miss_cnt,
+           (unsigned long)Encoder.fault_streak,
+           (unsigned)ENCODER_FAULT_STREAK_N,
+           (unsigned long)Encoder.fault_posts);
+    /* 阻塞读超时的时基状态（AS5047.h 的 as5047_dwt_state）：
+     *   1 = DWT 周期计数器在跑，使用微秒级帧截止时间（另有轮询次数硬上限）；
+     *   2 = **没在跑**，超时已退化成"最大轮询次数"兜底 —— 不会死等，但精度很差。
+     *   0 = 还没探测（编码器没初始化）。正常必须恒为 1；出现 2 说明 DWT 被谁关了，
+     *   同时 FOC ISR 的 WCET 也会是 0，别拿那时的 WCET 数字去做优化决策。 */
+    printf("  enc-timebase: dwt=%u (0=untested 1=ok 2=fallback)\r\n",
+           (unsigned)as5047_dwt_state);
+    printf("  enc-stream: mode=%u real=%lu age=%luus prime=%lu timeout=%lu stale=%lu read=%lu/max=%lu cycles\r\n",
+           (unsigned)AS5047_READ_MODE,
+           (unsigned long)Encoder_AS5047.valid_sample_seq,
+           (unsigned long)Encoder_AS5047.sample_age_us,
+           (unsigned long)Encoder_AS5047.priming_frames,
+           (unsigned long)Encoder_AS5047.transfer_timeouts,
+           (unsigned long)Encoder_AS5047.stale_samples,
+           (unsigned long)Encoder_AS5047.read_cycles,
+           (unsigned long)Encoder_AS5047.max_read_cycles);
+    /* 速度预测补帧自检（驱动读失败时用上一拍速度外推一帧角度，保证喂给模型 PLL
+     * 的角度连续，避免 PLL 相位跟踪器在"输入冻结"时速度先过冲再塌陷）：
+     *   pred = 累计补帧数（缓慢增长 = 偶发丢帧被平滑掉了）
+     *   now  = 当前连续补帧数（持续不为 0 = 链路不稳）
+     *   max  = 历史最长连续补帧数（到 window 就是"预测额度用尽→报故障"那一刻）
+     * 补帧**不算**健康样本，仍计入 streak，所以 streak 与 now 会同步增长。 */
+    printf("  enc-pred: pred=%lu now=%lu max=%lu (window=%u frames)\r\n",
+           (unsigned long)Encoder.data.predicted_cnt,
+           (unsigned long)Encoder.data.predict_streak,
+           (unsigned long)Encoder.data.max_predict_streak,
+           (unsigned)ENCODER_FAULT_STREAK_N);
+    /* 看门狗自检：
+     *   reset=     上一次复位原因（IWDG_TIMEOUT 表示上一轮有喂狗点漏了）
+     *   stall=     任务看门狗累计判定卡死次数（正常恒为 0）
+     *   rebuild=   卡死的非关键任务自动重建次数（正常恒为 0）
+     * 详细分任务计数见 RTT `diag` 命令。 */
+    printf("  wdg: reset=%s was_iwdg=%u stall=%lu rebuild=%lu\r\n",
+           Twdt_ResetCauseName(Twdt_GetResetCause()),
+           (unsigned)Twdt_IsWatchdogReset(),
+           (unsigned long)Twdt_GetStallCount(),
+           (unsigned long)Twdt_GetRebuildCount());
 }
 
 /* 把命令构造为事件投递（参数取自 MotorCtrl 影子值，3b 由状态机提交快照） */

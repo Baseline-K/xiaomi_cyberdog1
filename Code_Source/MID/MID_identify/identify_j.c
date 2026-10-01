@@ -64,7 +64,11 @@ static struct {
     int   pt_idx;
     int   count;
     float iq_ref;
-    uint8_t sat_prev;             /* 上一拍是否电压饱和（上升沿打印警告） */
+    uint8_t sat_prev;             /* 上一拍是否电压饱和（保留，供扩展） */
+    uint32_t sat_ticks_accel;     /* 加速采样期内被判电压饱和的拍数 */
+    uint32_t tot_ticks_accel;     /* 加速采样期总拍数 */
+    uint32_t sat_ticks_decel;     /* 减速采样期内被判电压饱和的拍数 */
+    uint32_t tot_ticks_decel;     /* 减速采样期总拍数 */
     float wm_prev, alpha_lpf;
     InertiaData_t accel_data[INERTIA_IQ_NUM];
     InertiaData_t decel_data[INERTIA_IQ_NUM];
@@ -151,8 +155,11 @@ void identify_j_Step(Identify_Context_t *ctx)
         InertiaData_t *pd = &j_ctx.accel_data[j_ctx.pt_idx];
         /* 电压饱和检测：实测 iq 偏离指令 >20%（电流环电压饱和 iq 塌陷）→ 该样本不采 */
         int saturated = (fabsf(iq_now - j_ctx.iq_ref) > INERTIA_IQ_SAT_FRAC * iq_target);
-        if (saturated && !j_ctx.sat_prev) {
-            printf("INERTIA: SAT pt=%d accel\r\n", j_ctx.pt_idx);
+        /* 只累计、不逐拍打印：iq 会在门限附近反复抖动，原来按"上升沿"打印
+         * 一次辨识仍能刷出上百行。比例在最后的汇总行里给出。 */
+        j_ctx.tot_ticks_accel++;
+        if (saturated) {
+            j_ctx.sat_ticks_accel++;
         }
         j_ctx.sat_prev = (uint8_t)saturated;
         if (!saturated && fabsf(alpha_now) > INERTIA_MIN_ALPHA) {
@@ -206,8 +213,10 @@ void identify_j_Step(Identify_Context_t *ctx)
         InertiaData_t *pd = &j_ctx.decel_data[j_ctx.pt_idx];
         /* 电压饱和检测（iq_cmd = −target；iq 偏离指令 → 不采） */
         int saturated = (fabsf(iq_now - j_ctx.iq_ref) > INERTIA_IQ_SAT_FRAC * iq_target);
-        if (saturated && !j_ctx.sat_prev) {
-            printf("INERTIA: SAT pt=%d decel\r\n", j_ctx.pt_idx);
+        /* 同上：只累计，不逐拍打印 */
+        j_ctx.tot_ticks_decel++;
+        if (saturated) {
+            j_ctx.sat_ticks_decel++;
         }
         j_ctx.sat_prev = (uint8_t)saturated;
         if (!saturated && alpha_now < -INERTIA_MIN_ALPHA) {
@@ -285,6 +294,12 @@ void identify_j_Step(Identify_Context_t *ctx)
             printf("INERTIA: J_accel=%.7f J_decel=%.7f J=%.7f err=%.3f (n=%d/%d)\r\n",
                    (double)j_ctx.J_accel, (double)j_ctx.J_decel, (double)j_ctx.J_avg,
                    (double)j_ctx.J_error, n_acc, n_dec);
+            /* 电压饱和统计：饱和拍已被排除出拟合（见 INERTIA_*_SAMPLE 分支），
+             * 但如果比例很高说明 iq 根本没跟上指令，J 的可信度要打折。
+             * accel/decel 各给 分子/分母，比例 = 饱和拍/总采样拍。 */
+            printf("INERTIA: SAT accel=%lu/%lu decel=%lu/%lu (rejected from fit)\r\n",
+                   (unsigned long)j_ctx.sat_ticks_accel, (unsigned long)j_ctx.tot_ticks_accel,
+                   (unsigned long)j_ctx.sat_ticks_decel, (unsigned long)j_ctx.tot_ticks_decel);
         } else {
             ctx->res.J = -1.0f;
             ctx->task_fail_flag = 1;

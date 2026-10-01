@@ -4,10 +4,11 @@
 #include "SEGGER_RTT_Port.h"
 
 #include "foc.h"
-#include "AS5600.h"
+#include "Encoder_Adapt.h"        /* 编码器服务层：Encoder_Update / Encoder.data */
 #include "Safety_Module.h"        /* Safety_FastStep */
 #include "motor_state_machine.h"  /* MotorStateMachine_PostFault */
 #include "identify.h"             /* 离线辨识：RUNSTATE_IDENTIFYING 时填电压输入 */
+#include "MotorCtrl.h"            /* PowerStage_MoeOff（快检无条件关断） */
 
 #define DEBUG 1
 #if DEBUG
@@ -30,6 +31,14 @@ extern TIM_HandleTypeDef htim1;
 uint32_t start,end,cycles;
 float time_us;
 volatile uint32_t g_foc_wcet_us = 0U;   /* FOC ISR 最大耗时（us），DiagTask/Ozone 只读 */
+/* FOC ISR 进入次数。用途：`diag` 里直接看这个数有没有在涨，就能判定
+ * "采样链路是否活着" —— 它是 TIM1_TRGO(OC4REF) → ADC 注入 → JEOC 整条链的存活指示。 */
+volatile uint32_t g_foc_isr_cnt = 0U;
+/* 输出端霍尔扫描分频：10kHz / 10 = 1kHz（见 ISR 内写 SWSTART 的那段） */
+static uint8_t    s_hall_scan_div = 0U;
+/* 霍尔扫描序号（seqlock）：ISR 在启动新一轮扫描前 +1；
+ * 解码侧读前/读后各取一次，不相等就重读，避免读到"半新半旧"的 6 通道快照。 */
+volatile uint32_t g_hall_scan_seq = 0U;
 volatile uint32_t g_foc_isr_us  = 0U;   /* FOC ISR 每周期耗时（us），Ozone 实时观察 */
 void (* func_ptr)(ADC_HandleTypeDef *hadc) = NULL;
 // 10khz  ADC注入组采样完成中断
@@ -40,19 +49,61 @@ float Predict_eleangle;
 float g_mech_pos_rad = 0.0f;
 static float g_last_angle_rad = -1.0f;   /* <0 = 首样本哨兵 */
 
-float Phase_Ra,Phase_Rb,Phase_Rc, Vbus;
-float Phase_La,Phase_Lb,Phase_Lc, Vbus;
+float Phase_Ra,Phase_Rb,Phase_Rc;
+float Phase_La,Phase_Lb,Phase_Lc;
+/* 母线电压。**初值必须给标称值**（原来两行都是无初值的暂定定义 → 上电为 0）：
+ * 模型用 Motor_Params.VBUS 做 SVPWM 归一化，若 ADC3 还没出数就停在 0，
+ * 会算出 Inf/NaN；而 NaN 会让 S_FAULT_OVER 的 fabsf(speed) < 0.1 恒为 false，
+ * 状态机从此卡死在 FAULT_OVER 出不来（实测踩过）。 */
+float Vbus = 24.0f;
+
+/* 编码器一拍耗时（µs，DWT 实测，SystemCoreClock 推导）。g_enc_read_wcet_us 是
+ * 上电以来的最大值。用途：证明/推翻"编码器读取占了多少 FOC 中断预算"这类估算。
+ * 期望：AS5047 阻塞读（2 帧 @7.5MHz + 4 次 t_CSn/t_L 间隔）约 6 us。
+ * 若明显更大，先查 as5047_cs_gap 与 SPI 分频，而不是去改协议。 */
+volatile uint32_t g_enc_read_us      = 0U;
+volatile uint32_t g_enc_read_wcet_us = 0U;
 void HAL_ADCEx_InjectedConvCpltCallback( ADC_HandleTypeDef *hadc)
 {
 	uint32_t _isr_t0 = DWT->CYCCNT;   /* FOC ISR 耗时测量（DWT 120MHz，SEGGER_RTT_Port 已使能） */
 
-	if( hadc->Instance == hadc1.Instance)
+	/* 进入次数必须记在**所有提前 return 之前**：下面的校准路径会直接 return，
+	 * 而这个计数被 SafetyTask 用作"IWDG 是否允许喂狗"的判据 ——
+	 * 只要 ISR 进了就该算数，否则会在校准期间误判"采样链路已死"。
+	 * （当前 RUNSTATE_CALIBRATING 只在调度器启动前出现，由 TIM4 喂狗，暂时不会踩到；
+	 *   但语义上必须这样，将来校准若移到任务域就不会出事。） */
+	g_foc_isr_cnt++;
+
+	if( hadc->Instance == hadc3.Instance)
 	{
+		/* ===== 必须每拍重新使能 JEOC 中断（否则只会进一次！）=====
+		 * F1 HAL 的 HAL_ADC_IRQHandler 在注入 EOC 分支里有这么一段：
+		 *     if (ADC_IS_SOFTWARE_START_INJECTED(hadc) ||
+		 *         (JAUTO==0 && ADC_IS_SOFTWARE_START_REGULAR(hadc) &&
+		 *          hadc->Init.ContinuousConvMode == DISABLE))
+		 *     { __HAL_ADC_DISABLE_IT(hadc, ADC_IT_JEOC); }     // ← 关掉 JEOCIE
+		 *     HAL_ADCEx_InjectedConvCpltCallback(hadc);         // ← 才调回调
+		 *     __HAL_ADC_CLEAR_FLAG(hadc, JSTRT|JEOC);           // ← 回调之后才清标志
+		 *
+		 * 本工程三个 ADC 的规则组都是 ADC_SOFTWARE_START（宏为真），
+		 * 而注入组是 T1_TRGO（不是 JSWSTART，宏为假），
+		 * 所以上面那个条件**等价于 ContinuousConvMode == DISABLE**。
+		 * 一旦成立，HAL 在第一次注入中断后就把 JEOCIE 关掉 →
+		 * **FOC 中断只进一次，之后再无触发**（实测症状：INIT 里进一次，进 IDLE 后再没进）。
+		 *
+		 * HAL 是在调用本回调**之前**关的，所以在这里重新使能是最直接、最稳的修法 ——
+		 * 不再依赖"某个 ADC 的 ContinuousConvMode 必须配成 ENABLE"这种隐式耦合。
+		 * 另外 adc.c 里也把 ADC3 的 ContinuousConvMode 配成 ENABLE 做双保险。
+		 * 注意不能依赖"读 JDR 会自动清 JEOC"这种未核实的行为：清标志由 HAL 在回调后显式做。 */
+		__HAL_ADC_ENABLE_IT(hadc, ADC_IT_JEOC);
 
 		if(MotorState.run_state == RUNSTATE_CALIBRATING)
 		{
 			Offset_CurrentReading();
-			{   uint32_t _el = (DWT->CYCCNT - _isr_t0) / 120U;   /* cycles → µs @120MHz */
+			/* 注意 DWT->CYCCNT 计的是 HCLK（本板 120MHz）。这里用 SystemCoreClock 推导，
+		 * 不要写死 120：改主频（或换回 72MHz 的 STM32F103）时 WCET 数字才不会静默失真。
+		 * 与 AS5047 驱动的寄存器级超时用同一套时钟推导口径。 */
+		{   uint32_t _el = (DWT->CYCCNT - _isr_t0) / (SystemCoreClock / 1000000U);
 			    g_foc_isr_us = _el;
 			    if (_el > g_foc_wcet_us) g_foc_wcet_us = _el; }
 			  return;
@@ -74,9 +125,26 @@ void HAL_ADCEx_InjectedConvCpltCallback( ADC_HandleTypeDef *hadc)
 		
 		//Predict_eleangle = VF_IF_RUN_Float(-600.0f, 6000.0f);  	//强拖判断同步电角度
 		
-		bsp_as5600GetAngle(&Encoder_AS5600.angle);
-		{   /* 连续机械位置：角度增量 + ±π 绕回检测（首样本定零点 = 电气零点对齐位置） */
-			float ang = Encoder_AS5600.angle;
+		/* 编码器服务层：取一拍。DMA 模式下这里同时"转换上一帧、发下一帧"，
+		 * 所以每拍必须恰好调用一次。换编码器不改这里。 */
+		/* DWT 分段计时：专量"编码器一拍"在 FOC 中断里到底花多少。
+		 * 这是 §17 FOC 中断时间优化的第一手数据 —— 在此之前只能靠估算，
+		 * 而估算错得离谱过：AS5047 的 CS 间隔原本写成 24 轮 volatile NOP 循环，
+		 * 实际 ≈2us × 每样本 4~6 次，占掉 10kHz 周期的 12%。 */
+		{
+			uint32_t _et0 = DWT->CYCCNT;
+			Encoder_Update();
+			{
+				uint32_t _eel = (DWT->CYCCNT - _et0) / (SystemCoreClock / 1000000U);
+				g_enc_read_us = _eel;
+				if (_eel > g_enc_read_wcet_us) g_enc_read_wcet_us = _eel;
+			}
+		}
+		{   /* 连续机械位置：角度增量 + ±π 绕回检测（首样本定起点 = 电气零点对齐位置）
+		     * 注意：多圈位置属于位置环自己的口径，故仍在本层累加。
+		     * Encoder.ResetTracking()（Param_init 会调）只清服务层内部量，
+		     * 不会重置这里的 g_mech_pos_rad，保持与迁移前一致的行为。 */
+			float ang = Encoder.data.mec;
 			float d = ang - g_last_angle_rad;
 			if (g_last_angle_rad < 0.0f) {
 				g_last_angle_rad = ang;
@@ -88,19 +156,51 @@ void HAL_ADCEx_InjectedConvCpltCallback( ADC_HandleTypeDef *hadc)
 				g_last_angle_rad = ang;
 			}
 		}
-		Encoder_AS5600.eleangle	= fmodf(Encoder_AS5600.angle * Motor_Params.Pole_Pairs, Two_PI);
 		
 		/***********************   2、Processing ADC  ***************************/
 		
-		foc_abc_current_i.adc_phase_ic =  ADC1->JDR1;   
-	  foc_abc_current_i.adc_phase_ib  =  ADC2->JDR1;  
+		foc_abc_current_i.adc_phase_ic =  ADC3->JDR1;   /* 电流C：PC0 / ADC3_IN10，注入 rank1 */
+	  foc_abc_current_i.adc_phase_ib  =  ADC2->JDR1;   /* 电流B：PC1 / ADC2_IN11，注入 rank1 */
 	
 
     foc_abc_current_i.ic  =  -((float)foc_abc_current_i.offset_phase_ic - foc_abc_current_i.adc_phase_ic) * I_SCALE;
-		foc_abc_current_i.ib  =  -((float)foc_abc_current_i.offset_phase_ib - foc_abc_current_i.adc_phase_ib) * I_SCALE;	//3.3/4096 /(40V/V) / (0.001Ω)
+		foc_abc_current_i.ib  =  -((float)foc_abc_current_i.offset_phase_ib - foc_abc_current_i.adc_phase_ib) * I_SCALE;	//I_SCALE=(3.3/4095)/(Rs×Gain)=(3.3/4095)/(0.001Ω×20)
 		foc_abc_current_i.ia = - foc_abc_current_i.ic - foc_abc_current_i.ib;
 
-    Vbus = ADC_ConvertedValue[0]* V_SCALE; // ADC1->JDR2 * V_SCALE;
+    /* ===== 母线电压：ADC3 注入 rank2（PC3 / ADC3_IN13）=====
+     * 与两个电流同被 TIM1_TRGO(OC4REF) 触发，所以是 PWM 同步采样。
+     * JEOC 是在整个注入序列（两个 rank）都转完之后才置位，而本 ISR 正是被它触发的，
+     * 所以此刻 JDR1/JDR2 都已就绪，直接读即可。
+     * 清标志由 HAL 在回调返回后显式做（__HAL_ADC_CLEAR_FLAG(JSTRT|JEOC)）；
+     * **不要**依赖"读 JDR 自动清 JEOC"这种未核实的行为。 */
+    Vbus = (float)ADC3->JDR2 * V_SCALE;
+
+    /* ===== 输出端 6 路霍尔：启动 ADC1 规则组的一次 6 通道扫描（10kHz/10 = 1kHz）=====
+     * ===== 输出端 6 路霍尔：ADC1 规则组，**单次扫描 + 软件触发** =====
+     * 排布（2026-09-27 定稿）：
+     *   ADC3 注入 = 电流C(rank1) + Vbus(rank2)  → JEOC = 本 ISR 源，**只有注入组**
+     *   ADC2 注入 = 电流B(rank1)                → 无中断，这里轮询 JDR1
+     *   ADC1 规则 = 6 路霍尔（单次扫描 + SWSTART，DMA 循环填 Hall_ADC_DMA[6]）
+     *
+     * 为什么不用连续自由跑：6 通道一轮 16.4us，而周期是 100us，100/16.4 = 6.1 **除不尽**
+     * → 采样时刻相对 PWM 开关沿会**逐周期漂移**，霍尔读数会随机落在开关噪声上，
+     * 既不准也不可复现。改成在 FOC ISR 里固定分频点写 SWSTART：
+     *   - 触发时刻锁在 PWM 周期内的固定位置（ISR 本身由 TIM1_TRGO 触发）→ 确定性采样
+     *   - 落在与电流采样同一个零矢量安静窗口 → 噪声小
+     *   - 一轮扫描 16.4us 远小于 1ms 分频周期，下一拍触发前早已完成
+     *
+     * 数据新鲜度与"撕裂"：本 ISR 只负责"启动下一轮"，**解码不在 ISR 里**（那是 3 组
+     * atan2 的 float 重活）。因为 buffer 只在 ISR 里被 DMA 改，任务侧读 6 个 halfword
+     * 可能被本 ISR 的下一轮扫描打断 → 用 g_hall_scan_seq 做 seqlock 重试即可
+     * （解码器还没写，见 §18.4）。 */
+    if (++s_hall_scan_div >= 10U) {
+        s_hall_scan_div = 0U;
+        g_hall_scan_seq++;      /* 先递增序号，解码侧前后各读一次做撕裂检测 */
+        /* 必须同时置 EXTTRIG —— F1 的规则组软件启动靠这两位配合，只写 SWSTART
+         * 在 EXTSEL 已设为 SWSTART 但 EXTTRIG 未置时不会真正启动
+         * （HAL 的 ADC_SoftwareStartConv 就是两个位一起写）。 */
+        ADC1->CR2 |= (ADC_CR2_EXTTRIG | ADC_CR2_SWSTART);
+    }
     Motor_Params.VBUS = Vbus;   /* 母线电压实时化：模型 SVPWM/限幅/电流限随实测母线（FOC_Generated_Step 每步同步） */
 		/*********************  Safety 快检（Phase 4） *************************/
 		{
@@ -108,7 +208,12 @@ void HAL_ADCEx_InjectedConvCpltCallback( ADC_HandleTypeDef *hadc)
 			fault_mask_t fast_faults = 0;
 			Safety_FastStep(&fast_in, &Safety_Config, &fast_faults);
 			if (fast_faults != 0U) {
-				__HAL_TIM_MOE_DISABLE(&htim1);              /* 当场快速关 PWM 输出 */
+				/* 当场无条件关 PWM 输出。
+				 * 原来这里是 __HAL_TIM_MOE_DISABLE(&htim1) —— 那个宏在 PWM 运行中
+				 * 是空操作（CCER 的 CCxE 非 0 就不写 BDTR），所以"快速关断"其实
+				 * 一直没生效，全靠 1ms 后状态机的 PowerStage_Disable() 兜底。
+				 * 详见 MotorCtrl.h 的 PowerStage_MoeOff() 说明。 */
+				PowerStage_MoeOff();
 				MotorStateMachine_PostFault(fast_faults);   /* 原子锁存，任务 1ms 巡检进 FAULT */
 			}
 		}
@@ -129,11 +234,12 @@ void HAL_ADCEx_InjectedConvCpltCallback( ADC_HandleTypeDef *hadc)
 									
 #endif
 	}
-	/* FOC ISR 每周期耗时记录（µs @120MHz），Ozone 加 g_foc_isr_us / g_foc_wcet_us */
+	/* FOC ISR 每周期耗时记录（µs，由 SystemCoreClock 推导），Ozone 加 g_foc_isr_us / g_foc_wcet_us */
 	{
-		uint32_t _el = (DWT->CYCCNT - _isr_t0) / 120U;
+		uint32_t _el = (DWT->CYCCNT - _isr_t0) / (SystemCoreClock / 1000000U);
 		g_foc_isr_us = _el;
 		if (_el > g_foc_wcet_us) g_foc_wcet_us = _el;
+		/* g_foc_isr_cnt 在 ISR 最前面自增（校准路径会提前 return，那里也必须计数） */
 	}
 }
 

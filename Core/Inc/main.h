@@ -31,7 +31,12 @@ extern "C" {
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+/* 板级常量（含 WWDG_FEED_INTERVAL_100us）。
+ * 必须在这里 include：下面 Private defines 里的别名
+ *     #define wwdg_feed_interval_100us WWDG_FEED_INTERVAL_100us
+ * 只是别名，真值由 Board_Config.h 提供；Core/Src/tim.c 只 include "tim.h"→"main.h"，
+ * 所以放在这段用户区才能让 tim.c 看见。 */
+#include "Board_Config.h"
 /* USER CODE END Includes */
 
 /* Exported types ------------------------------------------------------------*/
@@ -59,18 +64,13 @@ void Error_Handler(void);
 /* Private defines -----------------------------------------------------------*/
 #define PWM_period PWM_PERIOD
 #define PWM_ADC_trgo PWM_ADC_TRGO
+#define wwdg_feed_interval_100us WWDG_FEED_INTERVAL_100us
 #define LED_Pin GPIO_PIN_13
 #define LED_GPIO_Port GPIOC
 #define Current_C_Pin GPIO_PIN_0
 #define Current_C_GPIO_Port GPIOC
 #define Current_B_Pin GPIO_PIN_1
 #define Current_B_GPIO_Port GPIOC
-#define Voltage_BUS_Pin GPIO_PIN_3
-#define Voltage_BUS_GPIO_Port GPIOC
-#define IIC_SDA_Pin GPIO_PIN_5
-#define IIC_SDA_GPIO_Port GPIOA
-#define IIC_SCL_Pin GPIO_PIN_4
-#define IIC_SCL_GPIO_Port GPIOC
 #define SPI2_NSS_Pin GPIO_PIN_12
 #define SPI2_NSS_GPIO_Port GPIOB
 #define PWM_A_Pin GPIO_PIN_8
@@ -83,6 +83,7 @@ void Error_Handler(void);
 #define DRV8323_EN_GPIO_Port GPIOA
 #define DRV8232_nFAULT_Pin GPIO_PIN_12
 #define DRV8232_nFAULT_GPIO_Port GPIOA
+#define DRV8232_nFAULT_EXTI_IRQn EXTI15_10_IRQn
 #define Encode_CS_Pin GPIO_PIN_15
 #define Encode_CS_GPIO_Port GPIOA
 #define Encode_SCK_Pin GPIO_PIN_10

@@ -101,8 +101,10 @@ int main(void)
   MX_SPI2_Init();
   MX_TIM1_Init();
   MX_USART2_UART_Init();
-  //MX_IWDG_Init();   // GD32_NOTE: Phase 0 基线为关闭；CubeMX 再生成会重新启用，若启用需先实现喂狗（Phase 4），否则 ~160ms 复位
+  MX_IWDG_Init();
   MX_CAN_Init();
+  MX_TIM4_Init();
+  MX_ADC3_Init();
   /* USER CODE BEGIN 2 */
 
   main_user();
@@ -160,7 +162,7 @@ void SystemClock_Config(void)
     Error_Handler();
   }
   PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_ADC;
-  PeriphClkInit.AdcClockSelection = RCC_ADCPCLK2_DIV4;
+  PeriphClkInit.AdcClockSelection = RCC_ADCPCLK2_DIV8;
   if (HAL_RCCEx_PeriphCLKConfig(&PeriphClkInit) != HAL_OK)
   {
     Error_Handler();
@@ -189,7 +191,19 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
     HAL_IncTick();
   }
   /* USER CODE BEGIN Callback 1 */
-
+  /* ===== 调度器启动前的看门狗喂养点 =====
+   * IWDG 在 MX_IWDG_Init() 里就已经启动（PSC=32/Reload=49 ≈ 40ms 超时），
+   * 而 main_user() 的阻塞初始化最长一段是 Offset_Current_Start() 里的
+   * HAL_Delay(300)，没有这个喂养点必然复位。
+   *
+   * TIM4 更新中断 5ms 一次（ARR 来自 Board_Config.h: WWDG_FEED_INTERVAL_100us=50，
+   * 时钟 120MHz/PSC12000 = 100us/tick），NVIC 优先级 4（<5，所以这里绝不能调用
+   * 任何 FreeRTOS API / printf）。启动与关闭都在 main_user() 里成对出现：
+   * 调度器起来后必须关掉这个中断，否则"SafetyTask 卡死"会被 TIM4 掩盖。 */
+  if (htim->Instance == TIM4)
+  {
+    HAL_IWDG_Refresh(&hiwdg);
+  }
   /* USER CODE END Callback 1 */
 }
 

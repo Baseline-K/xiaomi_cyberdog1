@@ -20,12 +20,16 @@
 #include "identify.h"      /* 离线辨识：S_CALIB 复用 */
 #include "Safety_Module.h" /* FAULT_*_MASK（定向重初始化分类） */
 #include "CAN_bsp.h"       /* CAN_bsp_Recover（通信类故障恢复） */
+#include "drv83xx.h"       /* DRV83XX_ReadAndClearFaults（栅极驱动类故障恢复） */
 
 #include <stdio.h>
 #include <math.h>
 
 #define STOP_SPEED_THRESHOLD_RPS  0.1f   /* 判定电机静止的转速阈值 */
 #define STOP_TIMEOUT_MS           3000U  /* 停机超时兜底 */
+/* S_FAULT_OVER 的绝对超时兜底。取 3s：正常情况 1ms 内速度就低于阈值，
+ * 这个超时只在"速度拿不到有效值"时才用得上（见 state_FAULTOVER_do 的说明）。 */
+#define FAULTOVER_TIMEOUT_MS      3000U
 
 #define MOTOR_EVT_QUEUE_LEN  8U
 
@@ -66,6 +70,8 @@ static void None_exit(void) { }
 /* ---- 待提交命令缓存（EVENT_toRUN 携带，S_RUN_entry 使用） ---- */
 static MotorCommand_t g_pending_cmd = { 0 };
 static uint32_t g_stop_tick = 0U;
+/* 进入 S_FAULT_OVER 的时刻（在 state_FAULT_exit 里打点），用于绝对超时兜底 */
+static uint32_t g_faultover_tick = 0U;
 
 /* 发布 coast 快照（停机/滑行：duty 0.5、转矩模式 iq=0 避免速度环积分饱和） */
 static void publish_coast(void)
@@ -114,7 +120,25 @@ static void state_IDLE_entry(void)
     PowerStage_Disable();
     g_fault_report_active = 0U;   /* 回 IDLE 停止故障上报 */
 }
-static void state_IDLE_do(void) { }
+static void state_IDLE_do(void)
+{
+    /* 兜底：S_INIT 期间锁存的故障位没人处理。
+     * eventMap 里没有 {EVENT_toFAULT, S_INIT}（S_INIT 只是单拍直通，见 state_INIT_do），
+     * 所以上电时锁存的故障 —— 例如 FOC 中断在调度器启动前就已开始跑
+     * （main_user 里 FOC_Interrupt_Start 早于 AppTasks_Init），编码器在这段时间
+     * 判故障调用 Encoder_Adapt 的 PostFault(FAULT_ENCODER_MASK) —— 会变成
+     * "illegal event [toFAULT] in S_INIT" 被丢掉，故障位却留在 g_fault_bits 里。
+     * 进 IDLE 时补一次检查，把它转成正常的 toFAULT（于是会关功率 + 发 EMCY 上报）。
+     *
+     * 不会自激：state_FAULT_exit 离开 FAULT_NOW 时已把 g_fault_bits 清零，
+     * 所以恢复回 IDLE 之后这里不会又触发一次。 */
+    if (g_fault_bits != 0U) {
+        MotorEvent_t evt = { 0 };
+        evt.id = EVENT_toFAULT;
+        evt.timestamp_ms = HAL_GetTick();
+        MotorStateMachine_PostEvent(&evt);
+    }
+}
 
 static void state_CALIB_entry(void)
 {
@@ -206,8 +230,9 @@ static void state_FAULT_entry(void)
     g_fault_report_active = 1U;
     g_fault_report_dirty  = 1U;
 
-    /* 需定向软重初始化的硬件类（编码器 / CAN 通信）；其余类下一拍即自动恢复 */
-    g_recovery_mask = g_fault_bits & (FAULT_ENCODER_MASK | FAULT_COMM_TIMEOUT_MASK);
+    /* 需定向软重初始化的硬件类（编码器 / 栅极驱动 / CAN 通信）；
+     * 其余类（软过流、过压、欠压、堵转、转速异常、任务看门狗…）下一拍即自动恢复。 */
+    g_recovery_mask = g_fault_bits & (FAULT_ENCODER_MASK | FAULT_GATE_DRIVER_MASK | FAULT_COMM_TIMEOUT_MASK);
     g_recovery_done = (g_recovery_mask == 0U) ? 1U : 0U;
 
     printf("FSM: FAULT_NOW, fault=0x%08lX\r\n", (unsigned long)g_fault_bits);
@@ -220,12 +245,22 @@ static void state_FAULT_do(void)
         uint8_t ok = 1U;
 
         if ((g_recovery_mask & FAULT_ENCODER_MASK) != 0U) {
-            Param_init();            /* AS5600 跟踪软复位（无 I2C） */
+            Param_init();            /* 编码器跟踪软复位（无总线访问） */
             Param_deinit();          /* 清 dq/PLL 滤波状态（ISR 并发仅影响个别采样） */
             FOC_Generated_Reset();   /* 清模型控制环状态 */
         }
+        if ((g_recovery_mask & FAULT_GATE_DRIVER_MASK) != 0U) {
+            /* 读 FSR1/FSR2：读操作本身就清除 DRV 内部锁存。OCP_MODE=LATCH 时这是
+             * 唯一的解锁途径（不解锁的话 DRV 会一直把栅极按住、PWM 给了也不通）。
+             * 返回 0 = PA12 仍为低 → 真故障没消失，下拍重试（本函数非阻塞，安全）。 */
+            if (DRV83XX_ReadAndClearFaults() == 0) {
+                ok = 0U;
+            }
+        }
         if ((g_recovery_mask & FAULT_COMM_TIMEOUT_MASK) != 0U) {
-            ok = CAN_bsp_Recover();  /* bus-off 恢复；本已就绪则直接返回 1 */
+            if (CAN_bsp_Recover() == 0) {   /* bus-off 恢复；本已就绪则直接返回 1 */
+                ok = 0U;
+            }
         }
         g_recovery_done = ok;
     }
@@ -243,6 +278,9 @@ static void state_FAULT_exit(void)
     /* 自动恢复：退出 FAULT_NOW 即清故障字与锁存（对应 AC 的 state_FAULT_exit） */
     g_fault_bits     = 0U;
     MotorCtrl.faults = 0U;
+    /* 本函数在"离开 FAULT_NOW"时执行，也就是刚进入 FAULT_OVER —— 在此打点，
+     * 供 state_FAULTOVER_do 的绝对超时兜底使用。 */
+    g_faultover_tick = HAL_GetTick();
 }
 
 static void state_FAULTOVER_do(void)
@@ -256,9 +294,22 @@ static void state_FAULTOVER_do(void)
         return;
     }
 
-    /* 电机静止 → 停止上报并回 IDLE */
-    float speed = fabsf(FOC_Generated_GetSpeedRps());
-    if (speed < STOP_SPEED_THRESHOLD_RPS) {
+    /* 电机静止 → 停止上报并回 IDLE。
+     * 判据必须有**两道保险**，否则会死锁（实测踩过）：
+     *   1) 速度必须是有限值。若模型因为 Vbus=0 之类的原因算出 NaN，
+     *      fabsf(NaN) < 0.1 恒为 false，本状态永远退不出去；
+     *   2) 绝对超时兜底 —— 与 S_STOP 一致。凡是"靠外部量判据"的退出，
+     *      都要有超时，因为那个外部量可能压根不更新
+     *      （例如 FOC 中断没在跑时转速是冻结值）。 */
+    float speed = FOC_Generated_GetSpeedRps();
+    int   stopped = isfinite(speed) && (fabsf(speed) < STOP_SPEED_THRESHOLD_RPS);
+    int   timeout = ((HAL_GetTick() - g_faultover_tick) >= FAULTOVER_TIMEOUT_MS);
+
+    if (stopped || timeout) {
+        if (timeout && !stopped) {
+            printf("FSM: FAULT_OVER timeout (speed=%s), force to IDLE\r\n",
+                   isfinite(speed) ? "non-zero" : "non-finite");
+        }
         g_fault_report_active = 0U;
         MotorEvent_t evt = { 0 };
         evt.id = EVENT_toIDLE;
@@ -410,7 +461,12 @@ void MotorStateMachine_Init(void)
     configASSERT(g_evt_queue != NULL);
 
     g_cur_state = S_INIT;
-    g_fault_pending = 0U;
+    /* 调度器启动前 FOC 中断就已经在跑（main_user 里 FOC_Interrupt_Start 早于
+     * AppTasks_Init），所以这里可能已经有 PostFault 锁存的故障位。
+     * 不能直接把 pending 清 0 —— 那样 g_fault_bits 有值却没人处理，
+     * 掩码会在后面被 EVENT_toFAULT 兜底路径覆盖成 0xFFFFFFFF，线索就丢了。
+     * 保留 pending，让 Step() 的第一个分支正常走 toFAULT（掩码原样带过去）。 */
+    g_fault_pending = (g_fault_bits != 0U) ? 1U : 0U;
 
     /* 初始安全快照：coast（调度器启动前 FOC ISR 就读取，需先处于安全态） */
     publish_coast();
@@ -427,8 +483,17 @@ int MotorStateMachine_PostEvent(const MotorEvent_t *evt)
     BaseType_t ok;
 
     if (evt->id == EVENT_toFAULT) {
-        /* FAULT 走独立锁存兜底（计划 §5.3/§4.1），保证不因队列满丢失 */
-        MotorStateMachine_PostFault(0xFFFFFFFFUL);   /* 未知故障源，置全部位 */
+        /* FAULT 走独立锁存兜底（计划 §5.3/§4.1），保证不因队列满丢失。
+         *
+         * 但**不能无条件置全部位**：本分支也被"已经锁存了具体故障位"的调用者走到
+         *   - state_IDLE_do() 的 S_INIT 兜底（接住上电期间被 eventMap 丢掉的故障）
+         *   - state_FAULTOVER_do() 的"又出故障"
+         * 无条件写 0xFFFFFFFF 会把真实掩码（1<<2 过压 / 1<<13 通信超时 / 1<<14 编码器…）
+         * 覆盖掉，现场只剩一句 "FSM: FAULT_NOW, fault=0xFFFFFFFF"，什么线索都没了，
+         * 而且 g_recovery_mask 会变成"三类恢复全跑一遍"。
+         * 只有确实没有任何来源信息时才置全部位。
+         * PostFault 顺带把 g_fault_pending 置 1（本分支不走队列，靠它触发 toFAULT）。 */
+        MotorStateMachine_PostFault((g_fault_bits == 0U) ? 0xFFFFFFFFUL : g_fault_bits);
         return 1;
     }
     if (evt->id == EVENT_RUNtoSTOP) {
@@ -457,6 +522,14 @@ void MotorStateMachine_ClearFault(uint32_t mask)
     g_fault_bits &= ~mask;
 }
 
+/* 当前锁存的故障位（ISR/任务皆可读）。
+ * 用途：PowerStage_Enable() 的故障闸门 —— 那是个"不能等状态机"的场合，
+ * 必须在**同一时刻**知道有没有故障，而不是等 1ms 后状态机切到 FAULT。 */
+uint32_t MotorStateMachine_GetFaultBits(void)
+{
+    return g_fault_bits;
+}
+
 void MotorStateMachine_PostStop(void)
 {
     g_stop_pending = 1U;          /* 原子字节写，ISR/任务可安全调用 */
@@ -466,11 +539,18 @@ void MotorStateMachine_Step(void)
 {
     MotorEvent_t evt;
 
-    /* 1. fault_pending 兜底（FOC ISR 置位，1ms 巡检） */
+    /* 1. fault_pending 兜底（FOC ISR / EXTI 置位，1ms 巡检） */
     if (g_fault_pending != 0U) {
         g_fault_pending = 0U;
-        /* 已在故障态：故障位已由 PostFault 更新（可上报），不重复触发 toFAULT（防非法事件刷屏） */
-        if ((g_cur_state != S_FAULT_NOW) && (g_cur_state != S_FAULT_OVER)) {
+        /* 已在故障态：故障位已由 PostFault 更新（可上报），不重复触发 toFAULT（防非法事件刷屏）。
+         * S_INIT 也跳过：eventMap 里没有 {EVENT_toFAULT, S_INIT}（S_INIT 是单拍直通），
+         * 投了只会打一行 "illegal event [toFAULT] in S_INIT" 并污染 illegal 计数。
+         * 上电期间锁存的故障由 state_IDLE_do() 的兜底检查接手 —— 掩码留在
+         * g_fault_bits 里不会丢，进 IDLE 时会被转成正常的 toFAULT（含 CAN 上报）。
+         * 实测：上电时 PA12 nFAULT 的 EXTI 会在 MX_GPIO_Init() 里就锁存一次，
+         * 走的正是这条路径。 */
+        if ((g_cur_state != S_FAULT_NOW) && (g_cur_state != S_FAULT_OVER) &&
+            (g_cur_state != S_INIT)) {
             g_stats_fault_forced++;
             evt.id = EVENT_toFAULT;
             evt.timestamp_ms = HAL_GetTick();

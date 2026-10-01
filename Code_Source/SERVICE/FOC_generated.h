@@ -16,6 +16,13 @@ void FOC_Generated_Reset(void);
 /* 读取模型 PLL 输出的机械转速（RPS），coast 期间仍实时更新 */
 float FOC_Generated_GetSpeedRps(void);
 
+/* 读取模型 PLL 的机械加速度估计（RPS/s）。
+ * 由模型内 AccelEst 子系统对 speed_meas_rps 做"一阶低通 + 微分"得到：
+ *   a[k] = (1-K)*a[k-1] + (K/Ts)*(v[k]-v[k-1]),  fc = 100 Hz, Ts = 1e-4 s
+ * 单位与规划器的 ref_accel 一致（RPS/s），可直接相减比较。
+ * 注意：它是"测量"加速度，含 PLL 延迟与 100 Hz 低通相位滞后，不要当理想微分用。 */
+float FOC_Generated_GetAccelRps2(void);
+
 /* ---- 速度 S 曲线规划：常开（速度模式+未 coast 自动平滑）；仅机动时间可调（RTT plT） ---- */
 void FOC_SpeedPlan_SetTimeMs(uint32_t t_ms);   /* 加减速时间对称，默认 300ms */
 
